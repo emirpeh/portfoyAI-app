@@ -1,21 +1,60 @@
 <script setup lang="ts">
 import type { DateRange } from 'radix-vue'
-import type { Ref } from 'vue'
 import { cn } from '@/lib/utils'
-
 import { CalendarDate, DateFormatter, getLocalTimeZone } from '@internationalized/date'
 import { Calendar as CalendarIcon } from 'lucide-vue-next'
+import { useI18n } from 'vue-i18n'
+
+interface Props {
+  modelValue: { start: Date, end: Date } | null
+}
+
+const props = defineProps<Props>()
+
+const emit = defineEmits<{
+  'update:modelValue': [{ start: Date, end: Date } | null]
+}>()
+
+const { t } = useI18n()
 
 const df = new DateFormatter('en-US', {
   dateStyle: 'medium',
 })
 
-const calendarDate = new CalendarDate(2024, 0, 20)
+const value = computed<DateRange>({
+  get() {
+    if (!props.modelValue) {
+      return {
+        start: undefined,
+        end: undefined,
+      }
+    }
 
-const value = ref({
-  start: calendarDate,
-  end: calendarDate.add({ days: 20 }),
-}) as Ref<DateRange>
+    return {
+      start: new CalendarDate(
+        props.modelValue.start.getFullYear(),
+        props.modelValue.start.getMonth(),
+        props.modelValue.start.getDate(),
+      ),
+      end: new CalendarDate(
+        props.modelValue.end.getFullYear(),
+        props.modelValue.end.getMonth(),
+        props.modelValue.end.getDate(),
+      ),
+    }
+  },
+  set(newValue: DateRange) {
+    if (!newValue?.start || !newValue?.end) {
+      emit('update:modelValue', null)
+      return
+    }
+
+    emit('update:modelValue', {
+      start: newValue.start.toDate(getLocalTimeZone()),
+      end: newValue.end.toDate(getLocalTimeZone()),
+    })
+  },
+})
 </script>
 
 <template>
@@ -27,7 +66,7 @@ const value = ref({
           variant="outline"
           :class="cn(
             'justify-start text-left font-normal',
-            !value && 'text-muted-foreground',
+            !value.start && 'text-muted-foreground',
           )"
         >
           <CalendarIcon class="mr-2 h-4 w-4" />
@@ -36,13 +75,12 @@ const value = ref({
             <template v-if="value.end">
               {{ df.format(value.start.toDate(getLocalTimeZone())) }} - {{ df.format(value.end.toDate(getLocalTimeZone())) }}
             </template>
-
             <template v-else>
               {{ df.format(value.start.toDate(getLocalTimeZone())) }}
             </template>
           </template>
           <template v-else>
-            Pick a date
+            {{ t('common.pickDate') }}
           </template>
         </Button>
       </PopoverTrigger>
@@ -53,7 +91,6 @@ const value = ref({
           :number-of-months="2"
           initial-focus
           :placeholder="value.start"
-          @update:start-value="(startDate: any) => value.start = startDate"
         />
       </PopoverContent>
     </Popover>

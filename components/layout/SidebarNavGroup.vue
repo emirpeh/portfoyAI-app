@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { NavGroup } from '~/types/nav'
+import { useI18n } from 'vue-i18n'
 import { type SidebarMenuButtonVariants, useSidebar } from '~/components/ui/sidebar'
 
 withDefaults(defineProps<{
@@ -8,6 +9,8 @@ withDefaults(defineProps<{
 }>(), {
   size: 'default',
 })
+const { t } = useI18n()
+const localePath = useLocalePath()
 
 const { setOpenMobile } = useSidebar()
 
@@ -26,9 +29,9 @@ const openCollapsible = ref(false)
         <CollapsibleTrigger as-child>
           <SidebarMenuButton :tooltip="item.title" :size="size">
             <Icon :name="item.icon || ''" mode="svg" />
-            <span>{{ item.title }}</span>
+            <span>{{ t(item.title) }}</span>
             <span v-if="item.new" class="rounded-md bg-#adfa1d px-1.5 py-0.5 text-xs text-black leading-none no-underline group-hover:no-underline">
-              New
+              {{ t('nav.new') }}
             </span>
             <Icon name="i-lucide-chevron-right" class="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
           </SidebarMenuButton>
@@ -40,10 +43,10 @@ const openCollapsible = ref(false)
               :key="subItem.title"
             >
               <SidebarMenuSubButton as-child>
-                <NuxtLink :to="subItem.link" @click="setOpenMobile(false)">
-                  <span>{{ subItem.title }}</span>
+                <NuxtLink :to="localePath(subItem.link)" @click="setOpenMobile(false)">
+                  <span>{{ t(subItem.title) }}</span>
                   <span v-if="subItem.new" class="rounded-md bg-#adfa1d px-1.5 py-0.5 text-xs text-black leading-none no-underline group-hover:no-underline">
-                    New
+                    {{ t('nav.new') }}
                   </span>
                 </NuxtLink>
               </SidebarMenuSubButton>

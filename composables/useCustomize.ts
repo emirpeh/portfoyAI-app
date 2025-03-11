@@ -6,12 +6,21 @@ interface Config {
 }
 
 export function useCustomize() {
-  const { value: color } = useColorMode()
-  const isDark = color === 'dark'
+  const colorMode = useColorMode()
+
+  // Null check ekle
+  if (!colorMode?.value) {
+    return {
+      theme: 'light',
+      radius: 0,
+    }
+  }
+
+  const isDark = colorMode.value === 'yellow'
   const config = useCookie<Config>('config', {
     default: () => ({
-      theme: 'zinc',
-      radius: 0.5,
+      theme: 'yellow',
+      radius: 0,
     }),
   })
 

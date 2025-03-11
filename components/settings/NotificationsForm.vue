@@ -178,12 +178,6 @@ const onSubmit = handleSubmit((values) => {
           <FormLabel>
             Use different settings for my mobile devices
           </FormLabel>
-          <FormDescription>
-            You can manage your mobile notifications in the
-            <a href="/examples/forms">
-              mobile settings
-            </a> page.
-          </FormDescription>
         </div>
       </FormItem>
     </FormField>

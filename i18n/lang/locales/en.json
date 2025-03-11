@@ -1,0 +1,345 @@
+{
+  "dashboard": {
+    "overview": "Monthly Overview",
+    "title": "Dashboard",
+    "totalPositions": "Total Positions",
+    "totalExport": "Total Export",
+    "totalImport": "Total Import",
+    "totalTransit": "Total Transit",
+    "recentPositions": "Recent Positions",
+    "fromLastMonth": "from last month"
+  },
+  "account": {
+    "title": "Account",
+    "description": "Update your account settings. Set your preferred language and timezone.",
+    "name": {
+      "label": "Name",
+      "description": "This is the name that will be displayed on your profile and in emails.",
+      "placeholder": "Your name"
+    },
+    "dob": {
+      "label": "Date of birth",
+      "description": "Your date of birth is used to calculate your age.",
+      "placeholder": "Pick a date"
+    },
+    "language": {
+      "label": "Language",
+      "description": "This is the language that will be used in the dashboard.",
+      "placeholder": "Select language..."
+    },
+    "submit": "Update account"
+  },
+  "customers": {
+    "title": "Customers",
+    "description": "Customer management",
+    "no_results": "No results.",
+    "filter": {
+      "search": "Search Customer...",
+      "placeholder": "Filter by company name...",
+      "reset": "Reset filters"
+    },
+    "actions": {
+      "contact": "Contacts"
+    },
+    "contacts": {
+      "title": "Contacts",
+      "name": "Name",
+      "phone": "Phone",
+      "email": "Email",
+      "status": "Send Mail"
+    },
+    "columns": {
+      "company": "Company Name",
+      "taxOffice": "Tax Office",
+      "taxValue": "Tax Number",
+      "currency": "Currency",
+      "country": "Country",
+      "city": "City",
+      "district": "District"
+    },
+    "view": "View",
+    "createAccount": "Create Account",
+    "updateAccount": "Update Account",
+    "deleteAccount": "Delete Account",
+    "deleteConfirmTitle": "Delete Customer",
+    "deleteConfirmDescription": "Are you sure you want to delete this customer? This action cannot be undone and will remove all associated data.",
+    "createAccountDescription": "Fill out the form to create a new account.",
+    "save": "Save",
+    "name": "Name",
+    "username": "Email address"
+  },
+  "positions": {
+    "view": "View",
+    "title": "Positions",
+    "description": "Position list and details",
+    "details": "Position Details",
+    "print": "Print",
+    "status": {
+      "closed": "Position Closed",
+      "planned": "Planned Transport",
+      "steps": {
+        "created": "Position Created",
+        "transit": "On the Way",
+        "delivery": "On Delivery",
+        "delivered": "Delivered"
+      }
+    },
+    "files": {
+      "title": "Files",
+      "count": "file(s)",
+      "noFiles": "No files found"
+    },
+    "map": {
+      "title": "Last Location",
+      "loadingLocation": "Loading Location",
+      "unloadingLocation": "Unloading Location",
+      "currentLocation": "Current location: {location}"
+    },
+    "tabs": {
+      "tripDetails": "Trip Details",
+      "cargoInvoice": "Cargo & Invoice",
+      "route": "Route",
+      "loadingUnloading": "Loading/Unloading",
+      "tariffs": "Buy/Sell Tariffs",
+      "partialLoads": "Partial Loads",
+      "expectedCosts": "Expected Costs"
+    },
+    "positionType": {
+      "G": "Export Transport",
+      "D": "Import Transport",
+      "T": "Transit Transport"
+    },
+    "vehicleDetails": "Vehicle Details",
+    "customsDetails": "Customs Details",
+    "columns": {
+      "title": "Cargo Invoice",
+      "detailTitle": "Cargo Details",
+      "positionNo": "Position No",
+      "customer": "Customer",
+      "salesRep": "Sales Rep",
+      "partialNo": "Partial No",
+      "openingDate": "Opening Date",
+      "reservationNo": "Reservation Date",
+      "positionType": "Position Type",
+      "orderDate": "Order Date",
+      "sender": "Sender",
+      "receiver": "Receiver",
+      "placeOfLoading": "Place of Loading",
+      "countryOfLoading": "Country of Loading",
+      "dateOfLoading": "Date of Loading",
+      "placeOfUnloading": "Place of Unloading",
+      "countryOfUnloading": "Country of Unloading",
+      "dateOfUnloading": "Date of Unloading",
+      "truckPlate": "Truck Plate",
+      "trailerPlate": "Trailer Plate",
+      "customsName": "Customs Name",
+      "box": "Box",
+      "typeOfGoods": "Type of Goods",
+      "kg": "Kilo",
+      "m3": "m³",
+      "export": "Export",
+      "import": "Import",
+      "transit": "Transit"
+    },
+    "createPosition": "Create Position",
+    "createPositionDescription": "Fill out the form to create a new position.",
+    "save": "Save",
+    "cargoInvoice": {
+      "title": "Cargo Invoice",
+      "freightCurrencyType": "Freight Currency Type",
+      "freightInvoice": "Freight Invoice",
+      "freightInvoiceAmount": "Freight Invoice Amount",
+      "freightInvoiceTLAmount": "Freight Invoice TL Amount",
+      "details": {
+        "title": "Cargo Details",
+        "code": "Code",
+        "goodsType": "Type of Goods",
+        "brand": "Brand",
+        "weight": "Weight",
+        "materialType": "Material Type",
+        "quantity": "Quantity",
+        "length": "Length",
+        "width": "Width",
+        "height": "Height",
+        "volume": "Volume",
+        "serialNo": "Serial No"
+      }
+    },
+    "loadingUnloading": {
+      "loadingTitle": "Loading Locations",
+      "unloadingTitle": "Unloading Locations",
+      "address": "Address",
+      "date": "Date",
+      "quantity": "Quantity",
+      "notes": "Notes"
+    },
+    "partialLoads": {
+      "customer": "Customer",
+      "sender": "Sender",
+      "receiver": "Receiver",
+      "consignee": "Consignee",
+      "packages": "Packages",
+      "weight": "Weight",
+      "volume": "M³",
+      "goodsType": "Type of Goods",
+      "freight": "Freight",
+      "loadingDate": "Loading Date",
+      "unloadingDate": "Unloading Date",
+      "customsName": "Customs Name",
+      "warehouse": "Delivery Warehouse"
+    },
+    "filter": {
+      "search": "Filter by company name...",
+      "title": "Filters",
+      "reset": "Reset Filters",
+      "positionType": "Position Type",
+      "sender": "Sender",
+      "receiver": "Receiver",
+      "all": "All",
+      "senderPlaceholder": "Enter sender name...",
+      "receiverPlaceholder": "Enter receiver name..."
+    }
+  },
+  "language_switcher": {
+    "switch": "Switch Language"
+  },
+  "currency": {
+    "usd": "USD - US Dollar",
+    "eur": "EUR - Euro",
+    "try": "TRY - Turkish Lira",
+    "gbp": "GBP - British Pound"
+  },
+  "country": {
+    "turkiye": "Türkiye",
+    "usa": "USA"
+  },
+  "city": {
+    "istanbul": "Istanbul",
+    "ankara": "Ankara",
+    "new_york": "New York"
+  },
+  "district": {
+    "kadikoy": "Kadikoy",
+    "cankaya": "Cankaya",
+    "manhattan": "Manhattan"
+  },
+  "columns": {
+    "id": "ID",
+    "company": "Company Name",
+    "taxOffice": "Tax Office",
+    "taxValue": "Tax Number",
+    "currency": "Currency",
+    "country": "Country",
+    "city": "City",
+    "district": "District"
+  },
+  "table": {
+    "sort": {
+      "asc": "Ascending",
+      "desc": "Descending"
+    },
+    "column": {
+      "hide": "Hide"
+    },
+    "pagination": {
+      "rowsPerPage": "Rows per page",
+      "of": "of",
+      "selected": "row(s) selected",
+      "firstPage": "Go to first page",
+      "previousPage": "Go to previous page",
+      "nextPage": "Go to next page",
+      "lastPage": "Go to last page",
+      "page": "Page"
+    }
+  },
+  "nav": {
+    "general": "General",
+    "home": "Home",
+    "users": "Users",
+    "email": "Email",
+    "customers": "Customers",
+    "positions": "Positions",
+    "pages": "Pages",
+    "components": "Components",
+    "help": "Help & Support",
+    "feedback": "Feedback",
+    "authentication": "Authentication",
+    "errors": "Errors",
+    "settings": "Settings",
+    "logout": "Log out",
+    "login": "Login",
+    "new": "New",
+    "contact": "Contact Us via mail",
+    "whatsapp": "Contact Us via Whatsapp",
+    "search": "Search",
+    "theme": "Theme"
+  },
+  "auth": {
+    "login": "Login",
+    "description": "Sign in to your account",
+    "email": "Email",
+    "password": "Password",
+    "failed": "Email or password is incorrect",
+    "companyName": "Maxi Logistics",
+    "slogan": "Grow your business with reliable logistics solutions.",
+    "help_text_prefix": "If you have any login issues, please email ",
+    "help_text_suffix": ""
+  },
+  "users": {
+    "view": "View",
+    "edit": "Edit",
+    "delete": "Delete",
+    "title": "Users",
+    "description": "User list and details",
+    "createAccount": "Create User",
+    "createAccountDescription": "Create a new user account.",
+    "editAccount": "Edit User",
+    "editAccountDescription": "Edit user account details.",
+    "email": "Email",
+    "password": "Password",
+    "passwordPlaceholder": "Leave empty to keep current password",
+    "role": "Role",
+    "save": "Save",
+    "update": "Update",
+    "roles": {
+      "admin": "Administrator",
+      "customer": "Customer"
+    },
+    "deleteConfirmTitle": "Delete User Account",
+    "deleteConfirmADMIN": "Are you sure you want to delete this administrator account? This action cannot be undone.",
+    "deleteConfirmCUSTOMER": "Are you sure you want to unlink this customer account? This will remove their access to the system.",
+    "columns": {
+      "id": "ID",
+      "email": "Email",
+      "role": "Role",
+      "createdAt": "Created At",
+      "updatedAt": "Updated At"
+    },
+    "filter": {
+      "placeholder": "Filter by email...",
+      "search": "Search User",
+      "reset": "Reset"
+    }
+  },
+  "common": {
+    "new": "New",
+    "error": "An error occurred",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "pickDate": "Pick a date",
+    "placeholder": "Search...",
+    "menu": "Menu",
+    "no_results": "No results.",
+    "search": "Search..."
+  },
+  "customize": {
+    "title": "Customize",
+    "description": "Customize your dashboard",
+    "theme": "Theme",
+    "language": "Language",
+    "font": "Font",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  }
+}

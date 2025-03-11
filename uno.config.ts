@@ -57,6 +57,9 @@ export default defineConfig({
     presetAttributify(),
     presetIcons({
       scale: 1.2,
+      collections: {
+        logos: () => import('@iconify-json/logos/icons.json').then(i => i.default),
+      },
     }),
     presetTypography(),
     presetWebFonts({

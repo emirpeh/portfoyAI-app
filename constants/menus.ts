@@ -1,36 +1,49 @@
 import type { NavMenu, NavMenuItems } from '~/types/nav'
 
-export const navMenu: NavMenu[] = [
+// Temel menü öğeleri
+const baseNavMenu: NavMenu[] = [
   {
-    heading: 'General',
+    heading: 'nav.general',
     items: [
       {
-        title: 'Home',
+        title: 'nav.home',
         icon: 'i-lucide-home',
         link: '/',
       },
       {
-        title: 'Email',
+        title: 'nav.email',
         icon: 'i-lucide-mail',
         link: '/email',
       },
       {
-        title: 'Tasks',
-        icon: 'i-lucide-calendar-check-2',
-        link: '/tasks',
+        title: 'nav.users',
+        icon: 'i-lucide-users',
+        link: '/users',
+        new: true,
+      },
+      {
+        title: 'nav.customers',
+        icon: 'i-lucide-users',
+        link: '/customers',
+        new: true,
+      },
+      {
+        title: 'nav.positions',
+        icon: 'i-lucide-truck',
+        link: '/positions',
         new: true,
       },
     ],
   },
   {
-    heading: 'Pages',
+    heading: 'nav.pages',
     items: [
       {
-        title: 'Authentication',
+        title: 'nav.authentication',
         icon: 'i-lucide-lock-keyhole-open',
         children: [
           {
-            title: 'Login',
+            title: 'nav.login',
             icon: 'i-lucide-circle',
             link: '/login',
           },
@@ -52,7 +65,7 @@ export const navMenu: NavMenu[] = [
         ],
       },
       {
-        title: 'Errors',
+        title: 'nav.errors',
         icon: 'i-lucide-triangle-alert',
         children: [
           {
@@ -83,7 +96,7 @@ export const navMenu: NavMenu[] = [
         ],
       },
       {
-        title: 'Settings',
+        title: 'nav.settings',
         icon: 'i-lucide-settings',
         new: true,
         children: [
@@ -117,7 +130,7 @@ export const navMenu: NavMenu[] = [
     ],
   },
   {
-    heading: 'Components',
+    heading: 'nav.components',
     items: [
       {
         title: 'Components',
@@ -380,15 +393,74 @@ export const navMenu: NavMenu[] = [
   },
 ]
 
+// Kullanıcı rolüne göre menü öğelerini filtreleme fonksiyonu
+export function getFilteredMenu(role: 'ADMIN' | 'CUSTOMER' | null, isDefault: boolean = false) {
+  if (!role)
+    return []
+
+  // Temel menü yapısını kopyala
+  const filteredMenu = JSON.parse(JSON.stringify(baseNavMenu)) as NavMenu[]
+
+  // ADMIN rolü için
+  if (role === 'ADMIN') {
+    // isDefault true ise tüm menüyü göster
+    if (isDefault) {
+      return filteredMenu
+    }
+
+    // isDefault false ise sadece belirli menüleri göster
+    // Sadece nav.general grubunu al ve içindeki öğeleri filtrele
+    const generalGroup = filteredMenu.find(group => group.heading === 'nav.general')
+    if (generalGroup) {
+      generalGroup.items = generalGroup.items.filter((item) => {
+        // NavLink veya NavGroup tipindeki öğeleri filtrele
+        if ('title' in item) {
+          return ['nav.home', 'nav.email', 'nav.users', 'nav.customers', 'nav.positions'].includes(item.title)
+        }
+        return false
+      })
+    }
+
+    // Sadece nav.general grubunu döndür, diğer grupları gösterme
+    return [generalGroup].filter(Boolean) as NavMenu[]
+  }
+
+  // CUSTOMER rolü için
+  if (role === 'CUSTOMER') {
+    // İlk grup (nav.general) içindeki öğeleri filtrele
+    const generalGroup = filteredMenu.find(group => group.heading === 'nav.general')
+    if (generalGroup) {
+      generalGroup.items = generalGroup.items.filter((item) => {
+        // NavLink veya NavGroup tipindeki öğeleri filtrele
+        if ('title' in item) {
+          return ['nav.home', 'nav.positions'].includes(item.title)
+        }
+        return false
+      })
+    }
+
+    // Diğer grupları kaldır
+    return [generalGroup].filter(Boolean) as NavMenu[]
+  }
+
+  return []
+}
+
+// Varsayılan olarak tüm menüyü dışa aktar
+export const navMenu = baseNavMenu
+
 export const navMenuBottom: NavMenuItems = [
   {
-    title: 'Help & Support',
-    icon: 'i-lucide-circle-help',
-    link: '/support',
+    title: 'nav.contact',
+    icon: 'i-lucide-mail',
+    link: '#',
+    isMailto: true,
   },
   {
-    title: 'Feedback',
-    icon: 'i-lucide-send',
-    link: '/feedback',
+    title: 'nav.whatsapp',
+    icon: 'i-logos-whatsapp-icon',
+    link: 'https://wa.me/+905416139740',
+    isMailto: false,
+    target: '_blank',
   },
 ]

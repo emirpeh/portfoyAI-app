@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
 import { useSidebar } from '~/components/ui/sidebar'
+import { useAuth } from '~/composables/useAuth'
 
 defineProps<{
   user: {
@@ -8,11 +10,13 @@ defineProps<{
     avatar: string
   }
 }>()
+const { t } = useI18n()
+const auth = useAuth()
 
-const { isMobile, setOpenMobile } = useSidebar()
+const { isMobile } = useSidebar()
 
-function handleLogout() {
-  navigateTo('/login')
+async function handleLogout() {
+  await auth.logout()
 }
 
 const showModalTheme = ref(false)
@@ -60,44 +64,18 @@ const showModalTheme = ref(false)
             </div>
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuGroup>
-            <DropdownMenuItem>
-              <Icon name="i-lucide-sparkles" />
-              Upgrade to Pro
-            </DropdownMenuItem>
-          </DropdownMenuGroup>
+          <DropdownMenuGroup />
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
-            <DropdownMenuItem>
-              <Icon name="i-lucide-badge-check" />
-              Account
-            </DropdownMenuItem>
-            <DropdownMenuItem as-child>
-              <NuxtLink to="/settings" @click="setOpenMobile(false)">
-                <Icon name="i-lucide-settings" />
-                Settings
-              </NuxtLink>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Icon name="i-lucide-bell" />
-              Notifications
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem as-child>
-              <NuxtLink to="https://github.com/dianprata/nuxt-shadcn-dashboard" external target="_blank">
-                <Icon name="i-lucide-github" />
-                Github Repository
-              </NuxtLink>
-            </DropdownMenuItem>
             <DropdownMenuItem @click="showModalTheme = true">
               <Icon name="i-lucide-paintbrush" />
-              Theme
+              {{ t('nav.theme') }}
             </DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuItem @click="handleLogout">
             <Icon name="i-lucide-log-out" />
-            Log out
+            {{ t('nav.logout') }}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -107,9 +85,9 @@ const showModalTheme = ref(false)
   <Dialog v-model:open="showModalTheme">
     <DialogContent>
       <DialogHeader>
-        <DialogTitle>Customize</DialogTitle>
+        <DialogTitle>{{ t('customize.title') }}</DialogTitle>
         <DialogDescription class="text-xs text-muted-foreground">
-          Customize & Preview in Real Time
+          {{ t('customize.description') }}
         </DialogDescription>
       </DialogHeader>
       <ThemeCustomize />

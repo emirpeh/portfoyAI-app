@@ -1,57 +1,25 @@
 <script setup lang="ts">
 import NumberFlow from '@number-flow/vue'
-import { Activity, CreditCard, DollarSign, Users } from 'lucide-vue-next'
+import { format } from 'date-fns'
+import { ArrowDownRight, ArrowRight, ArrowUpRight, Package } from 'lucide-vue-next'
+import { useI18n } from 'vue-i18n'
+import { usePositions } from '~/composables/usePositions'
+import { usePositionStats } from '~/composables/usePositionStats'
 
-const dataCard = ref({
-  totalRevenue: 0,
-  totalRevenueDesc: 0,
-  subscriptions: 0,
-  subscriptionsDesc: 0,
-  sales: 0,
-  salesDesc: 0,
-  activeNow: 0,
-  activeNowDesc: 0,
-})
+const { t } = useI18n()
+const { stats, fetchStats } = usePositionStats()
+const { positions, fetchPositions } = usePositions()
+const selectedDateRange = ref<{ start: Date, end: Date } | null>(null)
 
-const dataRecentSales = [
-  {
-    name: 'Olivia Martin',
-    email: 'olivia.martin@email.com',
-    amount: 1999,
-  },
-  {
-    name: 'Jackson Lee',
-    email: 'jackson.lee@email.com',
-    amount: 39,
-  },
-  {
-    name: 'Isabella Nguyen',
-    email: 'isabella.nguyen@email.com',
-    amount: 299,
-  },
-  {
-    name: 'William Kim',
-    email: 'will@email.com',
-    amount: 99,
-  },
-  {
-    name: 'Sofia Davis',
-    email: 'sofia.davis@email.com',
-    amount: 39,
-  },
-]
+watch(selectedDateRange, (newRange) => {
+  if (newRange?.start && newRange?.end) {
+    fetchStats(newRange.start, newRange.end)
+  }
+}, { deep: true, immediate: true })
 
 onMounted(() => {
-  dataCard.value = {
-    totalRevenue: 45231.89,
-    totalRevenueDesc: 20.1 / 100,
-    subscriptions: 2350,
-    subscriptionsDesc: 180.5 / 100,
-    sales: 12234,
-    salesDesc: 45 / 100,
-    activeNow: 573,
-    activeNowDesc: 201,
-  }
+  fetchStats()
+  fetchPositions({ page: 1, pageSize: 5 })
 })
 </script>
 
@@ -59,11 +27,10 @@ onMounted(() => {
   <div class="w-full flex flex-col gap-4">
     <div class="flex flex-wrap items-center justify-between gap-2">
       <h2 class="text-2xl font-bold tracking-tight">
-        Dashboard
+        {{ t('dashboard.title') }}
       </h2>
       <div class="flex items-center space-x-2">
-        <BaseDateRangePicker />
-        <Button>Download</Button>
+        <BaseDateRangePicker v-model="selectedDateRange" />
       </div>
     </div>
     <main class="flex flex-1 flex-col gap-4 md:gap-8">
@@ -71,92 +38,64 @@ onMounted(() => {
         <Card>
           <CardHeader class="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle class="text-sm font-medium">
-              Total Revenue
+              {{ t('dashboard.totalPositions') }}
             </CardTitle>
-            <DollarSign class="h-4 w-4 text-muted-foreground" />
+            <Package class="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div class="text-2xl font-bold">
-              <NumberFlow
-                :value="dataCard.totalRevenue"
-                :format="{ style: 'currency', currency: 'USD', trailingZeroDisplay: 'stripIfInteger' }"
-              />
+              <NumberFlow :value="stats.totalPositions" />
             </div>
-            <p class="text-xs text-muted-foreground">
-              <NumberFlow
-                :value="dataCard.totalRevenueDesc"
-                prefix="+"
-                :format="{ style: 'percent', minimumFractionDigits: 1 }"
-              />
-              from last month
+            <p class="flex items-center gap-1 text-xs text-muted-foreground">
+              {{ t('dashboard.fromLastMonth') }}
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader class="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle class="text-sm font-medium">
-              Subscriptions
+              {{ t('dashboard.totalExport') }}
             </CardTitle>
-            <Users class="h-4 w-4 text-muted-foreground" />
+            <ArrowUpRight class="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div class="text-2xl font-bold">
-              <NumberFlow
-                :value="dataCard.subscriptions"
-                prefix="+"
-              />
+              <NumberFlow :value="stats.totalExport" />
             </div>
-            <p class="text-xs text-muted-foreground">
-              <NumberFlow
-                :value="dataCard.subscriptionsDesc"
-                prefix="+"
-                :format="{ style: 'percent', minimumFractionDigits: 1 }"
-              /> from last month
+            <p class="flex items-center gap-1 text-xs text-muted-foreground">
+              {{ t('dashboard.fromLastMonth') }}
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader class="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle class="text-sm font-medium">
-              Sales
+              {{ t('dashboard.totalImport') }}
             </CardTitle>
-            <CreditCard class="h-4 w-4 text-muted-foreground" />
+            <ArrowDownRight class="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div class="text-2xl font-bold">
-              <NumberFlow
-                :value="dataCard.sales"
-                prefix="+"
-              />
+              <NumberFlow :value="stats.totalImport" />
             </div>
-            <p class="text-xs text-muted-foreground">
-              <NumberFlow
-                :value="dataCard.salesDesc"
-                prefix="+"
-                :format="{ style: 'percent', minimumFractionDigits: 1 }"
-              /> from last month
+            <p class="flex items-center gap-1 text-xs text-muted-foreground">
+              {{ t('dashboard.fromLastMonth') }}
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader class="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle class="text-sm font-medium">
-              Active Now
+              {{ t('dashboard.totalTransit') }}
             </CardTitle>
-            <Activity class="h-4 w-4 text-muted-foreground" />
+            <ArrowRight class="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div class="text-2xl font-bold">
-              <NumberFlow
-                :value="dataCard.activeNow"
-                prefix="+"
-              />
+              <NumberFlow :value="stats.totalTransit" />
             </div>
-            <p class="text-xs text-muted-foreground">
-              <NumberFlow
-                :value="dataCard.activeNowDesc"
-                prefix="+"
-              /> since last hour
+            <p class="flex items-center gap-1 text-xs text-muted-foreground">
+              {{ t('dashboard.fromLastMonth') }}
             </p>
           </CardContent>
         </Card>
@@ -164,7 +103,7 @@ onMounted(() => {
       <div class="grid gap-4 lg:grid-cols-2 xl:grid-cols-3 md:gap-8">
         <Card class="xl:col-span-2">
           <CardHeader>
-            <CardTitle>Overview</CardTitle>
+            <CardTitle>{{ t('dashboard.overview') }}</CardTitle>
           </CardHeader>
           <CardContent class="pl-2">
             <DashboardOverview />
@@ -172,30 +111,27 @@ onMounted(() => {
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle>Recent Sales</CardTitle>
+            <CardTitle>{{ t('dashboard.recentPositions') }}</CardTitle>
           </CardHeader>
-          <CardContent class="grid gap-8">
+          <CardContent class="grid gap-4">
             <div
-              v-for="recentSales in dataRecentSales" :key="recentSales.name"
+              v-for="position in positions"
+              :key="position.positionNo"
               class="flex items-center gap-4"
             >
-              <Avatar class="hidden h-9 w-9 sm:flex">
-                <AvatarFallback>{{ recentSales.name.split(' ').map((n) => n[0]).join('') }}</AvatarFallback>
-              </Avatar>
               <div class="grid gap-1">
-                <p class="text-sm font-medium leading-none">
-                  {{ recentSales.name }}
-                </p>
+                <NuxtLink
+                  :to="`/positions/detail?id=${position.positionNo}`"
+                  class="text-sm font-medium leading-none hover:underline"
+                >
+                  {{ position.positionNo }}
+                </NuxtLink>
                 <p class="text-sm text-muted-foreground">
-                  {{ recentSales.email }}
+                  {{ t(`positions.positionType.${position.positionType}`) }}
                 </p>
               </div>
-              <div class="ml-auto font-medium">
-                <NumberFlow
-                  :value="recentSales.amount"
-                  :format="{ style: 'currency', currency: 'USD', trailingZeroDisplay: 'stripIfInteger' }"
-                  prefix="+"
-                />
+              <div class="ml-auto text-sm text-muted-foreground">
+                {{ position.orderDate ? format(new Date(position.orderDate), 'yyyy-MM-dd') : '' }}
               </div>
             </div>
           </CardContent>

@@ -115,7 +115,6 @@ const onSubmit = handleSubmit((values) => {
                   </Select>
                   <FormDescription>
                     You can manage email addresses in your
-                    <a href="/examples/forms">email settings</a>.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -129,7 +128,6 @@ const onSubmit = handleSubmit((values) => {
                     <FormLabel>Use different settings for my mobile devices</FormLabel>
                     <FormDescription>
                       You can manage your mobile notifications in the
-                      <a href="/examples/forms">mobile settings</a> page.
                     </FormDescription>
                     <FormMessage />
                   </div>

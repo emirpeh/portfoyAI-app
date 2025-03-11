@@ -1,12 +1,30 @@
 <script setup lang="ts">
 import { Sonner } from '@/components/ui/sonner'
 import { ConfigProvider } from 'radix-vue'
+import { useLanguage } from '~/composables/useLanguage'
 
 const colorMode = useColorMode()
+const color = computed(() => (colorMode?.value === 'dark' ? '#09090b' : '#ffffff'))
 
-const color = computed(() => colorMode.value === 'dark' ? '#09090b' : '#ffffff')
+const customize = useCustomize()
 
-const { theme, radius } = useCustomize()
+const theme = computed(() => 'yellow')
+const radius = computed(() => customize?.radius || 0.5)
+
+const { currentLanguage, setLanguage } = useLanguage()
+
+onMounted(() => {
+  const savedLocale = useCookie('i18n_redirected').value
+  if (savedLocale) {
+    setLanguage(savedLocale as 'en' | 'tr')
+  }
+})
+
+watch(() => currentLanguage.value, async (newLocale) => {
+  if (newLocale) {
+    await setLanguage(newLocale)
+  }
+}, { immediate: true })
 
 useHead({
   meta: [
@@ -15,10 +33,10 @@ useHead({
     { key: 'theme-color', name: 'theme-color', content: color },
   ],
   link: [
-    { rel: 'icon', href: '/favicon.ico' },
+    { rel: 'icon', href: '/images/icon.jpeg' },
   ],
   htmlAttrs: {
-    lang: 'en',
+    lang: computed(() => currentLanguage.value),
   },
   bodyAttrs: {
     class: computed(() => `theme-${theme.value}`),
@@ -26,19 +44,19 @@ useHead({
   },
 })
 
-const title = 'Nuxt Shadcn UI - Dashboard Template'
-const description = 'This dashboard, built with Nuxt, Shadcn UI, and UnoCSS. It includes a dark mode toggle and is optimized for performance and data efficiency.'
+const title = 'Maxi Lojistik'
+const description = 'Sistemli kargo operasyonu ve yoğun uçuş desteği ile dünyanın her yerinden, havalimanı ya da kapı teslimli havayolu taşımacılığı hizmetleri çözümleri.'
 
 useSeoMeta({
   title,
   description,
   ogTitle: title,
   ogDescription: description,
-  ogUrl: 'https://dashboard.dianprata.com',
-  ogImage: 'https://nuxt-shadcn-dashboard.vercel.app/social-card.png',
+  ogUrl: 'https://maxitransport.net',
+  ogImage: 'https://maxitransport.net/wp-content/uploads/2022/03/Varlik-2.png',
   twitterTitle: title,
   twitterDescription: description,
-  twitterImage: 'https://nuxt-shadcn-dashboard.vercel.app/social-card.png',
+  twitterImage: 'https://maxitransport.net/wp-content/uploads/2022/03/Varlik-2.png',
   twitterCard: 'summary_large_image',
 })
 
@@ -61,8 +79,6 @@ const dir = computed(() => textDirection.value === 'rtl' ? 'rtl' : 'ltr')
       <NuxtLayout>
         <NuxtPage />
       </NuxtLayout>
-
-      <AppSettings />
     </div>
 
     <Toaster />

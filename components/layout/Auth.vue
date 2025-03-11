@@ -1,7 +1,26 @@
 <script setup lang="ts">
+import { watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useRouter } from 'vue-router'
+import LanguageSwitcher from '~/components/LanguageSwitcher.vue'
+
 defineProps<{
   reverse?: boolean
 }>()
+
+const { t, locale } = useI18n({
+  useScope: 'global',
+})
+const router = useRouter()
+const switchLocalePath = useSwitchLocalePath()
+
+// Dil değiştiğinde route'u güncelle
+watch(locale, (newLocale) => {
+  const newPath = switchLocalePath(newLocale)
+  if (newPath) {
+    router.push(newPath)
+  }
+})
 </script>
 
 <template>
@@ -9,33 +28,58 @@ defineProps<{
     class="relative flex items-center justify-center px-4 h-dvh lg:max-w-none lg:px-0"
     :class="{ 'flex-row-reverse': reverse }"
   >
-    <div class="relative hidden h-full flex-1 flex-col bg-muted p-10 text-white lg:flex dark:border-r">
-      <div class="absolute inset-0 bg-zinc-900" />
-      <div class="relative z-20 flex items-center text-lg font-medium">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" class="mr-2 h-6 w-6">
-          <path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3" />
-        </svg>
-        Acme Inc
-      </div>
-      <div class="relative z-20 mt-auto">
-        <blockquote class="space-y-2">
-          <p class="text-lg">
-            &ldquo;This library has saved me countless hours of work and
-            helped me deliver stunning designs to my clients faster than
-            ever before.&rdquo;
+    <!-- Dil Seçici -->
+    <div class="absolute right-4 top-4 z-50">
+      <LanguageSwitcher />
+    </div>
+
+    <img
+      src="/images/maxi.svg"
+      alt="Maxi Lojistik"
+      class="animate-slide-in absolute top-1/2 z-10 hidden object-contain brightness-200 filter lg:block -translate-y-1/2"
+      :class="{ 'right-[-380px]': !reverse, 'left-[380px]': reverse }"
+    >
+
+    <!-- Sol taraf - Logo ve slogan -->
+    <div class="relative hidden h-full w-1/2.5 flex-col bg-zinc-900 p-10 lg:flex">
+      <div class="relative top-1/4 z-20 flex flex-1 flex-col items-center justify-end pb-48">
+        <blockquote class="text-center space-y-4">
+          <p class="text-xl text-white">
+            "{{ t('auth.slogan') }}"
           </p>
-          <footer class="text-sm">
-            Sofia Davis
+          <footer class="text-sm text-white">
+            {{ t('auth.companyName') }}
           </footer>
         </blockquote>
       </div>
     </div>
-    <div class="mx-auto flex-1 lg:p-8">
-      <slot />
+
+    <!-- Sağ taraf - Form -->
+    <div class="relative w-1/2 flex-1 lg:p-8">
+      <div class="relative z-10">
+        <slot />
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped>
+.filter {
+  filter: brightness(0.75) contrast(1);
+}
 
+@keyframes slide-in {
+  from {
+    transform: translateX(100vw) translateY(-50%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0) translateY(-50%);
+    opacity: 1;
+  }
+}
+
+.animate-slide-in {
+  animation: slide-in 2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
 </style>

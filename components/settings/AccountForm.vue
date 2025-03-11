@@ -5,6 +5,7 @@ import { toTypedSchema } from '@vee-validate/zod'
 import { Check, ChevronsUpDown } from 'lucide-vue-next'
 import { toDate } from 'radix-vue/date'
 import { h, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import * as z from 'zod'
 import { toast } from '~/components/ui/toast'
 
@@ -12,17 +13,11 @@ const open = ref(false)
 const dateValue = ref()
 const placeholder = ref()
 
+const { t } = useI18n()
+
 const languages = [
   { label: 'English', value: 'en' },
-  { label: 'French', value: 'fr' },
-  { label: 'German', value: 'de' },
-  { label: 'Indonesia', value: 'id' },
-  { label: 'Spanish', value: 'es' },
-  { label: 'Portuguese', value: 'pt' },
-  { label: 'Russian', value: 'ru' },
-  { label: 'Japanese', value: 'ja' },
-  { label: 'Korean', value: 'ko' },
-  { label: 'Chinese', value: 'zh' },
+  { label: 'Türkçe', value: 'tr' },
 ] as const
 
 const df = new DateFormatter('en-US', {
@@ -44,8 +39,6 @@ const accountFormSchema = toTypedSchema(z.object({
   language: z.string().min(1, 'Please select a language.'),
 }))
 
-// https://github.com/logaretm/vee-validate/issues/3521
-// https://github.com/logaretm/vee-validate/discussions/3571
 async function onSubmit(values: any) {
   toast({
     title: 'You submitted the following values:',
@@ -57,22 +50,22 @@ async function onSubmit(values: any) {
 <template>
   <div>
     <h3 class="text-lg font-medium">
-      Account
+      {{ t('account.title') }}
     </h3>
     <p class="text-sm text-muted-foreground">
-      Update your account settings. Set your preferred language and timezone.
+      {{ t('account.description') }}
     </p>
   </div>
   <Separator />
   <Form v-slot="{ setFieldValue }" :validation-schema="accountFormSchema" class="space-y-8" @submit="onSubmit">
     <FormField v-slot="{ componentField }" name="name">
       <FormItem>
-        <FormLabel>Name</FormLabel>
+        <FormLabel>{{ t('account.name.label') }}</FormLabel>
         <FormControl>
-          <Input type="text" placeholder="Your name" v-bind="componentField" />
+          <Input type="text" :placeholder="t('account.name.placeholder')" v-bind="componentField" />
         </FormControl>
         <FormDescription>
-          This is the name that will be displayed on your profile and in emails.
+          {{ t('account.name.description') }}
         </FormDescription>
         <FormMessage />
       </FormItem>
@@ -80,7 +73,7 @@ async function onSubmit(values: any) {
 
     <FormField v-slot="{ field, value }" name="dob">
       <FormItem class="flex flex-col">
-        <FormLabel>Date of birth</FormLabel>
+        <FormLabel>{{ t('account.dob.label') }}</FormLabel>
         <Popover>
           <PopoverTrigger as-child>
             <FormControl>
@@ -117,7 +110,7 @@ async function onSubmit(values: any) {
           </PopoverContent>
         </Popover>
         <FormDescription>
-          Your date of birth is used to calculate your age.
+          {{ t('account.dob.description') }}
         </FormDescription>
         <FormMessage />
       </FormItem>
@@ -126,7 +119,7 @@ async function onSubmit(values: any) {
 
     <FormField v-slot="{ value }" name="language">
       <FormItem class="flex flex-col">
-        <FormLabel>Language</FormLabel>
+        <FormLabel>{{ t('account.language.label') }}</FormLabel>
 
         <Popover v-model:open="open">
           <PopoverTrigger as-child>
@@ -173,7 +166,7 @@ async function onSubmit(values: any) {
         </Popover>
 
         <FormDescription>
-          This is the language that will be used in the dashboard.
+          {{ t('account.language.description') }}
         </FormDescription>
         <FormMessage />
       </FormItem>
@@ -181,7 +174,7 @@ async function onSubmit(values: any) {
 
     <div class="flex justify-start">
       <Button type="submit">
-        Update account
+        {{ t('account.submit') }}
       </Button>
     </div>
   </Form>

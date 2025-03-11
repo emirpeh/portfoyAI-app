@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { navigationMenuTriggerStyle } from '@/components/ui/navigation-menu'
-
 const components: { title: string, href: string, description: string }[] = [
   {
     title: 'Alert Dialog',
@@ -103,15 +101,6 @@ const components: { title: string, href: string, description: string }[] = [
                           </NuxtLink>
                         </NavigationMenuLink>
                       </li>
-                      <NavigationMenuDemoItem href="/docs" title="Introduction">
-                        Re-usable components built using Radix UI and Tailwind CSS.
-                      </NavigationMenuDemoItem>
-                      <NavigationMenuDemoItem href="/docs/installation" title="Installation">
-                        How to install dependencies and structure your app.
-                      </NavigationMenuDemoItem>
-                      <NavigationMenuDemoItem href="/docs/primitives/typography" title="Typography">
-                        Styles for headings, paragraphs, lists...etc
-                      </NavigationMenuDemoItem>
                     </ul>
                   </NavigationMenuContent>
                 </NavigationMenuItem>
@@ -129,11 +118,6 @@ const components: { title: string, href: string, description: string }[] = [
                       </NavigationMenuDemoItem>
                     </ul>
                   </NavigationMenuContent>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
-                  <NavigationMenuLink href="/docs" :class="navigationMenuTriggerStyle()">
-                    Documentation
-                  </NavigationMenuLink>
                 </NavigationMenuItem>
               </NavigationMenuList>
             </NavigationMenu>

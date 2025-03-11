@@ -3,6 +3,8 @@ export interface NavLink {
   link: string
   icon?: string
   new?: boolean
+  isMailto?: boolean
+  target?: '_blank' | '_self'
 }
 
 export interface NavSectionTitle {
