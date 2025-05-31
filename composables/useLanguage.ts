@@ -6,9 +6,13 @@ export function useLanguage() {
   const i18nStore = useI18nStore()
   const router = useRouter()
   const switchLocalePath = useSwitchLocalePath()
-  const nuxtApp = useNuxtApp()
 
   async function setLanguage(lang: 'en' | 'tr') {
+    // Eğer zaten seçili dil aynıysa işlem yapma
+    if (locale.value === lang) {
+      return
+    }
+
     // Vue I18n locale'ini güncelle
     i18n.locale.value = lang
 
@@ -22,16 +26,15 @@ export function useLanguage() {
     })
     cookie.value = lang
 
-    // URL'yi güncelle (sayfayı yenilemeden)
+    // URL'yi güncelle
     const newPath = switchLocalePath(lang)
     if (newPath && router.currentRoute.value.path !== newPath) {
       await router.push(newPath)
+      
+      // Sayfa yenileme işlemini ekle
+      // Nuxt'ın kendi dil değiştirme mekanizması bazen çalışmayabiliyor
+      window.location.reload()
     }
-
-    // Tüm bileşenlerin yeniden render edilmesini sağla
-    nuxtApp.hook('i18n:localeSwitched', () => {
-      // Dil değiştirildi
-    })
   }
 
   return {

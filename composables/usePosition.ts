@@ -46,7 +46,7 @@ export function usePosition(id: string) {
   const position = ref<Position | null>(null)
   const loading = ref(false)
   const error = ref<Error | null>(null)
-  const truckLocations = ref<string[][]>([])
+  const truckLocations = ref<{ lastLocation: string }[]>([])
   const truckLocationsLoading = ref(false)
 
   async function fetchPosition() {
@@ -71,8 +71,23 @@ export function usePosition(id: string) {
     truckLocationsLoading.value = true
     try {
       const encodedId = encodeURIComponent(id)
-      const response = await $apiFetch<string[][]>(`/positions/${encodedId}/truck-detail`)
-      truckLocations.value = response || []
+      const response = await $apiFetch<any[]>(`/positions/${encodedId}/truck-detail`)
+      
+      if (Array.isArray(response)) {
+        if (response.length > 0 && Array.isArray(response[0])) {
+          truckLocations.value = response.map(loc => ({ lastLocation: loc[0] || '' }))
+        } else {
+          truckLocations.value = response.map((loc) => {
+            if (typeof loc === 'object' && loc !== null && 'lastLocation' in loc) {
+              return loc as { lastLocation: string }
+            } else {
+              return { lastLocation: String(loc) || '' }
+            }
+          })
+        }
+      } else {
+        truckLocations.value = []
+      }
     }
     catch (err) {
       console.error('Error fetching truck locations:', err)
@@ -124,6 +139,8 @@ export function usePosition(id: string) {
     error,
     truckLocations,
     truckLocationsLoading,
+    fetchPosition,
+    fetchTruckLocations,
     getPositionFiles,
     downloadFile,
   }

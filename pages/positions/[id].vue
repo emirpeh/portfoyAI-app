@@ -19,7 +19,6 @@ const activeTab = ref('trip-details')
 const tabs = [
   { id: 'trip-details', label: t('positions.tabs.tripDetails') },
   { id: 'cargo-invoice', label: t('positions.tabs.cargoInvoice') },
-  { id: 'loading-unloading', label: t('positions.tabs.loadingUnloading') },
   { id: 'partial-loads', label: t('positions.tabs.partialLoads') },
 ]
 
@@ -121,11 +120,6 @@ const { position, loading, error } = usePosition(positionId)
         <!-- Yük ve Fatura Sekmesi -->
         <TabsContent value="cargo-invoice">
           <CargoInvoiceDetails :position-id="position.positionNo" />
-        </TabsContent>
-
-        <!-- Yükleme/Boşaltma Sekmesi -->
-        <TabsContent value="loading-unloading">
-          <LoadingUnloadingDetails />
         </TabsContent>
 
         <!-- Parsiyel Yükler Sekmesi -->

@@ -1,33 +1,25 @@
-export default defineI18nConfig(() => ({
+import { en, tr } from 'vuetify/locale'
+import enLocale from './lang/locales/en.json'
+import trLocale from './lang/locales/tr.json'
+
+const config = {
   legacy: false,
-  locale: 'en',
-  fallbackLocale: 'en',
+  locale: 'tr',
+  fallbackLocale: 'tr',
   messages: {
     en: {
-      auth: {
-        login: 'Login',
-        description: 'Enter your email and password to login',
-        failed: 'Invalid credentials',
-        error: 'An error occurred',
-        slogan: 'Systematic cargo operation and intensive flight support with air transportation services solutions from all over the world, airport or door delivery.',
-        companyName: 'Maxi Logistics',
+      $vuetify: {
+        ...en,
       },
-      language_switcher: {
-        switch: 'Change Language',
-      },
+      ...enLocale,
     },
     tr: {
-      auth: {
-        login: 'Giriş Yap',
-        description: 'Giriş yapmak için e-posta ve şifrenizi girin',
-        failed: 'Geçersiz kimlik bilgileri',
-        error: 'Bir hata oluştu',
-        slogan: 'Sistemli kargo operasyonu ve yoğun uçuş desteği ile dünyanın her yerinden, havalimanı ya da kapı teslimli havayolu taşımacılığı hizmetleri çözümleri.',
-        companyName: 'Maxi Lojistik',
+      $vuetify: {
+        ...tr,
       },
-      language_switcher: {
-        switch: 'Dil Değiştir',
-      },
+      ...trLocale,
     },
   },
-}))
+}
+export { config }
+export default defineI18nConfig(() => config)

@@ -1,16 +1,11 @@
-import type { DefineNuxtConfig } from 'nuxt/config'
-import type { VueI18n } from 'vue-i18n'
-
 export default defineNuxtConfig({
   devtools: { enabled: true },
 
-  // SSR'yi devre dışı bırak, sadece CSR modunda çalış
   ssr: false,
 
-  // Statik site oluşturma için gerekli ayarlar
   app: {
-    baseURL: '/', // Kök dizinden başla
-    buildAssetsDir: '_nuxt', // Varsayılan varlık dizini
+    baseURL: '/',
+    buildAssetsDir: '_nuxt',
     head: {
       link: [
         { rel: 'icon', type: 'image/x-icon', href: '/images/icon.jpeg' },
@@ -18,7 +13,6 @@ export default defineNuxtConfig({
     },
   },
 
-  // Statik site için resim yapılandırması
   image: {
     dir: 'public',
     domains: ['localhost'],
@@ -50,6 +44,8 @@ export default defineNuxtConfig({
     '@unocss/reset/tailwind.css',
     'leaflet/dist/leaflet.css',
     '~/assets/css/global.css',
+    '~/assets/css/sidebar-custom.css',
+    '~/assets/css/login-custom.css',
   ],
 
   colorMode: {
@@ -86,18 +82,17 @@ export default defineNuxtConfig({
 
   i18n: {
     langDir: './lang/locales',
-    defaultLocale: 'en',
+    defaultLocale: 'tr',
     locales: [
-      { code: 'en', iso: 'en-US', file: 'en.json', name: 'English' },
       { code: 'tr', iso: 'tr-TR', file: 'tr.json', name: 'Türkçe' },
+      { code: 'en', iso: 'en-US', file: 'en.json', name: 'English' },
     ],
-    strategy: 'prefix_except_default',
+    strategy: 'no_prefix',
     detectBrowserLanguage: false,
-    vueI18n: './i18n/config.ts',
-    skipSettingLocaleOnNavigate: false,
-    lazy: false,
-    experimental: {
-      // Deneysel özellikler
+    vueI18n: './config.ts',
+    compilation: {
+      strictMessage: false,
+      escapeHtml: false,
     },
   },
 
@@ -109,16 +104,13 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      apiBaseUrl: '/api',
+      apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL ?? 'http://localhost:3000',
     },
   },
 
   // Nitro yapılandırması - statik site için
   nitro: {
     preset: 'static',
-    routeRules: {
-      '/**': { ssr: false },
-    },
     prerender: {
       crawlLinks: true,
       routes: [
@@ -126,6 +118,11 @@ export default defineNuxtConfig({
         '/login',
         '/tr',
         '/tr/login',
+        '/en',
+        '/en/login',
+        '/dashboard',
+        '/tr/dashboard',
+        '/en/dashboard',
       ],
     },
     static: true,

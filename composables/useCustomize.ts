@@ -11,8 +11,8 @@ export function useCustomize() {
   // Null check ekle
   if (!colorMode?.value) {
     return {
-      theme: 'light',
-      radius: 0,
+      theme: ref('light'),
+      radius: ref(0),
     }
   }
 
@@ -26,15 +26,17 @@ export function useCustomize() {
 
   const themeClass = computed(() => `theme-${config.value.theme}`)
 
-  const theme = computed(() => config.value.theme)
-  const radius = computed(() => config.value.radius)
+  const theme = ref(config.value.theme)
+  const radius = ref(config.value.radius)
 
   function setTheme(themeName: Theme['name']) {
     config.value.theme = themeName
+    theme.value = themeName
   }
 
   function setRadius(newRadius: number) {
     config.value.radius = newRadius
+    radius.value = newRadius
   }
 
   const themePrimary = computed(() => {

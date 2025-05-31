@@ -1,0 +1,84 @@
+/* Custom sidebar styling */
+:root {
+  /* Override sidebar background color to dark gray (#343a40) */
+  --sidebar-background: 210 10% 23%; /* HSL equivalent of #343a40 */
+  --sidebar-border: 210 10% 23%; /* Match background color */
+  --sidebar-accent: 210 10% 30%; /* Slightly lighter for accents */
+  --sidebar-accent-foreground: 0 0% 100%; /* White text */
+}
+
+/* Ensure text is readable on dark background */
+.bg-sidebar {
+  color: #ffffff !important; /* White text for better contrast */
+}
+
+/* Custom sidebar class */
+.custom-sidebar [data-sidebar="sidebar"] {
+  background-color: #343a40 !important; /* Ensure the dark gray background is applied */
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2) !important; /* Add subtle shadow for depth */
+}
+
+/* Adjust hover states for better visibility */
+.hover\:bg-sidebar-accent:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important; /* Slightly lighter on hover */
+}
+
+/* Adjust sidebar menu items for better contrast */
+.custom-sidebar [data-sidebar="menu-item"] button,
+.custom-sidebar [data-sidebar="menu-button"] {
+  color: #ffffff !important;
+  transition: all 0.2s ease-in-out !important;
+}
+
+/* Adjust active states */
+.custom-sidebar [data-active="true"],
+.custom-sidebar [aria-current="page"] {
+  background-color: rgba(255, 255, 255, 0.15) !important;
+  color: #ffde59 !important; /* Yellow text for active items */
+  font-weight: bold;
+  border-left: 3px solid #ffde59 !important; /* Yellow accent border */
+}
+
+/* Style sidebar header */
+.custom-sidebar [data-sidebar="header"] {
+  border-bottom-color: rgba(255, 255, 255, 0.1) !important;
+  padding-bottom: 0.75rem !important;
+}
+
+/* Style sidebar footer */
+.custom-sidebar [data-sidebar="footer"] {
+  border-top-color: rgba(255, 255, 255, 0.1) !important;
+  padding-top: 0.75rem !important;
+}
+
+/* Style sidebar group labels */
+.custom-sidebar [data-sidebar="group-label"] {
+  color: rgba(255, 255, 255, 0.7) !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.5px !important;
+}
+
+/* Style sidebar search input */
+.custom-sidebar input[type="search"] {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  transition: all 0.2s ease-in-out !important;
+}
+
+/* Style sidebar search input focus */
+.custom-sidebar input[type="search"]:focus {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 222, 89, 0.5) !important; /* Yellow border on focus */
+  box-shadow: 0 0 0 2px rgba(255, 222, 89, 0.25) !important;
+}
+
+/* Style sidebar search input placeholder */
+.custom-sidebar input[type="search"]::placeholder {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* Style logo area */
+.custom-sidebar .logo-container img {
+  filter: brightness(1.2) !important; /* Make logo slightly brighter */
+} 

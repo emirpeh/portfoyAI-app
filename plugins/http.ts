@@ -7,7 +7,7 @@ export default defineNuxtPlugin((nuxtApp) => {
   const auth = useAuth()
 
   // API base URL'ini belirle - aynı portta /api yoluna istek at
-  const baseURL = 'https://localhost:4000/api'
+  const baseURL = 'https://customer.maxitransport.net/api'
 
   // Refresh token için ayrı bir fetch instance
   const refreshFetch = $fetch.create({
@@ -29,7 +29,6 @@ export default defineNuxtPlugin((nuxtApp) => {
       }
 
       // Headers'ı ayarla
-      // @ts-expect-error - Headers tipi uyumsuzluğu
       options.headers = headers
     },
     async onResponseError({ response, request, options }) {
@@ -62,13 +61,11 @@ export default defineNuxtPlugin((nuxtApp) => {
         // Yeni token ile isteği tekrar gönder
         const newOptions = { ...options }
         newOptions.headers = {
-          // @ts-expect-error - Headers tipi uyumsuzluğu
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${result.access_token}`,
         }
 
         // İsteği tekrar gönder ve sonucu döndür
-        // @ts-expect-error - Fetch options tipi uyumsuzluğu
         return await $fetch(request, newOptions)
       }
       catch {

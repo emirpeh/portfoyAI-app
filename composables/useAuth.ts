@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import { useRoute, useRouter } from 'vue-router'
 
 interface AuthUser {
   id: string
@@ -22,12 +23,14 @@ export const useAuth = defineStore('auth', () => {
   const user = ref<AuthUser | null>(null)
   const accessToken = ref<string | null>(null)
   const refreshToken = ref<string | null>(null)
+  const router = useRouter()
+  const route = useRoute()
 
   async function login(payload: LoginPayload) {
     const { $apiFetch } = useNuxtApp()
 
     try {
-      const response = await $apiFetch<LoginResponse>(`/auth/login`, {
+      const response = await $apiFetch<LoginResponse>('/auth/login', {
         method: 'POST',
         body: payload,
       })
@@ -46,9 +49,8 @@ export const useAuth = defineStore('auth', () => {
 
   async function fetchUser() {
     const { $apiFetch } = useNuxtApp()
-
     try {
-      const response = await $apiFetch<{ user: AuthUser }>(`/auth/profile`, {
+      const response = await $apiFetch<{ user: AuthUser }>('/auth/profile', {
         headers: {
           Authorization: `Bearer ${accessToken.value}`,
         },
@@ -57,24 +59,35 @@ export const useAuth = defineStore('auth', () => {
       return response.user
     }
     catch (error) {
-      logout()
+      // Eğer zaten login sayfasındaysak veya public route'taysa sessizce devam et
+      const publicRoutes = ['/login', '/register', '/forgot-password']
+      const currentPath = route.path.replace(/^\/(tr|en)/, '')
+      if (!publicRoutes.includes(currentPath)) {
+        await logout()
+      }
       throw error
     }
   }
 
   async function logout() {
+    // Önce state'i temizle
     user.value = null
     accessToken.value = null
     refreshToken.value = null
 
-    navigateTo('/login')
+    // Sonra yönlendirme yap
+    try {
+      await router.push(`/login`)
+    }
+    catch (error) {
+      console.error('Navigation error:', error)
+    }
   }
 
   async function refreshTokens() {
     const { $apiFetch } = useNuxtApp()
-
     try {
-      const response = await $apiFetch<LoginResponse>(`/auth/refresh`, {
+      const response = await $apiFetch<LoginResponse>('/auth/refresh', {
         method: 'POST',
         body: {
           refresh_token: refreshToken.value,
@@ -85,7 +98,12 @@ export const useAuth = defineStore('auth', () => {
       return response.access_token
     }
     catch (error) {
-      logout()
+      // Eğer zaten login sayfasındaysak veya public route'taysa sessizce devam et
+      const publicRoutes = ['/login', '/register', '/forgot-password']
+      const currentPath = route.path.replace(/^\/(tr|en)/, '')
+      if (!publicRoutes.includes(currentPath)) {
+        await logout()
+      }
       throw error
     }
   }
@@ -103,7 +121,7 @@ export const useAuth = defineStore('auth', () => {
   }
 }, {
   persist: {
-    storage: localStorage,
+    storage: persistedState.localStorage,
     serializer: {
       serialize: JSON.stringify,
       deserialize: JSON.parse,

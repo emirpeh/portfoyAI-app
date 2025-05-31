@@ -1,8 +1,8 @@
 import type { ColumnDef } from '@tanstack/vue-table'
 
 import type { Customer } from '../data/schema'
-import { Checkbox } from '@/components/ui/checkbox'
 import { h } from 'vue'
+import { Checkbox } from '@/components/ui/checkbox'
 import DataTableColumnHeader from './DataTableColumnHeader.vue'
 import DataTableRowActions from './DataTableRowActions.vue'
 

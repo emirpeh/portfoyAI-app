@@ -13,7 +13,7 @@ const cookie = useCookie('i18n_redirected')
 onMounted(() => {
   const savedLocale = cookie.value
   if (savedLocale) {
-    setLanguage(savedLocale)
+    setLanguage(savedLocale as 'en' | 'tr')
   }
 })
 

@@ -5,7 +5,6 @@ import { useI18n } from 'vue-i18n'
 import { useAuth } from '~/composables/useAuth'
 
 const { t } = useI18n()
-const { metaSymbol } = useShortcuts()
 const auth = useAuth()
 
 const openCommand = ref(false)
@@ -41,14 +40,10 @@ function handleSelectLink(link: string) {
 </script>
 
 <template>
-  <SidebarMenuButton as-child tooltip="Search">
-    <Button variant="outline" size="sm" class="text-xs" @click="openCommand = !openCommand">
-      <Icon name="i-lucide-search" />
-      <span class="font-normal group-data-[collapsible=icon]:hidden">{{ t('nav.search') }}</span>
-      <div class="ml-auto flex items-center space-x-0.5 group-data-[collapsible=icon]:hidden">
-        <BaseKbd>{{ metaSymbol }}</BaseKbd>
-        <BaseKbd>K</BaseKbd>
-      </div>
+  <SidebarMenuButton as-child tooltip="Search" class="block w-full">
+    <Button variant="outline" size="sm" class="w-full border-gray-300 bg-white text-xs hover:bg-gray-100" @click="openCommand = !openCommand">
+      <Icon name="i-lucide-search" class="mr-2 text-gray-500" />
+      <span class="text-gray-700 font-normal group-data-[collapsible=icon]:hidden">{{ t('nav.search') }}</span>
     </Button>
   </SidebarMenuButton>
 

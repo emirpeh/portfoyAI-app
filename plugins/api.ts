@@ -5,6 +5,9 @@ export default defineNuxtPlugin(() => {
 
   const baseURL = config.public.apiBaseUrl
 
+  // Public routes that don't need token check
+  const publicRoutes = ['/auth/login']
+
   // Create default headers
   const createHeaders = (authToken?: string | null) => {
     const headers: Record<string, string> = {
@@ -14,6 +17,12 @@ export default defineNuxtPlugin(() => {
       headers.Authorization = `Bearer ${authToken}`
     }
     return headers
+  }
+
+  // Handle unauthorized redirect
+  const handleUnauthorized = () => {
+    const router = useRouter()
+    router.push(`/login`)
   }
 
   return {
@@ -30,7 +39,8 @@ export default defineNuxtPlugin(() => {
           return await $fetch<T>(request, options)
         }
         catch (error: any) {
-          if (error.response?.status === 401) {
+          // Skip token refresh for public routes
+          if (error.response?.status === 401 && !publicRoutes.includes(request)) {
             try {
               // Try to refresh token
               if (!refreshToken.value) {
@@ -61,8 +71,7 @@ export default defineNuxtPlugin(() => {
             catch (refreshError) {
               token.value = null
               refreshToken.value = null
-              const router = useRouter()
-              router.push('/login')
+              handleUnauthorized()
               throw refreshError
             }
           }

@@ -21,7 +21,6 @@ export default defineConfig({
         if (!match)
           return matcher
         return {
-          // slice `hover:` prefix and passed to the next variants and rules
           matcher: matcher.substring(match[0].length),
           selector: s => `${s}:nth-child(${match[1]})`,
         }

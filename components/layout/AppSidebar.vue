@@ -68,27 +68,29 @@ const { sidebar } = useAppSettings()
 </script>
 
 <template>
-  <Sidebar :collapsible="sidebar.collapsible" :side="sidebar.side" :variant="sidebar.variant">
-    <SidebarHeader>
-      <LayoutSidebarNavHeader :teams="teams" />
-      <Search />
-    </SidebarHeader>
-    <SidebarContent>
-      <SidebarGroup v-for="(nav, indexGroup) in filteredNavMenu" :key="indexGroup">
-        <SidebarGroupLabel v-if="nav.heading">
-          {{ t(nav.heading) }}
-        </SidebarGroupLabel>
-        <component :is="resolveNavItemComponent(item)" v-for="(item, index) in nav.items" :key="index" :item="item" />
-      </SidebarGroup>
-      <SidebarGroup class="mt-auto">
-        <component :is="resolveNavItemComponent(item)" v-for="(item, index) in navMenuBottom" :key="index" :item="item" size="sm" />
-      </SidebarGroup>
-    </SidebarContent>
-    <SidebarFooter>
-      <LayoutSidebarNavFooter :user="user" />
-    </SidebarFooter>
-    <SidebarRail />
-  </Sidebar>
+  <SidebarProvider>
+    <Sidebar :collapsible="sidebar.collapsible" :side="sidebar.side" :variant="sidebar.variant">
+      <SidebarHeader>
+        <LayoutSidebarNavHeader :teams="teams" />
+        <Search />
+      </SidebarHeader>
+      <SidebarContent>
+        <SidebarGroup v-for="(nav, indexGroup) in filteredNavMenu" :key="indexGroup">
+          <SidebarGroupLabel v-if="nav.heading">
+            {{ t(nav.heading) }}
+          </SidebarGroupLabel>
+          <component :is="resolveNavItemComponent(item)" v-for="(item, index) in nav.items" :key="index" :item="item" />
+        </SidebarGroup>
+        <SidebarGroup class="mt-auto">
+          <component :is="resolveNavItemComponent(item)" v-for="(item, index) in navMenuBottom" :key="index" :item="item" size="sm" />
+        </SidebarGroup>
+      </SidebarContent>
+      <SidebarFooter>
+        <LayoutSidebarNavFooter :user="user" />
+      </SidebarFooter>
+      <SidebarRail />
+    </Sidebar>
+  </SidebarProvider>
 </template>
 
 <style scoped>

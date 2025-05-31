@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { usePosition } from '@/composables/usePosition'
+import { useI18n } from 'vue-i18n'
 
 const props = defineProps<{ positionId: string }>()
 const { position, loading, error } = usePosition(props.positionId)
+const { t } = useI18n()
 </script>
 
 <template>
@@ -17,68 +19,82 @@ const { position, loading, error } = usePosition(props.positionId)
     </AlertDescription>
   </Alert>
 
-  <div v-else-if="position" class="grid gap-6">
+  <div v-else-if="position" class="grid gap-4">
     <!-- Truck Details -->
-    <Card>
-      <CardHeader>
-        <CardTitle>Truck Details</CardTitle>
+    <Card class="border shadow-sm" style="background-color: #343a40; border-color: transparent; min-height: 210px;">
+      <CardHeader style="background-color: #343a40; border-bottom: 1px solid rgba(255, 255, 255, 0.1)">
+        <CardTitle class="text-sm" style="color: white">
+          {{ t('positions.truckDetails') }}
+        </CardTitle>
       </CardHeader>
       <CardContent>
-        <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
-          <div>
-            <Label>Truck Plate</Label>
-            <div>{{ position.truckPlate }}</div>
+        <div class="grid grid-cols-1 gap-x-4 gap-y-4 md:grid-cols-2">
+          <div class="space-y-1">
+            <Label class="text-xs" style="color: rgba(255, 255, 255, 0.7)">{{ t('positions.columns.truckPlate') }}</Label>
+            <div class="text-sm font-medium" style="color: white">
+              {{ position.truckPlate }}
+            </div>
           </div>
-          <div>
-            <Label>Trailer Plate</Label>
-            <div>{{ position.trailerPlate }}</div>
+          <div class="space-y-1">
+            <Label class="text-xs" style="color: rgba(255, 255, 255, 0.7)">{{ t('positions.columns.trailerPlate') }}</Label>
+            <div class="text-sm font-medium" style="color: white">
+              {{ position.trailerPlate }}
+            </div>
           </div>
-          <div>
-            <Label>Country of Loading</Label>
-            <div>{{ position.countryOfLoading }}</div>
+          <div class="space-y-1">
+            <Label class="text-xs" style="color: rgba(255, 255, 255, 0.7)">{{ t('positions.columns.placeOfLoading') }}</Label>
+            <div class="text-sm font-medium" style="color: white">
+              {{ position.placeOfLoading }}, {{ position.countryOfLoading }}
+            </div>
           </div>
-          <div>
-            <Label>Country of Unloading</Label>
-            <div>{{ position.countryOfUnloading }}</div>
-          </div>
-          <div>
-            <Label>Place of Loading</Label>
-            <div>{{ position.placeOfLoading }}</div>
-          </div>
-          <div>
-            <Label>Place of Unloading</Label>
-            <div>{{ position.placeOfUnloading }}</div>
+          <div class="space-y-1">
+            <Label class="text-xs" style="color: rgba(255, 255, 255, 0.7)">{{ t('positions.columns.placeOfUnloading') }}</Label>
+            <div class="text-sm font-medium" style="color: white">
+              {{ position.placeOfUnloading }}, {{ position.countryOfUnloading }}
+            </div>
           </div>
         </div>
       </CardContent>
     </Card>
 
     <!-- Customs Details -->
-    <Card>
-      <CardHeader>
-        <CardTitle>Customs Details</CardTitle>
+    <Card class="border shadow-sm" style="background-color: #343a40; border-color: transparent">
+      <CardHeader style="background-color: #343a40; border-bottom: 1px solid rgba(255, 255, 255, 0.1)">
+        <CardTitle class="text-sm" style="color: white">
+          {{ t('positions.customsDetails') }}
+        </CardTitle>
       </CardHeader>
       <CardContent>
-        <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
-          <div>
-            <Label>Customs</Label>
-            <div>{{ position.customs }}</div>
+        <div class="grid grid-cols-1 gap-x-4 gap-y-4 md:grid-cols-3">
+          <div class="space-y-1">
+            <Label class="text-xs" style="color: rgba(255, 255, 255, 0.7)">{{ t('positions.customsName') }}</Label>
+            <div class="text-sm font-medium" style="color: white">
+              {{ position.customs }}
+            </div>
           </div>
-          <div>
-            <Label>Entrance Gate</Label>
-            <div>{{ position.entranceGate }}</div>
+          <div class="space-y-1">
+            <Label class="text-xs" style="color: rgba(255, 255, 255, 0.7)">{{ t('positions.entranceGate') }}</Label>
+            <div class="text-sm font-medium" style="color: white">
+              {{ position.entranceGate || '-' }}
+            </div>
           </div>
-          <div>
-            <Label>Exit Gate</Label>
-            <div>{{ position.exitGate }}</div>
+          <div class="space-y-1">
+            <Label class="text-xs" style="color: rgba(255, 255, 255, 0.7)">{{ t('positions.exitGate') }}</Label>
+            <div class="text-sm font-medium" style="color: white">
+              {{ position.exitGate }}
+            </div>
           </div>
-          <div>
-            <Label>Receiver</Label>
-            <div>{{ position.receiver }}</div>
+          <div class="space-y-1">
+            <Label class="text-xs" style="color: rgba(255, 255, 255, 0.7)">{{ t('positions.columns.receiver') }}</Label>
+            <div class="text-sm font-medium" style="color: white">
+              {{ position.receiver }}
+            </div>
           </div>
-          <div>
-            <Label>Sender</Label>
-            <div>{{ position.sender }}</div>
+          <div class="md:col-span-2 space-y-1">
+            <Label class="text-xs" style="color: rgba(255, 255, 255, 0.7)">{{ t('positions.columns.sender') }}</Label>
+            <div class="text-sm font-medium" style="color: white">
+              {{ position.sender }}
+            </div>
           </div>
         </div>
       </CardContent>

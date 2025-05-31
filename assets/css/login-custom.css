@@ -1,0 +1,42 @@
+/* Custom login page styling */
+
+/* Change the left side background to yellow */
+.auth-layout .left-panel {
+  background-color: #ffde59 !important; /* Yellow background */
+  color: #343a40 !important; /* Dark text for better contrast */
+}
+
+/* Style the quote text */
+.auth-layout .left-panel blockquote p {
+  color: #343a40 !important;
+  font-weight: 600 !important;
+}
+
+/* Style the company name */
+.auth-layout .left-panel blockquote footer {
+  color: #343a40 !important;
+  font-weight: 500 !important;
+}
+
+/* Adjust the truck image */
+.auth-layout .truck-image {
+  filter: brightness(1) contrast(1.1) !important;
+}
+
+/* Style the login button */
+.auth-layout .login-button {
+  background-color: #ffde59 !important;
+  color: #343a40 !important;
+  font-weight: 600 !important;
+  border: none !important;
+}
+
+.auth-layout .login-button:hover {
+  background-color: #e6c84f !important; /* Slightly darker yellow on hover */
+}
+
+/* Style the form inputs */
+.auth-layout .form-input:focus {
+  border-color: #ffde59 !important;
+  box-shadow: 0 0 0 2px rgba(255, 222, 89, 0.25) !important;
+} 

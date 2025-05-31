@@ -68,6 +68,7 @@ const value = computed<DateRange>({
             'justify-start text-left font-normal',
             !value.start && 'text-muted-foreground',
           )"
+          style="background-color: #f5c518; color: #343a40; border-color: #f5c518;"
         >
           <CalendarIcon class="mr-2 h-4 w-4" />
 

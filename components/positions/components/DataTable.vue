@@ -18,6 +18,7 @@ import {
   getSortedRowModel,
   useVueTable,
 } from '@tanstack/vue-table'
+import { useI18n } from 'vue-i18n'
 import DataTablePagination from './DataTablePagination.vue'
 import DataTableToolbar from './DataTableToolbar.vue'
 
@@ -113,6 +114,8 @@ function handlePageChange(page: number) {
 function handlePageSizeChange(size: number) {
   emit('pageSizeChange', size)
 }
+
+const { t } = useI18n()
 </script>
 
 <template>
@@ -123,7 +126,7 @@ function handlePageSizeChange(size: number) {
       :loading="props.loading"
       @search="handleSearch"
     />
-    <div class="border rounded-md">
+    <div class="border rounded-md dark:bg-background">
       <Table>
         <TableHeader>
           <TableRow v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
@@ -150,7 +153,7 @@ function handlePageSizeChange(size: number) {
               :colspan="props.columns.length"
               class="h-24 text-center"
             >
-              No results.
+              {{ t('common.no_results') }}
             </TableCell>
           </TableRow>
         </TableBody>

@@ -40,6 +40,14 @@ export function createColumns(t: (key: string) => string): ColumnDef<Position>[]
       },
     },
     {
+      accessorKey: 'customer',
+      header: ({ column }) => h(DataTableColumnHeader, { column, title: 'positions.columns.customer' }),
+      cell: ({ row }) => h('div', {
+        class: 'w-[120px] cursor-pointer hover:text-primary',
+        onClick: () => router.push(`/positions/detail?id=${row.getValue('positionNo')}`),
+      }, row.getValue('customer')),
+    },
+    {
       accessorKey: 'sender',
       header: ({ column }) => h(DataTableColumnHeader, { column, title: 'positions.columns.sender' }),
       cell: ({ row }) => h('div', {

@@ -121,23 +121,24 @@ function handleCreate() {
       </div>
     </div>
 
-    <div class="border rounded-md">
-      <Table>
-        <TableHeader>
-          <TableRow v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
-            <TableHead v-for="header in headerGroup.headers" :key="header.id">
+    <div class="border rounded-md dark:bg-background">
+      <Table class="dark:bg-background">
+        <TableHeader class="dark:bg-background">
+          <TableRow v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id" class="dark:bg-background">
+            <TableHead v-for="header in headerGroup.headers" :key="header.id" class="dark:bg-background text-foreground">
               <FlexRender v-if="!header.isPlaceholder" :render="header.column.columnDef.header" :props="header.getContext()" />
             </TableHead>
           </TableRow>
         </TableHeader>
-        <TableBody>
+        <TableBody class="dark:bg-background">
           <template v-if="table.getRowModel().rows?.length">
             <TableRow
               v-for="row in table.getRowModel().rows"
               :key="row.id"
               :data-state="row.getIsSelected() && 'selected'"
+              class="hover:bg-muted/50 dark:hover:bg-muted/90 dark:bg-background"
             >
-              <TableCell v-for="cell in row.getVisibleCells()" :key="cell.id">
+              <TableCell v-for="cell in row.getVisibleCells()" :key="cell.id" class="dark:bg-background text-foreground">
                 <template v-if="cell.column.id === 'actions'">
                   <DataTableRowActions :row="row" @edit="handleEdit" />
                 </template>
@@ -148,12 +149,12 @@ function handleCreate() {
             </TableRow>
           </template>
 
-          <TableRow v-else>
+          <TableRow v-else class="dark:bg-background">
             <TableCell
               :colspan="props.columns.length"
-              class="h-24 text-center"
+              class="h-24 text-center dark:bg-background text-foreground"
             >
-              No results.
+              {{ t('common.no_results') }}
             </TableCell>
           </TableRow>
         </TableBody>

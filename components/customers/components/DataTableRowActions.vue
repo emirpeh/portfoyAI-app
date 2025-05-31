@@ -18,12 +18,19 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { useCustomers } from '@/composables/useCustomers'
-import { DotsHorizontalIcon } from '@radix-icons/vue'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import AddOrEditUser from '~/components/users/components/AddOrEditUser.vue'
 import { useUsers } from '~/composables/useUsers'
 import { customerSchema } from '../data/schema'
+
+interface Contact {
+  companyNo: string
+  name: string
+  phone: string
+  email: string
+  isSend: boolean
+}
 
 const props = defineProps<DataTableRowActionsProps>()
 
@@ -39,7 +46,7 @@ interface DataTableRowActionsProps {
 const showAddAccount = ref(false)
 const showDeleteDialog = ref(false)
 const showContactDialog = ref(false)
-const contacts = ref([])
+const contacts = ref<Contact[]>([])
 const loading = ref(false)
 
 const customer = computed(() => customerSchema.parse(props.row.original))
@@ -66,7 +73,7 @@ async function handleContactClick() {
   showContactDialog.value = true
   loading.value = true
   try {
-    contacts.value = await getCustomerMailList(props.row.id)
+    contacts.value = (await getCustomerMailList(props.row.original.id)) as Contact[]
   }
   catch (error) {
     console.error('Error fetching contacts:', error)
@@ -76,9 +83,9 @@ async function handleContactClick() {
   }
 }
 
-async function handleMailStatusChange(contact: { email: string, isSend: boolean }) {
+async function handleMailStatusChange(contact: Contact) {
   try {
-    await $apiFetch(`/customers/${props.row.id}/mail`, {
+    await $apiFetch(`/customers/${props.row.original.id}/mail`, {
       method: 'PUT',
       body: {
         mail: contact.email,
@@ -86,7 +93,7 @@ async function handleMailStatusChange(contact: { email: string, isSend: boolean 
       },
     })
     // Refresh the contacts list after update
-    contacts.value = await getCustomerMailList(props.row.id)
+    contacts.value = (await getCustomerMailList(props.row.original.id)) as Contact[]
   }
   catch (error) {
     console.error('Error updating mail status:', error)

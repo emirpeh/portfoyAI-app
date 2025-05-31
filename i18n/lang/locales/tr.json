@@ -1,340 +1,471 @@
 {
+  "Commands:": "Komutlar:",
+  "Options:": "Seçenekler:",
+  "Examples:": "Örnekler:",
+  "boolean": "boolean",
+  "count": "sayı",
+  "string": "string",
+  "number": "numara",
+  "array": "array",
+  "required": "zorunlu",
+  "default": "varsayılan",
+  "default:": "varsayılan:",
+  "choices:": "seçimler:",
+  "aliases:": "takma adlar:",
+  "generated-value": "oluşturulan-değer",
+  "Not enough non-option arguments: got %s, need at least %s": {
+    "one": "Seçenek dışı argümanlar yetersiz: %s bulundu, %s gerekli",
+    "other": "Seçenek dışı argümanlar yetersiz: %s bulundu, %s gerekli"
+  },
+  "Too many non-option arguments: got %s, maximum of %s": {
+    "one": "Seçenek dışı argümanlar gereğinden fazla: %s bulundu, azami %s",
+    "other": "Seçenek dışı argümanlar gereğinden fazla: %s bulundu, azami %s"
+  },
+  "Missing argument value: %s": {
+    "one": "Eksik argüman değeri: %s",
+    "other": "Eksik argüman değerleri: %s"
+  },
+  "Missing required argument: %s": {
+    "one": "Eksik zorunlu argüman: %s",
+    "other": "Eksik zorunlu argümanlar: %s"
+  },
+  "Unknown argument: %s": {
+    "one": "Bilinmeyen argüman: %s",
+    "other": "Bilinmeyen argümanlar: %s"
+  },
+  "Invalid values:": "Geçersiz değerler:",
+  "Argument: %s, Given: %s, Choices: %s": "Argüman: %s, Verilen: %s, Seçimler: %s",
+  "Argument check failed: %s": "Argüman kontrolü başarısız oldu: %s",
+  "Implications failed:": "Sonuçlar başarısız oldu:",
+  "Not enough arguments following: %s": "%s için yeterli argüman bulunamadı",
+  "Invalid JSON config file: %s": "Geçersiz JSON yapılandırma dosyası: %s",
+  "Path to JSON config file": "JSON yapılandırma dosya konumu",
+  "Show help": "Yardım detaylarını göster",
+  "Show version number": "Versiyon detaylarını göster",
+  "Did you mean %s?": "Bunu mu demek istediniz: %s?",
+  "Positionals:": "Sıralılar:",
+  "command": "komut",
   "dashboard": {
     "overview": "Aylık Genel Bakış",
-    "title": "Panol",
-    "totalPositions": "Toplam Sefer",
+    "title": "Panel",
+    "totalPositions": "Toplam Pozisyon",
     "totalExport": "Toplam İhracat",
     "totalImport": "Toplam İthalat",
     "totalTransit": "Toplam Transit",
     "recentPositions": "Son Pozisyonlar",
-    "fromLastMonth": "son ay"
+    "fromLastMonth": "geçen aydan"
   },
-  "account": {
-    "title": "Hesap",
-    "description": "Hesap ayarlarınızı güncelleyin. Tercih ettiğiniz dili ve saat dilimini ayarlayın.",
-    "name": {
-      "label": "İsim",
-      "description": "Bu isim profilinizde ve e-postalarda görüntülenecektir.",
-      "placeholder": "İsminiz"
-    },
-    "dob": {
-      "label": "Doğum tarihi",
-      "description": "Doğum tarihiniz yaşınızı hesaplamak için kullanılır.",
-      "placeholder": "Tarih seçin"
-    },
-    "language": {
-      "label": "Dil",
-      "description": "Bu dil panoda kullanılacaktır.",
-      "placeholder": "Dil seçin..."
-    },
-    "submit": "Hesabı güncelle"
-  },
-  "customers": {
-    "title": "Müşteriler",
-    "description": "Müşteri listesi ve detayları",
-    "no_results": "Sonuç bulunamadı.",
-    "filter": {
-      "placeholder": "Müşteri ara...",
-      "search": "Müşteri Ara...",
-      "reset": "Filtreleri sıfırla"
-    },
-    "columns": {
-      "company": "Firma Adı",
-      "taxOffice": "Vergi Dairesi",
-      "taxValue": "Vergi No",
-      "currency": "Döviz",
-      "country": "Ülke",
-      "city": "Şehir",
-      "district": "İlçe"
-    },
-    "contacts": {
-      "title": "İletişim Bilgileri",
-      "name": "İsim",
-      "phone": "Telefon",
-      "email": "E-posta",
-      "status": "Mail Gönder"
-    },
-    "actions": {
-      "contact": "İletişim Bilgileri"
-    },
-    "view": "Görüntüle",
-    "createAccount": "Hesap Oluştur",
-    "updateAccount": "Hesabı Güncelle",
-    "deleteAccount": "Hesabı Sil",
-    "deleteConfirmTitle": "Müşteriyi Sil",
-    "deleteConfirmDescription": "Bu müşteriyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz ve ilgili tüm verileri kaldıracaktır.",
-    "createAccountDescription": "Yeni bir hesap oluşturmak için formu doldurun.",
-    "save": "Kaydet",
-    "name": "İsim",
-    "username": "E posta adresi"
-  },
-  "positions": {
-    "view": "Görüntüle",
-    "title": "Pozisyonlar",
-    "description": "Pozisyon listesi ve detayları",
-    "details": "Pozisyon Detayları",
-    "print": "Yazdır",
-    "status": {
-      "closed": "Pozisyon Kapalı",
-      "planned": "Planlanmış Taşıma",
-      "steps": {
-        "created": "Pozisyon Oluşturuldu",
-        "transit": "Yolda",
-        "delivery": "Dağıtımda",
-        "delivered": "Teslim Edildi"
-      }
-    },
-    "files": {
-      "title": "Dosyalar",
-      "count": "dosya(lar)",
-      "noFiles": "Dosya bulunamadı"
-    },
-    "map": {
-      "title": "Son Konum",
-      "loadingLocation": "Yükleme Noktası",
-      "unloadingLocation": "Boşaltma Noktası",
-      "currentLocation": "Mevcut konum: {location}"
-    },
-    "type": {
-      "export": "İhracat Taşıma"
-    },
+  "email": {
     "tabs": {
-      "tripDetails": "Sefer Bilgileri",
-      "cargoInvoice": "Yük ve Fatura",
-      "route": "Güzergâh",
-      "loadingUnloading": "Yükleme/Boşaltma",
-      "tariffs": "Alış/Satış Tarifeleri",
-      "partialLoads": "Parsiyel Yükler",
-      "expectedCosts": "Beklenen Masraflar"
+      "all": "Tüm Postalar",
+      "unread": "Okunmamış",
+      "logs": "Kayıtlar",
+      "offers": "Teklifler",
+      "suppliers": "Tedarikçiler",
+      "inbox": "Kayıtlar",
+      "configuration": "Yapılandırma",
+      "html_hint": "HTML formatı kullanabilirsiniz."
     },
-    "vehicleDetails": "Çekici ve Dorse Bilgileri",
-    "customsDetails": "Gümrük Bilgileri",
-    "columns": {
-      "positionNo": "Pozisyon No",
-      "partialNo": "Parsiyel No",
-      "positionType": "Pozisyon Tipi",
-      "orderDate": "Sipariş Tarihi",
-      "sender": "Gönderici",
-      "customer": "Müşteri",
-      "openingDate": "Açılma Tarihi",
-      "reservationNo": "Rezervasyon Tarihi",
-      "salesRep": "Satış Temsilcisi",
-      "receiver": "Alıcı",
-      "countryOfLoading": "Yükleme Ülkesi",
-      "placeOfLoading": "Yükleme Yeri",
-      "dateOfLoading": "Yükleme Tarihi",
-      "countryOfUnloading": "Boşaltma Ülkesi",
-      "placeOfUnloading": "Boşaltma Yeri",
-      "dateOfUnloading": "Boşaltma Tarihi",
-      "export": "İhracat",
-      "import": "İthalat",
-      "transit": "Transit"
-    },
-    "positionType": {
-      "G": "İhracat Taşıma",
-      "D": "İthalat Taşıma",
-      "T": "Transit Taşıma"
-    },
-    "createPosition": "Pozisyon Oluştur",
-    "createPositionDescription": "Yeni bir pozisyon oluşturmak için formu doldurun.",
-    "save": "Kaydet",
-    "cargoInvoice": {
-      "title": "Yük Faturası",
-      "freightCurrencyType": "Navlun Dövizi",
-      "freightInvoice": "Navlun Fatura",
-      "freightInvoiceAmount": "Navlun Tutarı",
-      "freightInvoiceTLAmount": "Navlun Türk Lirası Tutarı",
-      "details": {
-        "title": "Yük Detayları",
-        "code": "Kodu",
-        "goodsType": "Malın Cinsi",
-        "brand": "Marka",
-        "weight": "Kilo",
-        "materialType": "Malın Cinsi",
-        "quantity": "Adet",
-        "length": "Boy",
-        "width": "En",
-        "height": "Yükseklik",
-        "volume": "Hacim",
-        "serialNo": "Seri No"
+    "suppliers": {
+      "title": "Tedarikçiler",
+      "add": "Yeni Tedarikçi",
+      "bulkAdd": {
+        "title": "Toplu Tedarikçi Ekle"
+      },
+      "table": {
+        "id": "ID",
+        "name": "İsim",
+        "email": "E-posta",
+        "gender": "Cinsiyet",
+        "companyName": "Firma Adı",
+        "countries": "Ülkeler",
+        "foreignTrades": "Dış Ticaret",
+        "language": "Dil",
+        "actions": "İşlemler",
+        "customs": "Gümrük",
+        "noData": "Tedarikçi bulunamadı",
+        "details": "Detaylar",
+        "edit": "Düzenle",
+        "delete": "Sil"
+      },
+      "edit": "Tedarikçi Düzenle",
+      "form": {
+        "name": "İsim",
+        "email": "E-posta",
+        "gender": "Cinsiyet",
+        "companyName": "Firma Adı",
+        "countries": "Ülkeler",
+        "customs": "Gümrük",
+        "foreignTrades": "Dış Ticaret",
+        "language": "Dil",
+        "placeholder": {
+          "name": "İsim giriniz",
+          "email": "E-posta giriniz",
+          "gender": "Cinsiyet seçiniz",
+          "companyName": "Firma adı giriniz",
+          "countries": "Ülkeleri virgülle ayırarak giriniz (örn: Türkiye,Almanya)",
+          "customs": "Gümrük giriniz",
+          "foreignTrades": "Dış ticaret tipini seçiniz",
+          "language": "Dil seçiniz"
+        },
+        "genderOptions": {
+          "male": "Erkek",
+          "female": "Kadın"
+        },
+        "foreignTradesOptions": {
+          "IM": "İthalat",
+          "EX": "İhracat",
+          "TRN": "Transit"
+        },
+        "buttons": {
+          "cancel": "İptal",
+          "add": "Ekle",
+          "update": "Güncelle"
+        },
+        "languageOptions": {
+          "tr": "Türkçe",
+          "en": "İngilizce",
+          "hr": "Hırvatça",
+          "sl": "Slovence",
+          "bs": "Boşnakça",
+          "mk": "Makedonca"
+        }
+      },
+      "languageOptions": {
+        "tr": "Türkçe",
+        "en": "İngilizce",
+        "hr": "Hırvatça",
+        "sl": "Slovence",
+        "bs": "Boşnakça",
+        "mk": "Makedonca"
+      },
+      "placeholder": {
+        "language": "Dil seçiniz"
       }
     },
-    "loadingUnloading": {
-      "loadingTitle": "Yükleme Yerleri",
-      "unloadingTitle": "Boşaltma Yerleri",
-      "address": "Adres",
-      "date": "Tarih",
-      "quantity": "Adet",
-      "notes": "Notlar"
+    "offers": {
+      "title": "Teklifler",
+      "description": "Tüm teklifleri görüntüle ve yönet",
+      "filter": {
+        "search": "Teklif ara...",
+        "reset": "Filtreleri sıfırla",
+        "status": "Durum",
+        "type": "Tip",
+        "date": "Tarih",
+        "startDate": "Başlangıç tarihi",
+        "endDate": "Bitiş tarihi",
+        "loadingCity": "Yükleme şehri",
+        "deliveryCity": "Teslimat şehri",
+        "placeholder": {
+          "status": "Durum seçin",
+          "type": "Tip seçin",
+          "loadingCity": "Yükleme şehri girin",
+          "deliveryCity": "Teslimat şehri girin"
+        }
+      }
     },
-    "partialLoads": {
-      "customer": "Müşteri",
-      "sender": "Gönderici",
-      "receiver": "Alıcı",
-      "consignee": "Consignee",
-      "packages": "Koli",
-      "weight": "Kilo",
-      "volume": "M³",
-      "goodsType": "Mal Cinsi",
-      "freight": "Navlun",
-      "loadingDate": "Yükleme Tarihi",
-      "unloadingDate": "Boşaltma Tarihi",
-      "customsName": "Gümrük Adı",
-      "warehouse": "Teslim Deposu"
+    "offer_display": {
+      "loading": "Yükleniyor...",
+      "error": "Teklif bilgileri yüklenirken bir hata oluştu.",
+      "offer_no": "Teklif No",
+      "created_at": "Oluşturulma Tarihi",
+      "offer_info": "Teklif Bilgileri",
+      "supplier_offers": "Tedarikçi Teklifleri",
+      "no_supplier_offers": "Henüz tedarikçi teklifi yok",
+      "offer_results": "Müşteriye Gönderilen Teklifler",
+      "sent_offers": "Gönderilen Teklifler",
+      "no_sent_offers": "Henüz teklif gönderilmedi",
+      "mail_logs": "Mail Kayıtları",
+      "mail_address": "Mail Adresi",
+      "supplier_details": {
+        "calculatedLdm": "Hesaplanan LDM",
+        "calculatedVolume": "Hesaplanan Hacim",
+        "price": "Fiyat",
+        "note": "Not"
+      },
+      "status": {
+        "OFFER_CREATED": "Taslak",
+        "OFFER_MISSING_INFORMATION": "Eksik Bilgi",
+        "NO_SUPPLIER_FOR_OFFER": "Tedarikçi Bulunamadı",
+        "FEE_REQUEST_FOR_OFFER": "Ücret Talebi",
+        "WAITING_COMPLETE_FOR_OFFER": "Tamamlanması Bekleniyor",
+        "OFFER_COMPLETED": "Tamamlandı",
+        "OFFER_CANCELED": "İptal Edildi",
+        "UNKNOWN": "Bilinmiyor"
+      },
+      "sent_offer_details": {
+        "price": "Fiyat",
+        "note": "Not"
+      }
     },
-    "filter": {
-      "search": "Pozisyon Ara...",
-      "title": "Filtreler",
-      "reset": "Filtreleri Sıfırla",
-      "positionType": "Pozisyon Tipi",
-      "sender": "Gönderici",
-      "receiver": "Alıcı",
-      "all": "Tümü",
-      "senderPlaceholder": "Gönderici adı girin...",
-      "receiverPlaceholder": "Alıcı adı girin..."
+    "send_offer_title": "Teklif Gönder",
+    "send_offer_description": "Müşteriye teklif göndermek için formu doldurun.",
+    "customer_email": "Müşteri E-postası",
+    "subject": "Konu",
+    "content": "İçerik",
+    "show_preview": "Önizleme Göster",
+    "status": {
+      "OFFER_CREATED": "Taslak",
+      "OFFER_MISSING_INFORMATION": "Eksik Bilgi",
+      "OFFER_RECEIVED": "Teklif Alındı",
+      "NO_SUPPLIER_FOR_OFFER": "Tedarikçi Bulunamadı",
+      "SUPPLIER_WAITING_FOR_OFFER": "Tedarikçi Bekleniyor",
+      "FEE_REQUEST_FOR_OFFER": "Ücret Talebi",
+      "WAITING_FEE_FOR_OFFER": "Ücret Bekleniyor",
+      "WAITING_COMPLETE_FOR_OFFER": "Tamamlanması Bekleniyor",
+      "OFFER_COMPLETED": "Tamamlandı",
+      "OFFER_CANCELED": "İptal Edildi"
+    },
+    "offer_no": "Teklif No",
+    "load_date": "Yükleme Tarihi",
+    "load_country": "Yükleme Ülkesi",
+    "load_city": "Yükleme Şehri",
+    "packaging_type": "Paketleme Tipi",
+    "num_of_containers": "Konteyner Sayısı",
+    "container_type": "Konteyner Tipi",
+    "container_dimensions": "Konteyner Boyutları",
+    "goods_type": "Mal Tipi",
+    "is_stackable": "İstiflenebilir",
+    "customs": "Gümrük",
+    "delivery_country": "Teslimat Ülkesi",
+    "delivery_city": "Teslimat Şehri",
+    "delivery_date": "Teslimat Tarihi",
+    "foreign_trade": "Dış Ticaret",
+    "supplier_display": {
+      "edit_supplier": "Tedarikçi Düzenle",
+      "edit_supplier_description": "Tedarikçi bilgilerini düzenleyin.",
+      "form": {
+        "full_name": "Ad Soyad",
+        "email": "E-posta",
+        "gender": "Cinsiyet",
+        "female": "Kadın",
+        "company_name": "Firma Adı",
+        "countries": "Ülkeler",
+        "customs": "Gümrük",
+        "foreign_trade": "Dış Ticaret",
+        "import": "İthalat",
+        "export": "İhracat",
+        "transit": "Transit",
+        "language": "Dil",
+        "cancel": "İptal",
+        "update": "Güncelle"
+      },
+      "personal_info": "Kişisel Bilgiler",
+      "company_info": "Firma Bilgileri",
+      "full_name": "Ad Soyad",
+      "email": "E-posta",
+      "gender": "Cinsiyet",
+      "company_name": "Firma Adı",
+      "countries": "Ülkeler",
+      "customs": "Gümrük",
+      "foreign_trade": "Dış Ticaret",
+      "language": "Dil",
+      "created_at": "{time} önce"
+    },
+    "mail_logs_title": "Mail Kayıtları",
+    "mail_types": {
+      "CUSTOMER_NEW_OFFER_REQUEST": "Yeni Teklif Talebi",
+      "CUSTOMER_REQUEST_CORRECTION": "Bilgi Talebi",
+      "CUSTOMER_REQUEST_CORRECTION_REMINDED": "Bilgi Talebi Hatırlatma",
+      "CUSTOMER_REQUEST_CORRECTION_FROM_CUSTOMER": "Müşteri Bilgi Güncellemesi",
+      "FEE_REQUEST_FOR_OFFER": "Ücret Talebi",
+      "FEE_REQUEST_FOR_OFFER_REMINDED": "Ücret Talebi Hatırlatma",
+      "SUPPLIER_NEW_OFFER": "Yeni Tedarikçi Teklifi",
+      "SUPPLIER_REQUEST_OFFER": "Tedarikçi Teklif Talebi",
+      "CUSTOMER_OFFER_RESULT": "Teklif Sonucu",
+      "WAITING_FEE_FOR_OFFER": "Ücret Bekleniyor",
+      "INTERNAL_INFORMATION": "İç Bilgilendirme",
+      "FILE_NOTIFICATION": "Dosya Bildirimi",
+      "OTHER": "Diğer"
     }
   },
-  "language_switcher": {
-    "switch": "Dil değiştir"
+  "configuration": {
+    "title": "Yapılandırma",
+    "description": "Teklif oranı ve kar marjı ayarlarını yönetin",
+    "rate": "Teklif Oranı (%)",
+    "profitMargin": "Kar Marjı (%)",
+    "isEnabled": "Sistem Durumu",
+    "isEnabledDescription": "Teklif sistemini etkinleştir veya devre dışı bırak"
   },
-  "currency": {
-    "usd": "USD - Amerikan Doları",
-    "eur": "EUR - Euro",
-    "try": "TRY - Türk Lirası",
-    "gbp": "GBP - İngiliz Sterlini"
-  },
-  "country": {
-    "turkiye": "Türkiye",
-    "usa": "ABD"
-  },
-  "city": {
-    "istanbul": "İstanbul",
-    "ankara": "Ankara",
-    "new_york": "New York"
-  },
-  "district": {
-    "kadikoy": "Kadıköy",
-    "cankaya": "Çankaya",
-    "manhattan": "Manhattan"
-  },
-  "columns": {
-    "id": "ID",
-    "company": "Firma Adı",
-    "tax_office": "Vergi Dairesi",
-    "tax_value": "Vergi Hesap Numarası",
-    "currency": "Döviz",
-    "country": "Ülke",
-    "city": "Şehir",
-    "district": "İlçe"
-  },
-  "table": {
-    "sort": {
-      "asc": "Artan",
-      "desc": "Azalan"
-    },
-    "column": {
-      "hide": "Gizle"
-    },
+  "common": {
+    "pickDate": "Tarih seçin",
+    "save": "Kaydet",
     "pagination": {
-      "rowsPerPage": "Sayfa başına satır",
-      "of": "e",
-      "selected": "satır seçildi",
-      "firstPage": "İlk sayfaya git",
-      "previousPage": "Önceki sayfaya git",
-      "nextPage": "Sonraki sayfaya git",
-      "lastPage": "Son sayfaya git",
-      "page": "Sayfa"
+      "showing": "Gösteriliyor",
+      "of": "/",
+      "previous": "Önceki",
+      "next": "Sonraki"
+    },
+    "no": "Hayır",
+    "search": "Ara",
+    "reset": "Sıfırla",
+    "dateFormat": "gg.aa.yyyy",
+    "all": "Tümü",
+    "row": "satır",
+    "openMenu": "Menüyü Aç",
+    "cancel": "İptal",
+    "send": "Gönder"
+  },
+  "language": {
+    "english": "İngilizce"
+  },
+  "mailLogs": {
+    "filters": {
+      "startDate": "Başlangıç Tarihi",
+      "endDate": "Bitiş Tarihi",
+      "type": "Mail Tipi",
+      "offerId": "Teklif No",
+      "offerIdPlaceholder": "Teklif no girin..."
     }
   },
   "nav": {
+    "search": "Ara",
     "general": "Genel",
     "home": "Ana Sayfa",
-    "users": "Kullanıcılar",
     "email": "E-posta",
+    "users": "Kullanıcılar",
+    "new": "Yeni",
     "customers": "Müşteriler",
     "positions": "Pozisyonlar",
     "pages": "Sayfalar",
-    "components": "Bileşenler",
-    "help": "Yardım & Destek",
-    "feedback": "Geri Bildirim",
     "authentication": "Kimlik Doğrulama",
     "errors": "Hatalar",
     "settings": "Ayarlar",
-    "logout": "Çıkış Yap",
+    "components": "Bileşenler",
+    "contact": "Mail ile İletişime Geç",
+    "whatsapp": "Whatsapp ile İletişime Geç",
     "login": "Giriş Yap",
-    "new": "Yeni",
-    "whatsapp": "Whatsapp ile Ulaşın",
-    "contact": "Bize Mail ile Ulaşın",
-    "search": "Ara",
-    "theme": "Tema"
-  },
-  "auth": {
-    "login": "Giriş Yap",
-    "description": "Hesabınıza giriş yapın",
-    "email": "E-posta",
-    "password": "Şifre",
-    "failed": "E-posta veya şifre yanlış",
-    "error": "Bir hata oluştu",
-    "companyName": "Maxi Lojistik",
-    "slogan": "Güvenilir lojistik çözümleri ile işinizi büyütün.",
-    "help_text_prefix": "Giriş ile ilgili sorun yaşıyorsanız lütfen ",
-    "help_text_suffix": " adresine mail atınız."
+    "theme": "Tema",
+    "logout": "Çıkış Yap"
   },
   "users": {
+    "filter": {
+      "placeholder": "E-posta ile filtrele...",
+      "search": "Kullanıcı Ara"
+    },
+    "createAccount": "Kullanıcı Oluştur",
+    "createAccountDescription": "Yeni bir kullanıcı hesabı oluştur.",
     "view": "Görüntüle",
     "edit": "Düzenle",
     "delete": "Sil",
-    "title": "Kullanıcılar",
-    "description": "Kullanıcı listesi ve detayları",
-    "createAccount": "Kullanıcı Oluştur",
-    "createAccountDescription": "Yeni bir kullanıcı hesabı oluşturun.",
     "editAccount": "Kullanıcı Düzenle",
-    "editAccountDescription": "Kullanıcı hesap bilgilerini düzenleyin.",
+    "editAccountDescription": "Kullanıcı hesap bilgilerini düzenle.",
     "email": "E-posta",
     "password": "Şifre",
     "passwordPlaceholder": "Mevcut şifreyi korumak için boş bırakın",
     "role": "Rol",
-    "save": "Kaydet",
     "update": "Güncelle",
-    "roles": {
-      "admin": "Yönetici",
-      "customer": "Müşteri"
-    },
-    "deleteConfirmTitle": "Kullanıcı Hesabını Sil",
-    "deleteConfirmADMIN": "Bu yönetici hesabını silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
-    "deleteConfirmCUSTOMER": "Bu müşteri hesabının bağlantısını kesmek istediğinizden emin misiniz? Bu işlem, sisteme erişimlerini kaldıracaktır.",
+    "save": "Kaydet",
     "columns": {
-      "id": "ID",
       "email": "E-posta",
       "role": "Rol",
       "createdAt": "Oluşturulma Tarihi",
       "updatedAt": "Güncellenme Tarihi"
     },
-    "filter": {
-      "placeholder": "E-posta ile ara...",
-      "search": "Kullanıcı Ara",
-      "reset": "Filtreleri sıfırla"
+    "roles": {
+      "admin": "Yönetici"
     }
   },
-  "common": {
-    "new": "Yeni",
-    "error": "Bir hata oluştu",
-    "cancel": "İptal",
-    "delete": "Sil",
-    "pickDate": "Tarih seçin",
-    "placeholder": "Ara...",
-    "menu": "Menü",
-    "no_results": "Sonuç bulunamadı.",
-    "search": "Ara..."
+  "table": {
+    "pagination": {
+      "rowsPerPage": "Sayfa başına satır",
+      "firstPage": "İlk sayfaya git",
+      "previousPage": "Önceki sayfaya git",
+      "nextPage": "Sonraki sayfaya git",
+      "lastPage": "Son sayfaya git",
+      "page": "Sayfa",
+      "of": "/",
+      "selected": "satır seçildi"
+    }
+  },
+  "customers": {
+    "view": "Görüntüle",
+    "filter": {
+      "placeholder": "Firma adı ile filtrele...",
+      "search": "Müşteri Ara"
+    },
+    "columns": {
+      "company": "Firma Adı",
+      "taxOffice": "Vergi Dairesi",
+      "taxValue": "Vergi Numarası",
+      "currency": "Para Birimi",
+      "country": "Ülke",
+      "city": "Şehir",
+      "district": "İlçe",
+      "accountId": "Hesap No"
+    }
+  },
+  "positions": {
+    "filter": {
+      "search": "Ara",
+      "placeholder": "Arama...",
+      "positionType": "Pozisyon Tipi",
+      "all": "Tümü"
+    },
+    "columns": {
+      "positionNo": "Pozisyon No",
+      "positionType": "Pozisyon Tipi",
+      "orderDate": "Sipariş Tarihi",
+      "customer": "Müşteri",
+      "sender": "Gönderici",
+      "receiver": "Alıcı",
+      "countryOfLoading": "Yükleme Ülkesi",
+      "placeOfLoading": "Yükleme Yeri",
+      "countryOfUnloading": "Boşaltma Ülkesi",
+      "placeOfUnloading": "Boşaltma Yeri"
+    },
+    "positionType": {
+      "G": "İhracat Taşıması",
+      "D": "İthalat Taşıması",
+      "T": "Transit Taşıma"
+    }
   },
   "customize": {
     "title": "Özelleştir",
-    "description": "Panonuzu özelleştirin",
-    "theme": "Tema",
-    "language": "Dil",
-    "font": "Yazı Tipi",
+    "description": "Panelinizi özelleştirin",
+    "mode": "Mod",
     "light": "Açık",
     "dark": "Koyu",
     "system": "Sistem"
+  },
+  "auth": {
+    "slogan": "İşinizi güvenilir lojistik çözümlerle büyütün.",
+    "customer": "Maxi Lojistik",
+    "login": "Giriş Yap",
+    "description": "Hesabınıza giriş yapın",
+    "email": "E-posta",
+    "password": "Şifre"
+  },
+  "download": {
+    "title": "Şifreli Dosya İndir",
+    "description": "Dosyayı indirmek için şifre gereklidir",
+    "fileInfo": {
+      "fileName": "Dosya Adı",
+      "positionId": "Pozisyon ID"
+    },
+    "password": "Şifre",
+    "passwordPlaceholder": "Dosya şifresini giriniz",
+    "passwordHint": "İpucu: Şifre, e-postanızda aldığınız şifredir.",
+    "downloadButton": "Dosyayı İndir",
+    "downloading": "İndiriliyor...",
+    "success": {
+      "title": "Başarılı",
+      "message": "Dosya başarıyla indirildi."
+    },
+    "error": {
+      "title": "Hata",
+      "fileIdMissing": "Dosya ID belirtilmedi",
+      "passwordRequired": "Lütfen şifre giriniz",
+      "downloadFailed": "Dosya indirilemedi",
+      "serverError": "Sunucu hatası: Dosya indirilemedi",
+      "infoFailed": "Dosya bilgisi alınamadı",
+      "infoServerError": "Sunucu hatası: Dosya bilgisi alınamadı",
+      "fileNotFound": "Dosya bilgisi bulunamadı. Lütfen geçerli bir dosya ID ile tekrar deneyin.",
+      "wrongPassword": "Yanlış şifre. Lütfen tekrar deneyin.",
+      "fileNotFoundServer": "Dosya bulunamadı. Dosya silinmiş veya süresi dolmuş olabilir."
+    }
+  },
+  "language_switcher": {
+    "switch": "Dili Değiştir"
   }
 }

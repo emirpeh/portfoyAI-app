@@ -3,6 +3,7 @@ import NumberFlow from '@number-flow/vue'
 import { format } from 'date-fns'
 import { ArrowDownRight, ArrowRight, ArrowUpRight, Package } from 'lucide-vue-next'
 import { useI18n } from 'vue-i18n'
+import DashboardOverviewCard from '~/components/dashboard/OverviewCard.vue'
 import { usePositions } from '~/composables/usePositions'
 import { usePositionStats } from '~/composables/usePositionStats'
 
@@ -26,9 +27,7 @@ onMounted(() => {
 <template>
   <div class="w-full flex flex-col gap-4">
     <div class="flex flex-wrap items-center justify-between gap-2">
-      <h2 class="text-2xl font-bold tracking-tight">
-        {{ t('dashboard.title') }}
-      </h2>
+      <h2 class="text-2xl font-bold tracking-tight" />
       <div class="flex items-center space-x-2">
         <BaseDateRangePicker v-model="selectedDateRange" />
       </div>
@@ -46,7 +45,7 @@ onMounted(() => {
             <div class="text-2xl font-bold">
               <NumberFlow :value="stats.totalPositions" />
             </div>
-            <p class="flex items-center gap-1 text-xs text-muted-foreground">
+            <p class="flex items-center gap-1 text-xs" style="color: #f5c518;">
               {{ t('dashboard.fromLastMonth') }}
             </p>
           </CardContent>
@@ -62,7 +61,7 @@ onMounted(() => {
             <div class="text-2xl font-bold">
               <NumberFlow :value="stats.totalExport" />
             </div>
-            <p class="flex items-center gap-1 text-xs text-muted-foreground">
+            <p class="flex items-center gap-1 text-xs" style="color: #f5c518;">
               {{ t('dashboard.fromLastMonth') }}
             </p>
           </CardContent>
@@ -78,7 +77,7 @@ onMounted(() => {
             <div class="text-2xl font-bold">
               <NumberFlow :value="stats.totalImport" />
             </div>
-            <p class="flex items-center gap-1 text-xs text-muted-foreground">
+            <p class="flex items-center gap-1 text-xs" style="color: #f5c518;">
               {{ t('dashboard.fromLastMonth') }}
             </p>
           </CardContent>
@@ -94,21 +93,21 @@ onMounted(() => {
             <div class="text-2xl font-bold">
               <NumberFlow :value="stats.totalTransit" />
             </div>
-            <p class="flex items-center gap-1 text-xs text-muted-foreground">
+            <p class="flex items-center gap-1 text-xs" style="color: #f5c518;">
               {{ t('dashboard.fromLastMonth') }}
             </p>
           </CardContent>
         </Card>
       </div>
       <div class="grid gap-4 lg:grid-cols-2 xl:grid-cols-3 md:gap-8">
-        <Card class="xl:col-span-2">
+        <DashboardOverviewCard class="xl:col-span-2">
           <CardHeader>
             <CardTitle>{{ t('dashboard.overview') }}</CardTitle>
           </CardHeader>
           <CardContent class="pl-2">
             <DashboardOverview />
           </CardContent>
-        </Card>
+        </DashboardOverviewCard>
         <Card>
           <CardHeader>
             <CardTitle>{{ t('dashboard.recentPositions') }}</CardTitle>
@@ -126,11 +125,11 @@ onMounted(() => {
                 >
                   {{ position.positionNo }}
                 </NuxtLink>
-                <p class="text-sm text-muted-foreground">
+                <p class="text-sm" style="color: #f5c518;">
                   {{ t(`positions.positionType.${position.positionType}`) }}
                 </p>
               </div>
-              <div class="ml-auto text-sm text-muted-foreground">
+              <div class="ml-auto text-sm" style="color: #f5c518;">
                 {{ position.orderDate ? format(new Date(position.orderDate), 'yyyy-MM-dd') : '' }}
               </div>
             </div>

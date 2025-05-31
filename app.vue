@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { Sonner } from '@/components/ui/sonner'
 import { ConfigProvider } from 'radix-vue'
+import { Sonner } from '@/components/ui/sonner'
 import { useLanguage } from '~/composables/useLanguage'
 
 const colorMode = useColorMode()
@@ -44,8 +44,8 @@ useHead({
   },
 })
 
-const title = 'Maxi Lojistik'
-const description = 'Sistemli kargo operasyonu ve yoğun uçuş desteği ile dünyanın her yerinden, havalimanı ya da kapı teslimli havayolu taşımacılığı hizmetleri çözümleri.'
+const title = 'Maxi Logistics'
+const description = 'Sistemli kargo taşımacılığı hizmetleri'
 
 useSeoMeta({
   title,

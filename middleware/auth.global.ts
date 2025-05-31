@@ -1,13 +1,20 @@
-export default defineNuxtRouteMiddleware((to, _from) => {
+export default defineNuxtRouteMiddleware((to) => {
   const auth = useAuth()
+  const publicRoutes = ['/login', '/forgot-password', '/download']
+  const isPublicRoute = publicRoutes.some(route => to.path.endsWith(route))
 
-  // Eğer login sayfasına gidiyorsa ve kullanıcı giriş yapmışsa, ana sayfaya yönlendir
-  if (to.path.includes('/login') && auth.accessToken) {
-    return navigateTo(to.path.includes('/tr') ? '/tr/' : '/')
+  // Eğer giriş yapılmamış ve anasayfadaysa
+  if (!auth?.accessToken && to.path === '/') {
+    return navigateTo('/login')
   }
 
-  // Eğer korumalı bir sayfaya gidiyorsa ve kullanıcı giriş yapmamışsa, login sayfasına yönlendir
-  if (!to.path.includes('/login') && !auth.accessToken) {
-    return navigateTo(to.path.includes('/tr') ? '/tr/login' : '/login')
+  // Eğer giriş yapılmamış ve korumalı (public olmayan) bir route'taysa
+  if (!auth?.accessToken && !isPublicRoute) {
+    return navigateTo('/login')
+  }
+
+  // Eğer giriş yapılmış ve login sayfasındaysa
+  if (auth?.accessToken && isPublicRoute) {
+    return navigateTo('/dashboard')
   }
 })

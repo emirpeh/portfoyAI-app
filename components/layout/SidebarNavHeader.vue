@@ -31,7 +31,7 @@ function goToHome() {
             :alt="activeTeam.name"
             class="h-12 w-auto"
             loading="eager"
-          />
+          >
           <Icon v-else :name="activeTeam.logo" class="size-8" />
         </div>
       </div>

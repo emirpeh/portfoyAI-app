@@ -1,5 +1,15 @@
 <script lang="ts" setup>
+import { useI18n } from 'vue-i18n'
 import { buttonVariants } from '~/components/ui/button'
+import { cn } from '~/lib/utils'
+
+defineProps<NavProps>()
+
+const emit = defineEmits<{
+  (e: 'linkClick', title: string): void
+}>()
+
+const { t } = useI18n()
 
 export interface LinkProp {
   title: string
@@ -13,7 +23,9 @@ interface NavProps {
   links: LinkProp[]
 }
 
-defineProps<NavProps>()
+function handleLinkClick(title: string) {
+  emit('linkClick', title)
+}
 </script>
 
 <template>
@@ -33,15 +45,16 @@ defineProps<NavProps>()
                 link.variant === 'default'
                   && 'dark:bg-muted dark:text-muted-foreground dark:hover:bg-muted dark:hover:text-white',
               )"
+              @click="handleLinkClick(link.title)"
             >
               <Icon :name="link.icon" class="size-4" />
-              <span class="sr-only">{{ link.title }}</span>
+              <span class="sr-only">{{ t(link.title) }}</span>
             </a>
           </TooltipTrigger>
           <TooltipContent side="right" class="flex items-center gap-4">
-            {{ link.title }}
+            {{ t(link.title) }}
             <span v-if="link.label" class="ml-auto text-muted-foreground">
-              {{ link.label }}
+              {{ t(link.label) }}
             </span>
           </TooltipContent>
         </Tooltip>
@@ -56,9 +69,10 @@ defineProps<NavProps>()
               && 'dark:bg-muted dark:text-white dark:hover:bg-muted dark:hover:text-white',
             'justify-start',
           )"
+          @click="handleLinkClick(link.title)"
         >
           <Icon :name="link.icon" class="mr-2 size-4" />
-          {{ link.title }}
+          {{ t(link.title) }}
           <span
             v-if="link.label"
             :class="cn(

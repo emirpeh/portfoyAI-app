@@ -53,20 +53,20 @@ function handlePositionTypeChange(event: Event) {
   handleFilterChange({ positionType: target.value as 'G' | 'D' | 'T' })
 }
 
-function handleSenderChange(event: Event) {
-  const target = event.target as HTMLInputElement
-  handleFilterChange({ sender: target.value })
-}
-
-function handleReceiverChange(event: Event) {
-  const target = event.target as HTMLInputElement
-  handleFilterChange({ receiver: target.value })
-}
-
 const positionFilters = computed(() => {
   return {
-    positionType: positionType.value,
-
+    positionType: [
+      { value: 'G', label: 'positions.positionType.G' },
+      { value: 'D', label: 'positions.positionType.D' },
+      { value: 'T', label: 'positions.positionType.T' },
+    ],
+    loadingStatus: [
+      { value: 'Yüklendi / Loaded', label: 'Yüklendi / Loaded' },
+      { value: 'Çıktı / Departed', label: 'Çıktı / Departed' },
+      { value: 'Yolda / On the Way', label: 'Yolda / On the Way' },
+      { value: 'Dağıtımda / On Delivery', label: 'Dağıtımda / On Delivery' },
+      { value: 'Teslim Edildi / Delivered', label: 'Teslim Edildi / Delivered' },
+    ],
   }
 })
 
@@ -74,116 +74,299 @@ const columns = createColumns(t)
 </script>
 
 <template>
-  <div class="w-full flex flex-col items-stretch gap-4">
-    <div class="flex flex-wrap items-end justify-between gap-2">
-      <div>
-        <h2 class="text-2xl font-bold tracking-tight">
-          {{ t('positions.title') }}
-        </h2>
-        <p class="text-muted-foreground">
-          {{ t('positions.description') }}
-        </p>
-      </div>
-    </div>
-
+  <div class="detail-container py-6">
     <!-- Filtreleme Bileşeni -->
-    <div class="mb-4 border rounded-lg bg-card p-4">
-      <h3 class="mb-3 text-lg font-medium">
-        {{ t('positions.filter.title') }}
-      </h3>
+    <div class="mb-3 overflow-hidden rounded-lg shadow-md" style="border: 1px solid #e2e8f0;">
+      <div class="p-3" style="background-color: transparent;">
+        <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
+          <!-- Arama Alanı -->
+          <div class="flex flex-col gap-1">
+            <label class="text-sm text-foreground font-medium">{{ t('positions.filter.search') }}</label>
+            <div class="relative">
+              <span class="absolute left-3 top-1/2 text-muted-foreground -translate-y-1/2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /></svg>
+              </span>
+              <input
+                type="text"
+                class="h-9 w-full border rounded-md bg-background py-1 pl-10 pr-3 text-sm text-foreground shadow-sm"
+                style="border-color: var(--border);"
+                :value="searchQuery"
+                :placeholder="`${t('positions.filter.search')}...`"
+                @input="handleSearch"
+                @keyup.enter="handleSearch(searchQuery)"
+              >
+              <button
+                v-if="searchQuery"
+                class="absolute right-3 top-1/2 text-muted-foreground -translate-y-1/2 hover:text-foreground"
+                @click="handleSearch('')"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
+              </button>
+            </div>
+          </div>
 
-      <!-- Arama Alanı -->
-      <div class="mb-4">
-        <div class="relative">
-          <input
-            type="text"
-            class="h-10 w-full border border-input rounded-md bg-background py-2 pl-10 pr-3 text-sm shadow-sm"
-            :value="searchQuery"
-            :placeholder="t('positions.filter.search')"
-            @input="handleSearch"
-            @keyup.enter="handleSearch(searchQuery)"
-          >
-          <span class="absolute left-3 top-1/2 text-muted-foreground -translate-y-1/2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /></svg>
-          </span>
+          <!-- Pozisyon Tipi Alanı -->
+          <div class="flex flex-col gap-1">
+            <label class="text-sm text-foreground font-medium">{{ t('positions.filter.positionType') }}</label>
+            <div class="relative">
+              <select
+                class="h-9 w-full border rounded-md bg-background px-3 py-1 text-sm text-foreground shadow-sm"
+                style="border-color: var(--border);"
+                :value="positionType"
+                @change="handlePositionTypeChange"
+              >
+                <option value="">
+                  {{ t('positions.filter.all') }}
+                </option>
+                <option v-for="option in positionFilters.positionType" :key="option.value" :value="option.value">
+                  {{ t(option.label) }}
+                </option>
+              </select>
+              <button
+                v-if="positionType"
+                class="absolute right-8 top-1/2 text-muted-foreground -translate-y-1/2 hover:text-foreground"
+                @click="handleFilterChange({ positionType: undefined })"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
+              </button>
+            </div>
+          </div>
         </div>
-      </div>
-
-      <div class="grid grid-cols-1 mb-4 gap-4 md:grid-cols-3">
-        <!-- Pozisyon Tipi Alanı -->
-        <div class="flex flex-col gap-1.5">
-          <label class="text-sm font-medium">{{ t('positions.filter.positionType') }}</label>
-          <select
-            class="h-9 w-full border border-input rounded-md bg-background px-3 py-1 text-sm shadow-sm"
-            :value="positionType"
-            @change="handlePositionTypeChange"
-          >
-            <option value="">
-              {{ t('positions.filter.all') }}
-            </option>
-            <option v-for="option in positionFilters.positionType" :key="option.value" :value="option.value">
-              {{ t(option.label) }}
-            </option>
-          </select>
-        </div>
-
-        <!-- Gönderici Alanı -->
-        <div class="flex flex-col gap-1.5">
-          <label class="text-sm font-medium">{{ t('positions.filter.sender') }}</label>
-          <input
-            type="text"
-            class="h-9 w-full border border-input rounded-md bg-background px-3 py-1 text-sm shadow-sm"
-            :value="sender"
-            :placeholder="t('positions.filter.senderPlaceholder')"
-            @input="handleSenderChange"
-          >
-        </div>
-
-        <!-- Alıcı Alanı -->
-        <div class="flex flex-col gap-1.5">
-          <label class="text-sm font-medium">{{ t('positions.filter.receiver') }}</label>
-          <input
-            type="text"
-            class="h-9 w-full border border-input rounded-md bg-background px-3 py-1 text-sm shadow-sm"
-            :value="receiver"
-            :placeholder="t('positions.filter.receiverPlaceholder')"
-            @input="handleReceiverChange"
-          >
-        </div>
-      </div>
-
-      <!-- Butonlar -->
-      <div class="flex justify-end">
-        <button
-          type="button"
-          class="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground font-medium shadow hover:bg-primary/90"
-          @click="handleSearch(searchQuery)"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search mr-2"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /></svg>
-          {{ t('positions.filter.search') }}
-        </button>
       </div>
     </div>
 
-    <DataTable
-      :data="positions"
-      :columns="columns"
-      :total="total"
-      :current-page="currentPage"
-      :page-size="pageSize"
-      :loading="loading"
-      :search-value="searchQuery"
-      :position-type="positionType"
-      :sender="sender"
-      :receiver="receiver"
-      @page-change="handlePageChange"
-      @page-size-change="handlePageSizeChange"
-      @search="handleSearch"
-      @filter-change="handleFilterChange"
-    />
+    <!-- Tablo Bileşeni -->
+    <div class="rounded-lg p-0" style="border: none; background-color: transparent; width: 100%;">
+      <DataTable
+        :data="positions"
+        :columns="columns"
+        :total="total"
+        :current-page="currentPage"
+        :page-size="pageSize"
+        :loading="loading"
+        :search-value="searchQuery"
+        :position-type="positionType"
+        :sender="sender"
+        :receiver="receiver"
+        @page-change="handlePageChange"
+        @page-size-change="handlePageSizeChange"
+        @search="handleSearch"
+        @filter-change="handleFilterChange"
+      />
+    </div>
   </div>
 </template>
 
 <style scoped>
+/* Sayfa arka planı */
+:deep(body),
+:deep(html) {
+  background-color: #121212 !important;
+}
 
+/* Tablo başlıkları için stil */
+:deep(th),
+:deep(th *),
+:deep(.p-column-header-content),
+:deep(.p-sortable-column) {
+  background-color: #343a40 !important;
+  color: #ffffff !important;
+  border: none !important;
+  border-bottom: none !important;
+  border-top: none !important;
+  border-left: none !important;
+  border-right: none !important;
+  font-weight: bold !important;
+  padding: 8px 8px !important;
+  box-shadow: none !important;
+  text-align: left !important;
+  justify-content: flex-start !important;
+  align-items: center !important;
+}
+
+/* Tablo satırları için hover efekti */
+:deep(tr:hover) {
+  background-color: var(--muted) !important;
+}
+
+/* Tablo satırları için hover efekti - daha spesifik seçici */
+:deep(tbody tr:hover) {
+  background-color: var(--muted) !important;
+  transition: background-color 0.2s ease-in-out !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
+  transform: translateY(-2px) !important;
+}
+
+/* Tablo satır çizgileri kaldırıldı */
+:deep(tr),
+:deep(tr *) {
+  border: none !important;
+  border-bottom: none !important;
+  border-top: none !important;
+  border-left: none !important;
+  border-right: none !important;
+  box-shadow: none !important;
+}
+
+/* Tablo hücreleri */
+:deep(td),
+:deep(td *),
+:deep(.p-column-title) {
+  color: var(--foreground) !important;
+  border: none !important;
+  border-bottom: none !important;
+  border-top: none !important;
+  border-left: none !important;
+  border-right: none !important;
+  padding: 8px 8px !important;
+  box-shadow: none !important;
+  text-align: left !important;
+  justify-content: flex-start !important;
+  align-items: center !important;
+}
+
+/* Tablo genel stil */
+:deep(table),
+:deep(table *) {
+  border-collapse: separate !important;
+  border-spacing: 0 4px !important;
+  border: none !important;
+  border-bottom: none !important;
+  border-top: none !important;
+  border-left: none !important;
+  border-right: none !important;
+  box-shadow: none !important;
+}
+
+/* Tablo içerik hizalama */
+:deep(.p-datatable-tbody > tr > td),
+:deep(.p-datatable-thead > tr > th) {
+  text-align: left !important;
+  padding: 8px 8px !important;
+}
+
+/* Tablo içerik hizalama - ek seçiciler */
+:deep(.p-datatable-tbody > tr > td > *),
+:deep(.p-datatable-thead > tr > th > *) {
+  text-align: left !important;
+  justify-content: flex-start !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+/* Tablo tüm kenarlıkları kaldır */
+:deep(*) {
+  border-color: transparent !important;
+}
+
+:deep(.p-datatable-wrapper),
+:deep(.p-datatable-table),
+:deep(.p-datatable-thead),
+:deep(.p-datatable-tbody),
+:deep(.p-datatable-tfoot),
+:deep(.p-datatable-header),
+:deep(.p-datatable-footer),
+:deep(.p-column-header-content),
+:deep(.p-sortable-column),
+:deep(.p-datatable-scrollable-header),
+:deep(.p-datatable-scrollable-body),
+:deep(.p-datatable-scrollable-footer) {
+  border: none !important;
+  border-bottom: none !important;
+  border-top: none !important;
+  border-left: none !important;
+  border-right: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Tablo container */
+:deep(.p-datatable),
+:deep(.p-datatable *) {
+  border: none !important;
+  border-bottom: none !important;
+  border-top: none !important;
+  border-left: none !important;
+  border-right: none !important;
+  box-shadow: none !important;
+}
+
+/* Pagination butonları */
+:deep(.pagination-button) {
+  background-color: #ffde59 !important;
+  color: #343a40 !important;
+}
+
+/* Aktif pagination butonu */
+:deep(.pagination-button.active) {
+  background-color: #ffde59 !important;
+  color: #343a40 !important;
+  font-weight: bold !important;
+}
+
+/* Tablo container arka planını şeffaf yap */
+:deep(.p-datatable-wrapper) {
+  background-color: transparent !important;
+}
+
+/* Tablo satırları arasındaki boşluğu artır */
+:deep(tbody tr) {
+  margin-bottom: 8px !important;
+  background-color: var(--background) !important;
+}
+
+/* Tablo satırları için yuvarlak köşeler */
+:deep(tbody tr) {
+  border-radius: 4px !important;
+  overflow: hidden !important;
+}
+
+/* Tablo satırlarının ilk ve son hücrelerine yuvarlak köşeler ekle */
+:deep(tbody tr td:first-child) {
+  border-top-left-radius: 4px !important;
+  border-bottom-left-radius: 4px !important;
+}
+
+:deep(tbody tr td:last-child) {
+  border-top-right-radius: 4px !important;
+  border-bottom-right-radius: 4px !important;
+}
+
+/* Sütun ayırıcılarını kaldır */
+:deep(.p-column-separator) {
+  display: none !important;
+}
+
+/* Sütun başlıkları arasındaki çizgileri kaldır */
+:deep(th:after),
+:deep(th:before) {
+  display: none !important;
+}
+
+/* Tablo satırları arasındaki boşluğu artır */
+:deep(tbody tr + tr) {
+  margin-top: 8px !important;
+}
+
+/* Tablo başlıkları ve içerik arasındaki boşluğu artır */
+:deep(thead) {
+  margin-bottom: 12px !important;
+}
+
+/* Tablo başlıklarının arka planını ayarla */
+:deep(thead tr) {
+  background-color: var(--muted) !important;
+  border-radius: 4px !important;
+}
+
+/* Tablo başlıklarının ilk ve son hücrelerine yuvarlak köşeler ekle */
+:deep(thead tr th:first-child) {
+  border-top-left-radius: 6px !important;
+  border-bottom-left-radius: 6px !important;
+}
+
+:deep(thead tr th:last-child) {
+  border-top-right-radius: 6px !important;
+  border-bottom-right-radius: 6px !important;
+}
 </style>

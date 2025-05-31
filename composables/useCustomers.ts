@@ -13,11 +13,11 @@ export function useCustomers() {
   const searching = ref(false)
   const error = ref<string | null>(null)
   const total = ref(0)
-  const currentOffset = ref(0)
+  const currentPage = ref(1)
   const pageSize = ref(10)
   const searchQuery = ref('')
 
-  async function fetchCustomers(offset = currentOffset.value, limit = pageSize.value, search = searchQuery.value, isSearching = false) {
+  async function fetchCustomers(page = currentPage.value, limit = pageSize.value, search = searchQuery.value, isSearching = false) {
     if (isSearching) {
       searching.value = true
     }
@@ -27,13 +27,14 @@ export function useCustomers() {
     error.value = null
 
     try {
+      const offset = (page - 1) * limit
       const query: Record<string, any> = {
         offset,
         limit,
       }
 
       if (search?.trim()) {
-        query.companyName = search.trim()
+        query.customer = search.trim()
       }
 
       const response = await $apiFetch<PaginatedResponse>('/customers', {
@@ -42,7 +43,7 @@ export function useCustomers() {
 
       customers.value = response.data
       total.value = response.total
-      currentOffset.value = offset
+      currentPage.value = page
       pageSize.value = limit
       searchQuery.value = search
     }
@@ -58,16 +59,15 @@ export function useCustomers() {
 
   function onSearch(search: string) {
     searchQuery.value = search
-    fetchCustomers(0, pageSize.value, search, true)
+    fetchCustomers(1, pageSize.value, search, true)
   }
 
   function onPageChange(page: number) {
-    const offset = (page - 1) * pageSize.value
-    fetchCustomers(offset, pageSize.value)
+    fetchCustomers(page, pageSize.value)
   }
 
   function onPageSizeChange(limit: number) {
-    fetchCustomers(0, limit)
+    fetchCustomers(1, limit)
   }
 
   async function getCustomerMailList(id: string) {
@@ -95,7 +95,7 @@ export function useCustomers() {
     searching,
     error,
     total,
-    currentPage: computed(() => Math.floor(currentOffset.value / pageSize.value) + 1),
+    currentPage: computed(() => currentPage.value),
     pageSize,
     searchQuery,
     fetchCustomers,

@@ -53,7 +53,7 @@ export function usePositions() {
       }
 
       if (search?.trim()) {
-        query.companyName = search.trim()
+        query.customer = search.trim()
       }
 
       if (type) {

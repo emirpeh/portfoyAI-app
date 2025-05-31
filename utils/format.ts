@@ -11,12 +11,13 @@ export function formatFileSize(bytes: number): string {
 }
 
 export function formatDate(date: string | Date): string {
-  if (!date) return ''
+  if (!date)
+    return ''
   return new Date(date).toLocaleDateString('tr-TR', {
     year: 'numeric',
     month: 'numeric',
     day: 'numeric',
     hour: '2-digit',
-    minute: '2-digit'
+    minute: '2-digit',
   })
-} 
+}

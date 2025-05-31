@@ -23,6 +23,11 @@ const linkHref = computed(() => {
       : 'info@maxitransport.net'
     return `mailto:${email}`
   }
+  // Special handling for home route to prevent double locale prefixing
+  if (props.item.link === '/') {
+    const { locale } = useI18n()
+    return locale.value === 'tr' ? '/' : `/${locale.value}`
+  }
   return localePath(props.item.link)
 })
 

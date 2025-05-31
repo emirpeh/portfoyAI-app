@@ -7,7 +7,6 @@ import type {
 } from '@tanstack/vue-table'
 
 import type { Customer } from '../data/schema'
-import { valueUpdater } from '@/lib/utils'
 import {
   FlexRender,
   getCoreRowModel,
@@ -18,6 +17,8 @@ import {
   getSortedRowModel,
   useVueTable,
 } from '@tanstack/vue-table'
+import { useI18n } from 'vue-i18n'
+import { valueUpdater } from '@/lib/utils'
 import DataTablePagination from './DataTablePagination.vue'
 import DataTableToolbar from './DataTableToolbar.vue'
 
@@ -26,6 +27,7 @@ interface DataTableProps {
   data: Customer[]
   total: number
   pageSize: number
+  currentPage: number
   searchValue?: string
   loading?: boolean
 }
@@ -37,15 +39,20 @@ const columnFilters = ref<ColumnFiltersState>([])
 const columnVisibility = ref<VisibilityState>({
   accountId: false,
 })
+const { t } = useI18n()
 const rowSelection = ref({})
 
 const pagination = ref({
-  pageIndex: 0,
+  pageIndex: props.currentPage - 1,
   pageSize: props.pageSize,
 })
 
 watch(() => props.pageSize, (newSize) => {
   pagination.value.pageSize = newSize
+})
+
+watch(() => props.currentPage, (newPage) => {
+  pagination.value.pageIndex = newPage - 1
 })
 
 const table = useVueTable({
@@ -102,7 +109,7 @@ function handleSearch(value: string) {
       @search="handleSearch"
       @update:model-value="$emit('update:searchValue', $event)"
     />
-    <div class="border rounded-md">
+    <div class="border rounded-md dark:bg-background">
       <Table>
         <TableHeader>
           <TableRow v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
@@ -117,7 +124,7 @@ function handleSearch(value: string) {
               v-for="row in table.getRowModel().rows"
               :key="row.id"
               :data-state="row.getIsSelected() && 'selected'"
-              class="hover:bg-muted/50" :class="[
+              class="hover:bg-muted/50 dark:hover:bg-muted/90" :class="[
                 row.getValue('accountId') ? 'bg-green-50 dark:bg-green-900/10' : '',
               ]"
             >
@@ -132,7 +139,7 @@ function handleSearch(value: string) {
               :colspan="props.columns.length"
               class="h-24 text-center"
             >
-              No results.
+              {{ t('common.no_results') }}
             </TableCell>
           </TableRow>
         </TableBody>

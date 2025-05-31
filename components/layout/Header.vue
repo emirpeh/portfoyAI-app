@@ -32,14 +32,14 @@ watch(() => route.fullPath, (val) => {
 </script>
 
 <template>
-  <header class="sticky top-0 z-10 h-53px flex items-center gap-4 border-b bg-background px-4 md:px-6">
+  <header class="sticky top-0 z-10 h-53px flex items-center gap-4 border-b px-4 md:px-6" style="background-color: #f5c518;">
     <div class="w-full flex items-center gap-4">
-      <SidebarTrigger />
-      <Separator orientation="vertical" class="h-4" />
-      <BaseBreadcrumbCustom :links="links" />
+      <SidebarTrigger class="text-black" />
+      <Separator orientation="vertical" class="h-4 bg-black" />
+      <BaseBreadcrumbCustom :links="links" class="text-black" />
     </div>
     <div class="ml-auto flex items-center gap-2">
-      <LanguageSwitcher />
+      <LanguageSwitcher class="text-black" />
       <slot />
     </div>
   </header>

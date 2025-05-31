@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
+import BaseSpinner from '~/components/base/BaseSpinner.vue'
 import { useMonthlyStats } from '~/composables/useMonthlyStats'
 
 interface ChartEntry {
@@ -37,7 +38,7 @@ const chartData = computed(() => {
 <template>
   <div class="h-[350px]">
     <div v-if="loading" class="h-full flex items-center justify-center">
-      <BaseSpinner />
+      <BaseSpinner size="lg" />
     </div>
     <BarChart
       v-else

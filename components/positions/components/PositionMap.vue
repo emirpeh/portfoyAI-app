@@ -7,7 +7,7 @@ import 'leaflet/dist/leaflet.css'
 const props = defineProps<{
   loadingLocation: [number, number]
   unloadingLocation: [number, number]
-  truckLocations?: { lastLocation: string }[] // Array of location objects
+  truckLocations?: { lastLocation: string }[]
 }>()
 
 const { t } = useI18n()
@@ -19,8 +19,21 @@ const markers = ref<L.Marker[]>([])
 
 // Function to get coordinates for a location name
 async function getCoordinates(locationName: string): Promise<[number, number] | null> {
-  if (!locationName) {
+  if (!locationName || locationName.trim() === '') {
+    console.warn('Empty location name provided to getCoordinates')
     return null
+  }
+
+  // Eğer konum zaten koordinat formatındaysa (lat,lng) doğrudan kullan
+  if (locationName.includes(',')) {
+    const parts = locationName.split(',')
+    if (parts.length === 2) {
+      const lat = Number.parseFloat(parts[0].trim())
+      const lng = Number.parseFloat(parts[1].trim())
+      if (!Number.isNaN(lat) && !Number.isNaN(lng)) {
+        return [lat, lng]
+      }
+    }
   }
 
   try {
@@ -30,6 +43,7 @@ async function getCoordinates(locationName: string): Promise<[number, number] | 
     if (data && data.length > 0) {
       return [Number.parseFloat(data[0].lat), Number.parseFloat(data[0].lon)]
     }
+    console.warn(`No coordinates found for location: ${locationName}`)
     return null
   }
   catch (error) {
@@ -116,12 +130,17 @@ async function drawRoute() {
   unloadingMarker.addTo(map.value)
   markers.value.push(unloadingMarker)
 
+  let shouldZoomToTruck = false
+  let truckCoords = null
+
   if (props.truckLocations && props.truckLocations.length > 0) {
-    const validTruckLocations = props.truckLocations.filter(loc => loc.lastLocation)
+    // Geçerli konum bilgisi olan kamyonları filtrele
+    const validTruckLocations = props.truckLocations.filter(loc => loc.lastLocation && loc.lastLocation.trim() !== '')
 
     for (let i = 0; i < validTruckLocations.length; i++) {
       const loc = validTruckLocations[i]
       const coords = await getCoordinates(loc.lastLocation)
+
       if (coords) {
         validLocations.push({ coords, name: loc.lastLocation })
         coordinates.push(coords)
@@ -154,9 +173,10 @@ async function drawRoute() {
       }
     }
 
-    if (coordinates.length > 0) {
+    if (coordinates.length > 1) { // En az bir tır konumu varsa (yükleme noktası + en az bir tır konumu)
       const lastCoords = coordinates[coordinates.length - 1]
       const lastLocation = validTruckLocations[validTruckLocations.length - 1]
+
       const truckMarker = L.marker(lastCoords, {
         icon: truckIcon,
         zIndexOffset: 2000,
@@ -172,14 +192,20 @@ async function drawRoute() {
         zIndexOffset: -1000,
       }).addTo(map.value)
       routeLines.value.push(blueLine)
-    }
 
-    const allPoints = [
-      props.loadingLocation,
-      ...coordinates,
-      props.unloadingLocation,
-    ]
-    map.value.fitBounds(L.latLngBounds(allPoints), { padding: [50, 50] })
+      // Tırın son konumuna yakınlaştırmak için işaretleyelim
+      shouldZoomToTruck = true
+      truckCoords = lastCoords
+    }
+  }
+
+  // Yakınlaştırma işlemini en son yapalım
+  if (shouldZoomToTruck && truckCoords) {
+    // Tırın son konumuna yakınlaştır
+    map.value.setView(truckCoords, 12)
+  }
+  else {
+    map.value.setView(props.loadingLocation, 12)
   }
 }
 
@@ -188,19 +214,24 @@ onMounted(() => {
   if (!mapContainer.value)
     return
 
-  map.value = L.map(mapContainer.value).setView(props.loadingLocation, 5)
+  // Haritayı başlangıç konumuna odaklanmış olarak oluştur
+  map.value = L.map(mapContainer.value)
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap contributors',
   }).addTo(map.value)
 
-  drawRoute()
+  // drawRoute fonksiyonu watch tarafından immediate: true ile çağrılacak
 })
 
 // Watch for changes in props
 watch([() => props.truckLocations, () => props.loadingLocation, () => props.unloadingLocation], () => {
-  drawRoute()
-})
+  // Harita her güncellendiğinde drawRoute fonksiyonunu çağır
+  // Bu, haritanın odak noktasının da güncellenmesini sağlayacak
+  if (map.value) {
+    drawRoute()
+  }
+}, { immediate: true })
 
 // Cleanup on unmount
 onUnmounted(() => {
