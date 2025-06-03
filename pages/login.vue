@@ -1,40 +1,42 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import { useAuth } from '~/composables/useAuth'
+import { useAuthStore } from '~/composables/useAuthStore'
+import { useUserProfileStore } from '~/stores/userProfileStore'
+import { storeToRefs } from 'pinia'
 
 definePageMeta({
   layout: 'blank',
 })
 
 const { t } = useI18n()
-const auth = useAuth()
+const authStore = useAuthStore()
+const userProfileStore = useUserProfileStore()
 const router = useRouter()
 
 const form = ref({
-  email: '',
-  password: '',
+  email: 'buyer@portfoy.ai',
+  password: 'password',
 })
 
-const loading = ref(false)
-const error = ref('')
+const { isLoading, error: authError } = storeToRefs(userProfileStore)
 
 async function handleSubmit() {
-  loading.value = true
-  error.value = ''
+  console.log('[LoginVue] Attempting login with form data:', JSON.parse(JSON.stringify(form.value)));
   try {
-    const { success } = await auth.login(form.value)
-    if (success) {
-      router.push(`/dashboard`)
+    const result = await authStore.login(form.value);
+    console.log('[LoginVue] Login result from authStore:', JSON.parse(JSON.stringify(result || {})));
+
+    if (result && result.success && result.user) {
+      if (result.user.roles.includes('buyer') && !userProfileStore.userPreferences) {
+        router.push('/my-profile/preferences')
+      } else {
+        router.push('/dashboard')
+      }
+    } else {
+      console.error('[LoginVue] Login failed in component. Full result:', JSON.parse(JSON.stringify(result || {})), 'Result error part:', result?.error);
     }
-    else {
-      error.value = t('auth.failed')
-    }
-  }
-  catch {
-    error.value = t('auth.error')
-  }
-  finally {
-    loading.value = false
+  } catch (e) {
+    console.error('[LoginVue] Error during handleSubmit execution:', e);
   }
 }
 </script>
@@ -45,9 +47,9 @@ async function handleSubmit() {
       <CardHeader class="pb-4 pt-6 text-center">
         <div class="mb-4 flex justify-center">
           <img
-            src="/images/logo.png"
-            alt="Maxi Logistics"
-            class="h-20 w-auto"
+            src="/images/logo-portfoyai.svg"
+            alt="PortfoyAI"
+            class="h-12 w-auto"
           >
         </div>
         <CardTitle class="text-2xl text-gray-900 font-bold">
@@ -55,7 +57,7 @@ async function handleSubmit() {
         </CardTitle>
         <CardDescription class="relative">
           <span class="animate-gradient-x from-primary via-primary/70 to-primary bg-gradient-to-r bg-clip-text text-base text-transparent">
-            {{ t('auth.description') }}
+            PortfoyAI Emlak Platformu
           </span>
         </CardDescription>
       </CardHeader>
@@ -65,7 +67,7 @@ async function handleSubmit() {
             <Label for="email" class="text-sm text-gray-700 font-medium">{{ t('auth.email') }}</Label>
             <Input
               id="email"
-              v-model="form.email as string"
+              v-model="form.email"
               type="email"
               required
               class="w-full border border-gray-300 rounded-lg bg-gray-100 px-4 py-2 text-gray-900 focus:border-primary focus:ring-2 focus:ring-primary focus:ring-opacity-50"
@@ -77,7 +79,7 @@ async function handleSubmit() {
             <Label for="password" class="text-sm text-gray-700 font-medium">{{ t('auth.password') }}</Label>
             <Input
               id="password"
-              v-model="form.password as string"
+              v-model="form.password"
               type="password"
               required
               class="w-full border border-gray-300 rounded-lg bg-gray-100 px-4 py-2 text-gray-900 focus:border-primary focus:ring-2 focus:ring-primary focus:ring-opacity-50"
@@ -85,14 +87,15 @@ async function handleSubmit() {
             />
           </div>
 
-          <p v-if="error" class="mt-2 text-sm text-red-600 font-medium">
-            {{ error }}
+          <p v-if="authError" class="mt-2 text-sm text-red-600 font-medium">
+            {{ typeof authError === 'object' ? JSON.stringify(authError) : authError }}
           </p>
 
           <Button
             type="submit"
             class="w-full rounded-lg bg-primary py-2.5 text-white font-medium transition-colors hover:bg-primary/90"
-            :loading="loading"
+            :loading="isLoading"
+            :disabled="isLoading"
           >
             {{ t('auth.login') }}
           </Button>

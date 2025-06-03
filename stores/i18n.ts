@@ -1,13 +1,11 @@
 export const useI18nStore = defineStore('i18n', {
   state: () => ({
-    locale: 'en',
+    locale: 'tr',
   }),
   actions: {
     setLocale(newLocale: 'en' | 'tr') {
       this.locale = newLocale
     },
   },
-  persist: {
-    storage: persistedState.localStorage,
-  },
+  persist: true,
 })

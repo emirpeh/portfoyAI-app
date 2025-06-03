@@ -9,7 +9,7 @@ import {
   transformerVariantGroup,
 } from 'unocss'
 import presetAnimations from 'unocss-preset-animations'
-import { builtinColors, presetShadcn } from 'unocss-preset-shadcn'
+import { presetShadcn } from 'unocss-preset-shadcn'
 
 export default defineConfig({
   variants: [
@@ -22,7 +22,7 @@ export default defineConfig({
           return matcher
         return {
           matcher: matcher.substring(match[0].length),
-          selector: s => `${s}:nth-child(${match[1]})`,
+          selector: (s: string) => `${s}:nth-child(${match[1]})`,
         }
       },
       multiPass: true,
@@ -30,14 +30,12 @@ export default defineConfig({
   ],
   theme: {
     colors: {
-      'sidebar': 'hsl(var(--sidebar-background))',
-      'sidebar-foreground': 'hsl(var(--sidebar-foreground))',
-      'sidebar-primary': 'hsl(var(--sidebar-primary))',
-      'sidebar-primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
-      'sidebar-accent': 'hsl(var(--sidebar-accent))',
-      'sidebar-accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
-      'sidebar-border': 'hsl(var(--sidebar-border))',
-      'sidebar-ring': 'hsl(var(--sidebar-ring))',
+      // Shadcn genellikle CSS değişkenlerini kullanır, bu bölümü sadeleştirebiliriz
+      // veya temel renkleri burada da tanımlayabiliriz.
+      // Örnek: 
+      // primary: '#2A60FF',
+      // secondary: '#F5F6FA',
+      // accent: '#30C98E',
     },
     animation: {
       keyframes: {
@@ -57,18 +55,23 @@ export default defineConfig({
     presetIcons({
       scale: 1.2,
       collections: {
-        logos: () => import('@iconify-json/logos/icons.json').then(i => i.default),
+        logos: () => import('@iconify-json/logos/icons.json').then(i => i.default as any),
       },
     }),
     presetTypography(),
-    presetWebFonts({
-      fonts: {
-        sans: 'Chivo',
-        mono: 'Chivo Mono',
-      },
-    }),
+    // presetWebFonts({
+    //   provider: 'google', // Google Fonts için provider belirtelim
+    //   fonts: {
+    //     sans: 'Open Sans:400,600,700', // Metin için Open Sans, farklı kalınlıklar
+    //     // heading: 'Montserrat:500,600,700', // Başlıklar için Montserrat
+    //     montserrat: [ // Montserrat'ı ayrı bir isimle ekleyip özel class ile kullanabiliriz
+    //         { name: 'Montserrat', weights: ['400', '500', '600', '700'] },
+    //         { name: 'sans-serif', provider: 'none' },
+    //     ],
+    //   },
+    // }),
     presetAnimations(),
-    presetShadcn(builtinColors.map(c => ({ color: c }))),
+    presetShadcn(), // Renkleri CSS değişkenlerinden alacak şekilde (varsayılan davranış)
   ],
   transformers: [
     transformerDirectives(),
@@ -88,36 +91,118 @@ export default defineConfig({
     {
       getCSS: () => `
         :root {
-          --vis-tooltip-background-color: none !important;
-          --vis-tooltip-border-color: none !important;
-          --vis-tooltip-text-color: none !important;
-          --vis-tooltip-shadow-color: none !important;
-          --vis-tooltip-backdrop-filter: none !important;
-          --vis-tooltip-padding: none !important;
+          /* PortfoyAI Renk Paleti */
+          --primary-hsl: 225 100% 58%; /* Kobalt Mavisi #2A60FF */
+          --primary: hsl(var(--primary-hsl));
+          --primary-foreground-hsl: 210 40% 98%; /* Primary üzerinde kullanılacak açık renk metin */
+          --primary-foreground: hsl(var(--primary-foreground-hsl));
+
+          --secondary-hsl: 220 16% 90%; /* Açık Gri'den biraz daha belirgin bir ikincil #E1E4ED */
+          --secondary: hsl(var(--secondary-hsl));
+          --secondary-foreground-hsl: 222 47% 11%; /* İkincil üzerinde kullanılacak koyu renk metin */
+          --secondary-foreground: hsl(var(--secondary-foreground-hsl));
           
-          --vis-primary-color: var(--primary);
-          --vis-secondary-color: 160 81% 40%;
-          --vis-text-color: var(--muted-foreground);
+          --accent-hsl: 158 60% 50%; /* Nane Yeşili #30C98E */
+          --accent: hsl(var(--accent-hsl));
+          --accent-foreground-hsl: 210 40% 98%; /* Vurgu üzerinde kullanılacak açık renk metin */
+          --accent-foreground: hsl(var(--accent-foreground-hsl));
+
+          --background-hsl: 220 20% 97%; /* Açık Gri #F5F6FA (hsl(220, 20%, 97%) gibi) */
+          --background: hsl(var(--background-hsl)); 
+          --foreground-hsl: 222 47% 11%; /* Koyu metin rengi */
+          --foreground: hsl(var(--foreground-hsl));
+
+          --muted-hsl: 220 9% 46%; /* Soluk metin/elementler için */
+          --muted: hsl(var(--muted-hsl));
+          --muted-foreground-hsl: 220 9% 60%; /* Soluk metinler */
+          --muted-foreground: hsl(var(--muted-foreground-hsl));
+
+          --card-hsl: 0 0% 100%; /* Kartlar için beyaz */
+          --card: hsl(var(--card-hsl));
+          --card-foreground-hsl: 222 47% 11%; /* Kart metin rengi */
+          --card-foreground: hsl(var(--card-foreground-hsl));
+
+          --popover-hsl: 0 0% 100%;
+          --popover: hsl(var(--popover-hsl));
+          --popover-foreground-hsl: 222 47% 11%;
+          --popover-foreground: hsl(var(--popover-foreground-hsl));
+
+          --border-hsl: 220 13% 85%; /* Kenarlıklar için */
+          --border: hsl(var(--border-hsl));
+          --input-hsl: 220 13% 88%; /* Input kenarlıkları için */
+          --input: hsl(var(--input-hsl));
+
+          --ring-hsl: 225 100% 58%; /* Odak halkası için primary */
+          --ring: hsl(var(--ring-hsl));
+
+          --radius: 0.5rem; /* shadcn varsayılanı */
+
+          /* Sidebar renkleri (PortfoyAI paletine uygun) */
+          --sidebar-background-hsl: 220 20% 98%; /* Açık Gri'ye çok yakın */
+          --sidebar-background: hsl(var(--sidebar-background-hsl));
+          --sidebar-foreground-hsl: 222 47% 11%; /* Koyu metin */
+          --sidebar-foreground: hsl(var(--sidebar-foreground-hsl));
           
-          --sidebar-background: 0 0% 98%;
-          --sidebar-foreground: 240 5.3% 26.1%;
-          --sidebar-primary: 240 5.9% 10%;
-          --sidebar-primary-foreground: 0 0% 98%;
-          --sidebar-accent: 240 4.8% 95.9%;
-          --sidebar-accent-foreground: 240 5.9% 10%;
-          --sidebar-border: 220 13% 91%;
-          --sidebar-ring: 217.2 91.2% 59.8%;
+          --sidebar-primary-hsl: var(--primary-hsl); /* Ana mavi */
+          --sidebar-primary: hsl(var(--sidebar-primary-hsl));
+          --sidebar-primary-foreground-hsl: var(--primary-foreground-hsl);
+          --sidebar-primary-foreground: hsl(var(--sidebar-primary-foreground-hsl));
+          
+          --sidebar-accent-hsl: var(--accent-hsl); /* Vurgu yeşili */
+          --sidebar-accent: hsl(var(--sidebar-accent-hsl));
+          --sidebar-accent-foreground-hsl: var(--accent-foreground-hsl);
+          --sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground-hsl));
+          
+          --sidebar-border-hsl: 220 13% 91%;
+          --sidebar-border: hsl(var(--sidebar-border-hsl));
+          --sidebar-ring-hsl: var(--ring-hsl);
+          --sidebar-ring: hsl(var(--sidebar-ring-hsl));
         }
         
         .dark {
-          --sidebar-background: 240 5.9% 10%;
-          --sidebar-foreground: 240 4.8% 95.9%;
-          --sidebar-primary: 224.3 76.3% 48%;
-          --sidebar-primary-foreground: 0 0% 100%;
-          --sidebar-accent: 240 3.7% 15.9%;
-          --sidebar-accent-foreground: 240 4.8% 95.9%;
-          --sidebar-border: 240 3.7% 15.9%;
-          --sidebar-ring: 217.2 91.2% 59.8%;
+          /* Dark mode renkleri (şimdilik shadcn varsayılanlarına benzer bırakıldı, ayarlanabilir) */
+          --primary-hsl: 225 100% 65%; /* Kobalt Mavisinin daha açığı */
+          --primary-foreground-hsl: 210 40% 98%;
+
+          --secondary-hsl: 220 15% 25%;
+          --secondary-foreground-hsl: 210 40% 90%;
+          
+          --accent-hsl: 158 60% 55%; /* Nane Yeşili daha açık */
+          --accent-foreground-hsl: 240 5% 90%;
+
+          --background-hsl: 222 47% 10%; /* Koyu arka plan */
+          --foreground-hsl: 210 40% 90%; /* Açık metin */
+
+          --muted-hsl: 220 9% 30%;
+          --muted-foreground-hsl: 220 9% 55%;
+
+          --card-hsl: 222 47% 12%; /* Koyu kartlar */
+          --card-foreground-hsl: 210 40% 90%;
+
+          --popover-hsl: 222 47% 12%;
+          --popover-foreground-hsl: 210 40% 90%;
+
+          --border-hsl: 220 15% 28%;
+          --input-hsl: 220 15% 30%;
+          --ring-hsl: 225 100% 65%;
+
+          /* Dark mode sidebar renkleri */
+          --sidebar-background-hsl: 222 47% 11%;
+          --sidebar-foreground-hsl: 210 40% 92%;
+          --sidebar-primary-hsl: var(--primary-hsl);
+          --sidebar-primary-foreground-hsl: var(--primary-foreground-hsl);
+          --sidebar-accent-hsl: var(--accent-hsl);
+          --sidebar-accent-foreground-hsl: var(--accent-foreground-hsl);
+          --sidebar-border-hsl: 220 15% 28%;
+          --sidebar-ring-hsl: var(--ring-hsl);
+        }
+
+        body {
+          font-family: 'Open Sans', sans-serif;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+          font-family: 'Montserrat', sans-serif;
         }
       `,
     },

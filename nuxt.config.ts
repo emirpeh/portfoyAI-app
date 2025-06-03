@@ -26,7 +26,7 @@ export default defineNuxtConfig({
     '@nuxt/eslint',
     '@nuxt/icon',
     '@pinia/nuxt',
-    '@pinia-plugin-persistedstate/nuxt',
+    'pinia-plugin-persistedstate/nuxt',
     '@nuxtjs/color-mode',
     '@nuxt/image',
     '@unocss/nuxt',
@@ -96,7 +96,8 @@ export default defineNuxtConfig({
     },
   },
 
-  piniaPersistedstate: {
+  piniaPluginPersistedstate: {
+    storage: 'localStorage',
     cookieOptions: {
       sameSite: 'strict',
     },
@@ -104,7 +105,7 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL ?? 'http://localhost:3000',
+      apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL ?? 'http://localhost:5000/api',
     },
   },
 

@@ -1,3 +1,12 @@
+import type { NitroFetchRequest, NitroFetchOptions } from 'nitropack';
+
+// Global $apiFetch tipi için
+// FetchError tipini de import etmek gerekebilir: import type { FetchError } from 'ofetch';
+type $ApiFetchGlobalType = <T = any, R extends NitroFetchRequest = NitroFetchRequest> (
+  request: R,
+  opts?: NitroFetchOptions<R, any>
+) => Promise<T>; 
+
 export default defineNuxtPlugin(() => {
   const token = useCookie('token')
   const refreshToken = useCookie('refresh_token')
@@ -6,78 +15,77 @@ export default defineNuxtPlugin(() => {
   const baseURL = config.public.apiBaseUrl
 
   // Public routes that don't need token check
-  const publicRoutes = ['/auth/login']
+  const publicRoutes = ['/auth/login', '/auth/refresh']
 
-  // Create default headers
-  const createHeaders = (authToken?: string | null) => {
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-    }
-    if (authToken) {
-      headers.Authorization = `Bearer ${authToken}`
-    }
-    return headers
-  }
+  const apiFetch = $fetch.create({
+    baseURL,
+    onRequest({ options }) {
+      const headers = new Headers(options.headers || {});
+      headers.set('Content-Type', 'application/json');
+      if (token.value) {
+        headers.set('Authorization', `Bearer ${token.value}`);
+      }
+      options.headers = headers;
+    },
+    async onResponseError({ request, response, options }) {
+      // response.url, tam URL'yi içerir (örn: http://localhost:5000/api/auth/login)
+      // publicRoutes ise path sonlarını içerir (örn: /auth/login)
+      const isPublicRoute = publicRoutes.some(publicPath => response.url.endsWith(publicPath));
 
-  // Handle unauthorized redirect
-  const handleUnauthorized = () => {
-    const router = useRouter()
-    router.push(`/login`)
-  }
+      if (response.status === 401 && !isPublicRoute) {
+        if (!refreshToken.value) {
+          token.value = null;
+          if (process.client) useRouter().push('/login');
+          throw new Error('No refresh token available and current token expired.');
+        }
+        try {
+          const result = await $fetch<{ access_token: string }>('/auth/refresh', {
+            baseURL, // Temel $fetch kullanıldığı için baseURL tekrar belirtilmeli
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }, // Authorization header yok
+            body: { refresh_token: refreshToken.value },
+          });
+
+          if (result.access_token) {
+            token.value = result.access_token;
+            // Orijinal isteği yeni token ile tekrar dene
+            // options.headers burada zaten onRequest içinde tekrar ayarlanacak
+            // bu yüzden sadece isteği tekrar gönderiyoruz.
+            // @ts-ignore
+            return $fetch(request, options as any); 
+          }
+          else {
+            throw new Error('Invalid refresh token response');
+          }
+        }
+        catch (refreshError) {
+          token.value = null;
+          refreshToken.value = null;
+          if (process.client) useRouter().push('/login');
+          console.error('Token refresh failed, redirecting to login:', refreshError);
+          throw new Error('Session expired or refresh failed. Please login again.');
+        }
+      }
+      throw response._data || response; // Diğer hatalar için
+    },
+  }) as $ApiFetchGlobalType;
 
   return {
     provide: {
-      async customFetch<T = any>(request: string, opts: any = {}) {
-        // Create options with default headers
-        const options = {
-          ...opts,
-          baseURL,
-          headers: createHeaders(token.value),
-        }
-
-        try {
-          return await $fetch<T>(request, options)
-        }
-        catch (error: any) {
-          // Skip token refresh for public routes
-          if (error.response?.status === 401 && !publicRoutes.includes(request)) {
-            try {
-              // Try to refresh token
-              if (!refreshToken.value) {
-                throw new Error('No refresh token')
-              }
-
-              const result = await $fetch<{ access_token: string }>('/auth/refresh', {
-                baseURL,
-                method: 'POST',
-                headers: createHeaders(),
-                body: {
-                  refresh_token: refreshToken.value,
-                },
-              })
-
-              if (result.access_token) {
-                token.value = result.access_token
-                // Retry with new token
-                return await $fetch<T>(request, {
-                  ...options,
-                  headers: createHeaders(result.access_token),
-                })
-              }
-              else {
-                throw new Error('Invalid refresh token response')
-              }
-            }
-            catch (refreshError) {
-              token.value = null
-              refreshToken.value = null
-              handleUnauthorized()
-              throw refreshError
-            }
-          }
-          throw error
-        }
-      },
+      apiFetch: apiFetch, // Provide as $apiFetch
     },
   }
-})
+});
+
+declare module '#app' {
+  interface NuxtApp {
+    $apiFetch: $ApiFetchGlobalType
+  }
+}
+
+declare module '@vue/runtime-core' {
+  interface ComponentCustomProperties {
+    $apiFetch: $ApiFetchGlobalType
+  }
+}
+
