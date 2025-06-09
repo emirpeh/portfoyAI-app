@@ -24,6 +24,14 @@ export interface PropertySearchRequest {
   maxPrice?: number | null;
   minRooms?: number | null;
   maxRooms?: number | null;
+  details?: {
+    propertyTypes?: string[];
+    locations?: string[];
+    roomCount?: string[];
+    minBudget?: number;
+    maxBudget?: number;
+    features?: string[];
+  } | null;
 }
 
 export interface DashboardStats {
@@ -43,13 +51,18 @@ export interface Lead {
   status: 'ACTIVE' | 'PENDING' | 'CLOSED' | 'REJECTED';
   transactionType: 'SALE' | 'RENT';
   createdAt: string;
-  customer: {
-    name: string;
-    email: string;
-  };
-  mailLogs: {
-    contentTitle: string;
-  }[];
+  updatedAt: string;
+  customer: Customer;
+  mailLogs: { contentTitle: string }[];
+  notes?: string | null;
+  details?: {
+    propertyTypes?: string[];
+    roomCount?: string[];
+    locations?: string[];
+    minBudget?: number;
+    maxBudget?: number;
+    features?: string[];
+  } | null;
   locations?: any;
   minPrice?: number | null;
   maxPrice?: number | null;
@@ -60,17 +73,16 @@ export interface Lead {
 export interface Property {
   id: string;
   listingNo: string;
-  title?: string | null;
-  status: 'ACTIVE' | 'INACTIVE' | 'SOLD' | 'RENTED' | 'PROCESSING';
+  title: string;
+  description: string | null;
+  status: 'ACTIVE' | 'INACTIVE' | 'PROCESSING' | 'SOLD' | 'RENTED';
   transactionType: 'SALE' | 'RENT';
-  propertyType: string;
   location: string;
   price: number;
   currency: string;
-  createdAt: string;
+  updatedAt: string;
   seller: {
-    id: string;
     name: string;
-    email: string;
+    email: string | null;
   };
 } 

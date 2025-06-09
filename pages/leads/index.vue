@@ -1,152 +1,118 @@
-<script setup lang="ts">
+<script lang="ts" setup>
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+import { fetchAllLeads } from '@/lib/api'
+import type { Lead } from '@/lib/types'
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { useLeads, useLeadStatuses } from '@/composables/useLeads'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { Home, Wallet, Calendar, ArrowRight } from 'lucide-vue-next'
 
-const { leads, loading, error, updateLeadStatus } = useLeads()
-const { leadStatuses } = useLeadStatuses()
+definePageMeta({
+  layout: 'default',
+})
+
+const leads = ref<Lead[]>([])
+const loading = ref(true)
+const error = ref<string | null>(null)
 const router = useRouter()
 
-function navigateToLead(id: string) {
+const statusVariant = (status: string | undefined) => {
+  if (!status) return 'secondary'
+  switch (status) {
+    case 'ACTIVE': return 'secondary'
+    case 'PENDING': return 'outline'
+    case 'CLOSED': return 'default'
+    case 'REJECTED':return 'destructive'
+    default: return 'secondary'
+  }
+}
+
+const navigateToLead = (id: string) => {
   router.push(`/leads/${id}`)
 }
 
-const formatDate = (dateString: string) => {
-  if (!dateString) return 'N/A';
-  return new Date(dateString).toLocaleDateString('tr-TR', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
-};
-
-const getInitial = (name: string) => {
-    if (!name) return '?';
-    return name.charAt(0).toUpperCase();
-}
-
-const parseLocations = (locations: any) => {
+onMounted(async () => {
+  loading.value = true
+  error.value = null
   try {
-    if (!locations) return 'Belirtilmemiş';
-    const parsed = typeof locations === 'string' ? JSON.parse(locations) : locations;
-    if (Array.isArray(parsed)) {
-      return parsed.join(', ');
-    }
-    return 'Geçersiz Lokasyon';
-  } catch (e) {
-    return 'Hatalı Lokasyon Formatı';
+    leads.value = await fetchAllLeads()
+  } catch (e: any) {
+    error.value = e.message || 'Talepler yüklenirken bir hata oluştu.'
+  } finally {
+    loading.value = false
   }
-};
-
-const getStatusVariant = (status: string): 'default' | 'secondary' | 'destructive' | 'outline' => {
-  switch (status) {
-    case 'ACTIVE':
-    case 'MATCH_FOUND':
-      return 'default' // veya 'outline'
-    case 'CLOSED':
-    case 'CANCELLED':
-      return 'destructive'
-    case 'PENDING_USER_INFO':
-      return 'secondary'
-    default:
-      return 'secondary'
-  }
-}
+})
 </script>
 
 <template>
-  <div class="p-4 md:p-6">
-    <Card>
-      <CardHeader>
-        <CardTitle>Gelen Talepler</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div v-if="loading" class="flex items-center justify-center py-16">
-          <p>Yükleniyor...</p>
-        </div>
+  <div class="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
+    <div class="flex items-center">
+      <div>
+        <h1 class="text-2xl font-bold">Alıcı Talepleri</h1>
+        <p class="text-muted-foreground">Tüm aktif ve geçmiş alıcı taleplerini buradan yönetin.</p>
+      </div>
+    </div>
 
-        <div v-else-if="error" class="text-red-500 py-16 text-center">
-          <p>Veriler yüklenirken bir hata oluştu.</p>
-          <p class="text-sm text-gray-500">{{ error }}</p>
-        </div>
+    <div v-if="loading" class="flex-1 flex items-center justify-center">
+      <p>Talepler yükleniyor...</p>
+    </div>
 
-        <div v-else>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Müşteri</TableHead>
-                <TableHead>Talep Özeti</TableHead>
-                <TableHead>Durum</TableHead>
-                <TableHead class="text-right">Tarih</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              <TableRow v-for="lead in leads" :key="lead.id">
-                <TableCell @click="navigateToLead(lead.id)" class="cursor-pointer">
-                  <div class="flex items-center gap-3">
-                    <Avatar>
-                      <AvatarFallback>{{ getInitial(lead.customer?.name ?? '') }}</AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <div class="font-medium">{{ lead.customer?.name || 'İsimsiz' }}</div>
-                      <div class="text-sm text-muted-foreground">{{ lead.customer?.email || '' }}</div>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell @click="navigateToLead(lead.id)" class="cursor-pointer">
-                  <div class="font-medium">
-                    {{ lead.transactionType === 'SALE' ? 'Satılık Talep' : 'Kiralık Talep' }}
-                  </div>
-                  <div class="text-sm text-muted-foreground">
-                    <span v-if="lead.locations">{{ parseLocations(lead.locations) }}</span>
-                    <span v-if="lead.minRooms || lead.maxRooms"> | {{ lead.minRooms || '?' }}-{{ lead.maxRooms || '?' }} oda</span>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger as-child>
-                      <Button variant="ghost" class="p-0 h-auto">
-                        <Badge :variant="getStatusVariant(lead.status)" class="cursor-pointer">
-                          {{ lead.status }}
-                        </Badge>
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="start">
-                      <DropdownMenuLabel>Durumu Değiştir</DropdownMenuLabel>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem v-for="s in leadStatuses" :key="s.value" @click="updateLeadStatus(lead.id, s.value)">
-                        <span>{{ s.label }}</span>
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TableCell>
-                <TableCell @click="navigateToLead(lead.id)" class="text-right cursor-pointer">
-                  {{ formatDate(lead.createdAt) }}
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </div>
-      </CardContent>
-    </Card>
+    <div v-else-if="error">
+       <Alert variant="destructive">
+          <AlertTitle>Hata</AlertTitle>
+          <AlertDescription>
+            {{ error }}
+          </AlertDescription>
+        </Alert>
+    </div>
+
+    <div v-else-if="leads.length > 0" class="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <Card v-for="lead in leads" :key="lead.id" class="flex flex-col">
+          <CardHeader>
+             <div class="flex items-start">
+                <div class="flex-1">
+                    <CardTitle class="text-lg">{{ lead.customer.name }}</CardTitle>
+                    <CardDescription>Talep No: {{ lead.requestNo }}</CardDescription>
+                </div>
+                 <Badge :variant="statusVariant(lead.status)">{{ lead.status }}</Badge>
+             </div>
+          </CardHeader>
+          <CardContent class="grid gap-4 text-sm flex-1">
+            <div class="grid grid-cols-[25px_1fr] items-start pb-4 last:pb-0 last:border-0">
+                <Home class="h-5 w-5" />
+                <div class="grid gap-1">
+                    <p class="font-medium"> {{ lead.transactionType === 'SALE' ? 'Satılık' : 'Kiralık' }} - {{ lead.details?.propertyTypes?.join(', ') || 'Belirtilmemiş' }}</p>
+                    <p class="text-muted-foreground">{{ lead.details?.locations?.join(', ') || 'Konum Belirtilmemiş' }}</p>
+                </div>
+            </div>
+             <div class="grid grid-cols-[25px_1fr] items-start pb-4 last:pb-0 last:border-0">
+                <Wallet class="h-5 w-5" />
+                <div class="grid gap-1">
+                    <p class="font-medium">Bütçe</p>
+                    <p class="text-muted-foreground">{{ lead.details?.minBudget && lead.details?.maxBudget ? `${new Intl.NumberFormat('tr-TR').format(lead.details.minBudget)} - ${new Intl.NumberFormat('tr-TR').format(lead.details.maxBudget)}` : 'Belirtilmemiş' }}</p>
+                </div>
+            </div>
+            <div class="grid grid-cols-[25px_1fr] items-start">
+                <Calendar class="h-5 w-5" />
+                 <div class="grid gap-1">
+                    <p class="font-medium">Tarih</p>
+                    <p class="text-muted-foreground">{{ new Date(lead.createdAt).toLocaleDateString('tr-TR') }}</p>
+                </div>
+            </div>
+          </CardContent>
+          <div class="p-4 pt-0 mt-auto">
+             <Button @click="navigateToLead(lead.id)" class="w-full">
+                Detayları Gör <ArrowRight class="ml-2 h-4 w-4" />
+             </Button>
+          </div>
+        </Card>
+    </div>
+
+    <div v-else class="text-center py-10 rounded-lg border-2 border-dashed border-gray-300">
+      <h3 class="text-xl font-semibold">Henüz Alıcı Talebi Yok</h3>
+      <p class="text-muted-foreground mt-2">Sisteme yeni alıcı talepleri eklendiğinde burada görünecektir.</p>
+    </div>
   </div>
 </template> 

@@ -1,45 +1,92 @@
-import type { DashboardData, PropertySearchRequest, Lead } from './types'
+import type { DashboardData, PropertySearchRequest, Lead, DashboardStats, Property } from './types'
 
 // Backend'den gelen PropertySearchRequest verisini Lead formatına dönüştüren adaptör
-export function adaptRequestToLead(request: PropertySearchRequest): Lead {
+export function adaptRequestToLead(request: PropertySearchRequest | any): Lead {
+  if (!request) {
+    throw new Error('Invalid request format')
+  }
+
+  if (!request.customer) {
+    throw new Error('PropertySearchRequest is missing customer data.')
+  }
+
   return {
     id: request.id,
     requestNo: request.requestNo,
     status: request.status,
     createdAt: request.createdAt,
-    customer: {
-      name: request.customer?.name || 'İsimsiz',
-      email: request.customer?.email || 'E-posta Yok',
-    },
-    // mailLogs'u backend'den almadığımız için geçici bir başlık oluşturuyoruz
+    updatedAt: request.updatedAt || request.createdAt,
+    transactionType: request.transactionType,
+    customer: request.customer,
+    notes: request.notes,
     mailLogs: [{ contentTitle: request.notes || 'Talep Notu' }],
+    // Backend'den gelen düz veri yapısını frontend'in beklediği 'details' nesnesine dönüştür.
+    details: {
+      propertyTypes: request.propertyTypes,
+      locations: request.locations,
+      roomCount: request.minRooms ? [String(request.minRooms)] : undefined,
+      minBudget: request.minPrice,
+      maxBudget: request.maxPrice,
+      features: request.requiredFeatures,
+    },
   }
 }
 
-export async function fetchDashboardData() {
-  const { data, error } = await useFetch<DashboardData>('/api/real-estate/dashboard')
+export async function fetchDashboardData(): Promise<{ leads: Lead[]; stats: DashboardStats; recentActivities: Property[] }> {
+  const { $apiFetch } = useNuxtApp()
+  try {
+    const dashboardData = await $apiFetch<{ leads: Lead[]; stats: DashboardStats; recentActivities: Property[] }>('/api/real-estate/dashboard')
 
-  if (error.value) {
-    console.error('Error fetching dashboard data:', error.value)
-    // Hata durumunda boş veya varsayılan bir yapı döndürebiliriz
+    if (!dashboardData) {
+      console.error('Error fetching dashboard data: no data returned')
+      throw new Error('Dashboard verileri alınamadı.')
+    }
+    
+    // API'den gelen verinin formatını doğrulayıp döndürüyoruz.
+    // Başarılı durumda dashboardData'nın doğrudan { leads, stats } yapısında olduğunu varsayıyoruz.
+    return dashboardData
+  }
+  catch (err) {
+    // Hata yönetimi
+    console.error(err)
+    // Boş veya varsayılan bir durum döndür
     return {
-      stats: { totalListings: 0, totalCustomers: 0, activeRequests: 0 },
       leads: [],
+      stats: { totalListings: 0, totalCustomers: 0, activeRequests: 0 },
+      recentActivities: [],
     }
   }
+}
 
-  if (data.value) {
-    // Gelen veriyi dashboard'un beklediği formata dönüştür
-    const leads = data.value.recentRequests.map(adaptRequestToLead)
-    return {
-      stats: data.value.stats,
-      leads,
-    }
+export async function createBuyerRequest(payload: any) {
+  const { $apiFetch } = useNuxtApp()
+  try {
+    const response = await $apiFetch('/api/property-search-requests', {
+      method: 'POST',
+      body: payload,
+    })
+    return response
   }
+  catch (error) {
+    console.error('Error creating buyer request:', error)
+    throw error
+  }
+}
 
-  // Veri gelmezse varsayılan değerler
-  return {
-    stats: { totalListings: 0, totalCustomers: 0, activeRequests: 0 },
-    leads: [],
+export async function fetchAllLeads(): Promise<Lead[]> {
+  const { $apiFetch } = useNuxtApp()
+  try {
+    const response = await $apiFetch<{ data: any[] }>('/api/property-search-requests')
+    // Gelen verinin ve 'data' alanının varlığını ve 'data'nın bir dizi olduğunu kontrol et
+    if (!response || !Array.isArray(response.data)) {
+      console.warn('fetchAllLeads received an unexpected response format:', response)
+      return []
+    }
+    // Gelen her bir isteği Lead formatına çevir
+    return response.data.map(request => adaptRequestToLead(request))
+  }
+  catch (error) {
+    console.error('Error fetching all leads:', error)
+    return []
   }
 } 

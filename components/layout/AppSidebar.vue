@@ -52,8 +52,8 @@ const teams: {
 const user = computed(() => {
   // Kullanıcı rolüne göre farklı mail adresleri
   const supportEmail = auth.user?.role === 'ADMIN'
-    ? 'hi@bulutplus.com'
-    : 'info@maxitransport.net'
+    ? 'hi@emirpeh.com'
+    : 'info@portfoyAI.net'
 
   return {
     name: auth.user?.role || 'Kullanıcı',

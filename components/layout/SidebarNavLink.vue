@@ -16,8 +16,8 @@ const auth = useAuth()
 const linkHref = computed(() => {
   if (props.item.isMailto) {
     const email = auth.user?.role === 'ADMIN'
-      ? 'hi@bulutplus.com'
-      : 'info@maxitransport.net'
+      ? 'hi@emirpeh.com'
+      : 'info@portfoyAI.net'
     return `mailto:${email}`
   }
   return props.item.link

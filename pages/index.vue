@@ -232,13 +232,22 @@ const sellerSteps = ref([
 <style scoped>
 .bg-dark-space {
   background: #0a0e1a;
-  background-image:
-    radial-gradient(2px 2px at 20px 30px, rgba(255, 255, 255, 0.1), transparent),
-    radial-gradient(2px 2px at 40px 70px, rgba(255, 255, 255, 0.05), transparent),
-    radial-gradient(1px 1px at 90px 40px, rgba(255, 255, 255, 0.1), transparent),
-    radial-gradient(1px 1px at 130px 80px, rgba(255, 255, 255, 0.05), transparent),
-    radial-gradient(2px 2px at 160px 30px, rgba(255, 255, 255, 0.1), transparent);
-  background-repeat: repeat;
-  background-size: 200px 100px;
+}
+
+.gradient-text {
+    background: -webkit-linear-gradient(45deg, #3b82f6, #14b8a6);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.cta-button-primary {
+    background-image: linear-gradient(to right, #3b82f6 0%, #14b8a6 51%, #3b82f6 100%);
+    background-size: 200% auto;
+    transition: 0.5s;
+}
+
+.cta-button-primary:hover {
+    background-position: right center;
 }
 </style> 

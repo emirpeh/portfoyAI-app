@@ -1,4 +1,5 @@
 import { env } from 'node:process'
+import { presetIcons } from 'unocss'
 
 export default defineNuxtConfig({
   devtools: { enabled: true },
@@ -43,6 +44,13 @@ export default defineNuxtConfig({
     attributify: true,
     shortcuts: [],
     rules: [],
+    presets: [
+      presetIcons({
+        collections: {
+          lucide: () => import('@iconify-json/lucide/icons.json').then(i => i.default),
+        },
+      }),
+    ],
   },
 
   css: [

@@ -15,11 +15,13 @@ interface BackendResponse {
 // ListingStatus ve TransactionType için enum benzeri yapılar
 export const usePropertyFilters = () => {
   const transactionTypes = [
+    { value: 'ALL', label: 'Tümü (İşlem Tipi)' },
     { value: 'SALE', label: 'Satılık' },
     { value: 'RENT', label: 'Kiralık' },
   ]
 
   const listingStatuses = [
+    { value: 'ALL', label: 'Tümü (Durum)' },
     { value: 'ACTIVE', label: 'Aktif' },
     { value: 'INACTIVE', label: 'Pasif' },
     { value: 'PROCESSING', label: 'İşleniyor' },
@@ -40,8 +42,8 @@ export function useProperties() {
   const currentPage = ref(1)
   const pageSize = ref(10)
   const searchQuery = ref('')
-  const statusFilter = ref<'ACTIVE' | 'INACTIVE' | 'SOLD' | 'RENTED' | 'PROCESSING' | ''>('')
-  const transactionTypeFilter = ref<'SALE' | 'RENT' | ''>('')
+  const statusFilter = ref<'ACTIVE' | 'INACTIVE' | 'SOLD' | 'RENTED' | 'PROCESSING' | 'ALL'>('ALL')
+  const transactionTypeFilter = ref<'SALE' | 'RENT' | 'ALL'>('ALL')
 
   async function fetchProperties() {
     loading.value = true
@@ -57,10 +59,10 @@ export function useProperties() {
       if (searchQuery.value) {
         query.query = searchQuery.value
       }
-      if (statusFilter.value) {
+      if (statusFilter.value && statusFilter.value !== 'ALL') {
         query.status = statusFilter.value
       }
-      if (transactionTypeFilter.value) {
+      if (transactionTypeFilter.value && transactionTypeFilter.value !== 'ALL') {
         query.transactionType = transactionTypeFilter.value
       }
 
@@ -124,14 +126,36 @@ export function useProperties() {
       })
       
       // Lokal veriyi güncelle
-      const index = properties.value.findIndex(p => p.id === id)
-      if (index !== -1) {
-        properties.value[index] = updatedProperty
+      const foundIndex = properties.value.findIndex(p => p.id === id)
+      if (foundIndex !== -1) {
+        // Gelen verinin ve seller bilgisinin varlığını kontrol et
+        if (updatedProperty && updatedProperty.seller) {
+          properties.value[foundIndex] = updatedProperty
+        } else {
+          // Eğer eksik veri gelirse, sadece durumu güncelle, kalanı aynı kalsın
+          properties.value[foundIndex].status = status
+          console.warn('Updated property data from backend is missing seller info. Only status was updated locally.', updatedProperty)
+        }
       }
     }
     catch (err: any) {
       console.error('Error updating property status:', err)
       throw err
+    }
+  }
+
+  async function fetchPropertyById(id: string): Promise<Property | null> {
+    loading.value = true
+    try {
+      const property = await $apiFetch<Property>(`/api/real-estate/${id}`)
+      return property
+    }
+    catch (e) {
+      console.error(`Error fetching property by id ${id}:`, e)
+      return null
+    }
+    finally {
+      loading.value = false
     }
   }
 
@@ -153,5 +177,24 @@ export function useProperties() {
     onFilterChange,
     deleteProperty,
     updatePropertyStatus,
+    fetchPropertyById,
   }
+}
+
+export function usePropertyStatuses() {
+  const propertyStatuses = [
+    { value: 'ACTIVE', label: 'Aktif' },
+    { value: 'INACTIVE', label: 'Pasif' },
+    { value: 'SOLD', label: 'Satıldı' },
+    { value: 'RENTED', label: 'Kiralandı' },
+  ]
+  return { propertyStatuses }
+}
+
+export function useTransactionTypes() {
+  const transactionTypes = [
+    { value: 'SALE', label: 'Satılık' },
+    { value: 'RENT', label: 'Kiralık' },
+  ]
+  return { transactionTypes }
 }

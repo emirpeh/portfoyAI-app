@@ -5,23 +5,28 @@ const baseNavMenu: NavMenu[] = [
     heading: 'Menü',
     items: [
       {
-        title: 'Anasayfa',
-        icon: 'i-lucide-home',
-        link: '/',
-        roles: ['ADMIN', 'CUSTOMER'],
+        title: 'Kontrol Paneli',
+        icon: 'i-lucide-layout-dashboard',
+        link: '/dashboard',
+        roles: ['ADMIN', 'USER'],
       },
       {
-        title: 'Potansiyel Müşteriler',
-        icon: 'i-lucide-inbox',
-        link: '/leads/',
-        new: true,
-        roles: ['ADMIN', 'CUSTOMER'],
+        title: 'Talepler',
+        icon: 'i-lucide-users',
+        link: '/leads',
+        roles: ['ADMIN', 'USER'],
+      },
+      {
+        title: 'İlanlar',
+        icon: 'i-lucide-package',
+        link: '/properties',
+        roles: ['ADMIN', 'USER'],
       },
       {
         title: 'Alıcılar',
-        icon: 'i-lucide-user-round',
-        link: '/buyers/',
-        roles: ['ADMIN', 'CUSTOMER'],
+        icon: 'i-lucide-user-search',
+        link: '/buyers',
+        roles: ['ADMIN', 'USER'],
       },
       {
         title: 'Satıcılar',
@@ -30,15 +35,9 @@ const baseNavMenu: NavMenu[] = [
         roles: ['ADMIN', 'CUSTOMER'],
       },
       {
-        title: 'Portföy',
-        icon: 'i-lucide-building-2',
-        link: '/properties/',
-        roles: ['ADMIN', 'CUSTOMER'],
-      },
-      {
-        title: 'Kullanıcılar',
-        icon: 'i-lucide-users',
-        link: '/users/',
+        title: 'Kullanıcı Yönetimi',
+        icon: 'i-lucide-user-cog',
+        link: '/users',
         roles: ['ADMIN'],
       },
     ],
@@ -47,15 +46,17 @@ const baseNavMenu: NavMenu[] = [
 
 export const navMenuBottom: NavMenuItems[] = []
 
-export function getFilteredMenu(role: 'ADMIN' | 'CUSTOMER' | 'USER' | null) {
-  if (!role) return []
+export function getFilteredMenu(role: 'ADMIN' | 'USER' | null) {
+  if (!role)
+    return []
 
   return baseNavMenu
     .map((group) => {
-      group.items = group.items.filter((item) => {
-        return !item.roles || (Array.isArray(item.roles) && item.roles.includes(role))
+      const newGroup = { ...group }
+      newGroup.items = newGroup.items.filter((item) => {
+        return !item.roles || item.roles.includes(role)
       })
-      return group
+      return newGroup
     })
     .filter(group => group.items.length > 0)
 }

@@ -1,192 +1,136 @@
-<script setup lang="ts">
-import { onMounted, ref } from 'vue'
+<script lang="ts" setup>
+import { onMounted } from 'vue'
 import { useRoute } from 'vue-router'
+import { useLead } from '@/composables/useLead'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { CircleUserRound, Home, Wallet, Tag, Calendar, NotebookText } from 'lucide-vue-next'
+
+definePageMeta({
+  layout: 'default',
+})
 
 const route = useRoute()
 const leadId = route.params.id as string
 
-interface MailLog {
-  id: string;
-  from: string;
-  to: string;
-  contentTitle: string;
-  contentBody: string;
-  createdAt: string;
-  parsedData: any;
-}
+const { lead, loading, error, fetchLead } = useLead(leadId)
 
-interface Lead {
-  id: string;
-  requestNo: string;
-  status: string;
-  createdAt: string;
-  customer: {
-    name: string;
-    email: string;
-    phone?: string;
-  };
-  mailLogs: MailLog[];
-  locations: any;
-  minPrice: number;
-  maxPrice: number;
-  minRooms: number;
-  maxRooms: number;
-  notes?: string;
-}
-
-const lead = ref<Lead | null>(null)
-const loading = ref(true)
-const error = ref<string | null>(null)
-
-async function fetchLeadDetails() {
-  loading.value = true
-  error.value = null
-  try {
-    const response = await fetch(`/api/leads/${leadId}`)
-    if (!response.ok) {
-      throw new Error('Talep detayları yüklenemedi.')
-    }
-    lead.value = await response.json()
-  }
-  catch (e: any) {
-    error.value = e.message
-  }
-  finally {
-    loading.value = false
+const statusVariant = (status: string | undefined) => {
+  if (!status) return 'secondary'
+  switch (status) {
+    case 'ACTIVE': return 'secondary'
+    case 'PENDING': return 'outline'
+    case 'CLOSED': return 'default'
+    case 'REJECTED': return 'destructive'
+    default: return 'secondary'
   }
 }
 
-onMounted(fetchLeadDetails)
-
-const formatDate = (dateString: string) => {
-  if (!dateString) return 'N/A';
-  return new Date(dateString).toLocaleString('tr-TR', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-};
-
-const getInitial = (name: string) => {
-    if (!name) return '?';
-    return name.charAt(0).toUpperCase();
-}
-
-const parseJsonData = (data: any) => {
-  if (!data) return null;
-  try {
-    return typeof data === 'string' ? JSON.parse(data) : data;
-  } catch {
-    return null;
-  }
-};
+onMounted(fetchLead)
 </script>
 
 <template>
-  <div class="p-4 md:p-6">
-    <div v-if="loading" class="text-center">
-      <p>Yükleniyor...</p>
+  <div class="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
+    <div v-if="loading" class="flex-1 flex items-center justify-center">
+      <p>Talep detayları yükleniyor...</p>
     </div>
-    <div v-else-if="error" class="text-center text-red-500">
-      <p>{{ error }}</p>
+    <div v-else-if="error">
+       <Alert variant="destructive">
+          <AlertTitle>Hata</AlertTitle>
+          <AlertDescription>
+            Talep detayları yüklenirken bir sorun oluştu: {{ error }}
+          </AlertDescription>
+        </Alert>
     </div>
     <div v-else-if="lead" class="grid gap-6">
-      <!-- Header -->
-      <div class="flex items-center justify-between">
-        <h1 class="text-2xl font-bold">
-          Talep Detayı: #{{ lead.requestNo }}
-        </h1>
-        <Badge :variant="lead.status === 'ACTIVE' ? 'default' : 'secondary'">
-          {{ lead.status }}
-        </Badge>
+      <div class="flex items-center">
+        <div>
+          <h1 class="text-2xl font-bold">Talep Detayları</h1>
+          <p class="text-muted-foreground">Talep No: {{ lead.requestNo }}</p>
+        </div>
+        <div class="ml-auto">
+           <Badge :variant="statusVariant(lead.status)" class="text-base px-4 py-2">{{ lead.status }}</Badge>
+        </div>
       </div>
+      
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Müşteri Bilgileri -->
+        <Card>
+          <CardHeader class="flex flex-row items-center gap-4">
+            <CircleUserRound class="w-8 h-8" />
+            <CardTitle>Müşteri Bilgileri</CardTitle>
+          </CardHeader>
+          <CardContent class="grid gap-2 text-sm">
+            <div class="font-semibold">{{ lead.customer.name }}</div>
+            <div>{{ lead.customer.email }}</div>
+            <div>Telefon: {{ lead.customer.phone || 'Belirtilmemiş' }}</div>
+          </CardContent>
+        </Card>
 
-      <div class="grid md:grid-cols-3 gap-6">
-        <!-- Sol Sütun: Talep ve Müşteri Bilgileri -->
-        <div class="md:col-span-2 grid gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Talep Özeti</CardTitle>
-            </CardHeader>
-            <CardContent class="space-y-4">
-              <div class="flex justify-between">
-                <span class="text-muted-foreground">Oluşturulma Tarihi</span>
-                <span>{{ formatDate(lead.createdAt) }}</span>
-              </div>
-              <div v-if="lead.minRooms || lead.maxRooms" class="flex justify-between">
-                <span class="text-muted-foreground">Oda Sayısı Aralığı</span>
-                <span>{{ lead.minRooms || '?' }} - {{ lead.maxRooms || '?' }}</span>
-              </div>
-              <div v-if="lead.minPrice || lead.maxPrice" class="flex justify-between">
-                <span class="text-muted-foreground">Fiyat Aralığı</span>
-                <span>{{ lead.minPrice?.toLocaleString() || '?' }} - {{ lead.maxPrice?.toLocaleString() || '?' }} TRY</span>
-              </div>
-              <div v-if="lead.locations" class="flex justify-between">
-                <span class="text-muted-foreground">İstenen Lokasyonlar</span>
-                <div class="flex flex-wrap gap-1 justify-end">
-                   <Badge v-for="loc in parseJsonData(lead.locations)" :key="loc" variant="outline">{{ loc }}</Badge>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+        <!-- Talep Özeti -->
+        <Card>
+          <CardHeader class="flex flex-row items-center gap-4">
+            <Home class="w-8 h-8" />
+            <CardTitle>Talep Özeti</CardTitle>
+          </CardHeader>
+          <CardContent class="grid gap-2 text-sm">
+             <div class="flex justify-between"><span>İşlem Tipi:</span> <span class="font-semibold">{{ lead.transactionType === 'SALE' ? 'Satılık' : 'Kiralık' }}</span></div>
+             <div class="flex justify-between"><span>Mülk Tipi:</span> <span class="font-semibold">{{ lead.details?.propertyTypes?.join(', ') || 'Belirtilmemiş' }}</span></div>
+             <div class="flex justify-between"><span>Oda Sayısı:</span> <span class="font-semibold">{{ lead.details?.roomCount?.join(', ') || 'Belirtilmemiş' }}</span></div>
+          </CardContent>
+        </Card>
+        
+        <!-- Konum ve Bütçe -->
+         <Card>
+          <CardHeader class="flex flex-row items-center gap-4">
+            <Wallet class="w-8 h-8" />
+            <CardTitle>Konum ve Bütçe</CardTitle>
+          </CardHeader>
+          <CardContent class="grid gap-2 text-sm">
+             <div class="flex justify-between"><span>Konum:</span> <span class="font-semibold">{{ lead.details?.locations?.join(', ') || 'Belirtilmemiş' }}</span></div>
+             <div class="flex justify-between"><span>Bütçe:</span> <span class="font-semibold">{{ lead.details?.minBudget }} - {{ lead.details?.maxBudget }}</span></div>
+          </CardContent>
+        </Card>
 
-           <Card>
-            <CardHeader>
-              <CardTitle>Müşteri Bilgileri</CardTitle>
-            </CardHeader>
-            <CardContent>
-               <div class="flex items-center gap-4">
-                  <Avatar>
-                    <AvatarFallback>{{ getInitial(lead.customer.name) }}</AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <div class="font-semibold">{{ lead.customer.name }}</div>
-                    <a :href="`mailto:${lead.customer.email}`" class="text-sm text-muted-foreground hover:underline">{{ lead.customer.email }}</a>
-                     <div v-if="lead.customer.phone" class="text-sm text-muted-foreground">{{ lead.customer.phone }}</div>
-                  </div>
-                </div>
-            </CardContent>
-          </Card>
-        </div>
+        <!-- Diğer Detaylar -->
+         <Card class="lg:col-span-2">
+          <CardHeader class="flex flex-row items-center gap-4">
+            <Tag class="w-8 h-8" />
+            <CardTitle>Diğer Kriterler</CardTitle>
+          </CardHeader>
+          <CardContent class="grid gap-2 text-sm">
+             <p>{{ lead.details?.features?.join(', ') || 'Özel bir kriter belirtilmemiş.' }}</p>
+          </CardContent>
+        </Card>
 
-        <!-- Sağ Sütun: E-posta Geçmişi -->
-        <div class="md:col-span-1">
-          <Card>
-            <CardHeader>
-              <CardTitle>İletişim Geçmişi</CardTitle>
-              <CardDescription>Bu talebe ilişkin tüm e-postalar.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Accordion type="single" collapsible class="w-full">
-                <AccordionItem v-for="log in lead.mailLogs" :key="log.id" :value="log.id">
-                  <AccordionTrigger>
-                    <div class="flex flex-col items-start text-left">
-                       <span class="font-semibold">{{ log.contentTitle || 'Başlıksız E-posta' }}</span>
-                       <span class="text-xs text-muted-foreground">{{ formatDate(log.createdAt) }}</span>
-                    </div>
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    <div class="prose max-w-none text-sm" v-html="log.contentBody?.replace(/\n/g, '<br />')"></div>
-                     <div v-if="parseJsonData(log.parsedData)" class="mt-4">
-                        <h4 class="font-semibold mb-2">Yapay Zeka Analizi:</h4>
-                        <pre class="text-xs bg-gray-100 p-2 rounded-md overflow-auto">{{ JSON.stringify(parseJsonData(log.parsedData), null, 2) }}</pre>
-                    </div>
-                  </AccordionContent>
-                </AccordionItem>
-              </Accordion>
-            </CardContent>
-          </Card>
-        </div>
+        <!-- Talep Geçmişi -->
+        <Card>
+          <CardHeader class="flex flex-row items-center gap-4">
+            <Calendar class="w-8 h-8" />
+            <CardTitle>Talep Geçmişi</CardTitle>
+          </CardHeader>
+          <CardContent class="grid gap-2 text-sm">
+            <div>Oluşturulma: {{ new Date(lead.createdAt).toLocaleDateString('tr-TR') }}</div>
+            <div>Son Güncelleme: {{ new Date(lead.updatedAt).toLocaleDateString('tr-TR') }}</div>
+          </CardContent>
+        </Card>
+        
+        <!-- Notlar -->
+        <Card class="md:col-span-2 lg:col-span-3">
+          <CardHeader class="flex flex-row items-center gap-4">
+            <NotebookText class="w-8 h-8" />
+            <CardTitle>Notlar</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p class="text-sm">{{ lead.notes || 'Bu talep için özel bir not bulunmamaktadır.' }}</p>
+          </CardContent>
+        </Card>
+
       </div>
     </div>
-    <div v-else class="text-center">
+     <div v-else class="text-center py-10">
       <p>Talep bulunamadı.</p>
     </div>
   </div>
-</template> 
+</template>

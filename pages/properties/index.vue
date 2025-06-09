@@ -1,5 +1,27 @@
 <script lang="ts" setup>
-import { useProperties, usePropertyFilters } from '@/composables/useProperties'
+import { ref, onMounted, computed } from 'vue'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { useProperties, usePropertyStatuses, useTransactionTypes } from '@/composables/useProperties'
+import PropertyDetailSheet from '@/components/properties/PropertyDetailSheet.vue'
 
 definePageMeta({
   layout: 'default',
@@ -9,185 +31,146 @@ const {
   properties,
   loading,
   error,
-  total,
-  currentPage,
-  pageSize,
-  searchQuery,
-  statusFilter,
-  transactionTypeFilter,
   fetchProperties,
-  onPageChange,
-  onSearch,
-  onFilterChange,
-  deleteProperty,
   updatePropertyStatus,
 } = useProperties()
 
-const { transactionTypes, listingStatuses } = usePropertyFilters()
+const { propertyStatuses } = usePropertyStatuses()
+const { transactionTypes } = useTransactionTypes()
 
-const columns = [
-  { key: 'listingNo', label: 'İlan No' },
-  { key: 'title', label: 'Başlık' },
-  { key: 'status', label: 'Durum' },
-  { key: 'transactionType', label: 'İşlem Tipi' },
-  { key: 'location', label: 'Konum' },
-  { key: 'price', label: 'Fiyat' },
-  { key: 'seller', label: 'Satıcı' },
-  { key: 'actions', label: 'İşlemler' },
-]
+const searchQuery = ref('')
 
-async function handleDelete(id: string) {
-  if (confirm('Bu ilanı silmek istediğinizden emin misiniz?')) {
-    await deleteProperty(id).catch((err) => {
-      // Hata UI'da gösterilebilir, örneğin bir toast notification ile
-      console.error('Silme işlemi başarısız oldu:', err.message)
-    })
+const isSheetOpen = ref(false)
+const selectedPropertyId = ref<string | null>(null)
+
+function viewPropertyDetails(id: string) {
+  selectedPropertyId.value = id
+  isSheetOpen.value = true
+}
+
+const getStatusVariant = (status: string): 'default' | 'secondary' | 'destructive' | 'outline' => {
+  switch (status) {
+    case 'ACTIVE':
+    case 'RENTED':
+      return 'default'
+    case 'INACTIVE':
+    case 'PROCESSING':
+      return 'secondary'
+    case 'SOLD':
+      return 'destructive'
+    default:
+      return 'outline'
   }
 }
 
-onMounted(() => {
-  fetchProperties()
+const filtered = computed(() => {
+  let tempProperties = properties.value
+
+  if (searchQuery.value) {
+    tempProperties = tempProperties.filter(p =>
+      (p.title?.toLowerCase() || '').includes(searchQuery.value.toLowerCase())
+      || p.listingNo.toLowerCase().includes(searchQuery.value.toLowerCase())
+      || p.seller.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+    )
+  }
+  return tempProperties
 })
+
+onMounted(fetchProperties)
 </script>
 
 <template>
-  <div class="h-full flex flex-col p-4 sm:p-6">
-    <div class="mb-4">
+  <div class="flex flex-col gap-4">
+    <header class="flex items-center justify-between">
       <h1 class="text-2xl font-bold">
-        Portföy
+        İlanlar
       </h1>
-      <p class="text-muted-foreground">
-        Tüm emlak ilanlarını buradan yönetebilirsiniz.
-      </p>
-    </div>
+      <Button>Yeni İlan Ekle</Button>
+    </header>
 
-    <div class="mb-4 flex flex-wrap items-center justify-between gap-4">
-      <Input
-        class="max-w-sm"
-        placeholder="Başlık, konum, ilan no ara..."
-        :model-value="searchQuery"
-        @update:model-value="(payload) => onSearch(String(payload))"
-      />
-      <div class="flex flex-wrap gap-4">
-        <Select v-model="transactionTypeFilter" @update:model-value="onFilterChange">
-          <SelectTrigger class="w-[180px]">
-            <SelectValue placeholder="İşlem Tipine Göre Filtrele" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="">
-              Tümü
-            </SelectItem>
-            <SelectItem v-for="item in transactionTypes" :key="item.value" :value="item.value">
-              {{ item.label }}
-            </SelectItem>
-          </SelectContent>
-        </Select>
-        <Select v-model="statusFilter" @update:model-value="onFilterChange">
-          <SelectTrigger class="w-[180px]">
-            <SelectValue placeholder="Duruma Göre Filtrele" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="">
-              Tümü
-            </SelectItem>
-            <SelectItem v-for="item in listingStatuses" :key="item.value" :value="item.value">
-              {{ item.label }}
-            </SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-    </div>
-
-    <div v-if="loading" class="flex-1 flex items-center justify-center">
-      <p>Yükleniyor...</p>
-    </div>
-    <div v-else-if="error" class="flex-1 flex items-center justify-center text-red-500">
-      <p>{{ error }}</p>
-    </div>
-    <div v-else class="border rounded-md">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead v-for="column in columns" :key="column.key">
-              {{ column.label }}
-            </TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          <template v-if="properties.length">
-            <TableRow v-for="prop in properties" :key="prop.id">
-              <TableCell>{{ prop.listingNo }}</TableCell>
-              <TableCell>{{ prop.title }}</TableCell>
+    <Card>
+      <CardHeader>
+        <CardTitle>İlan Listesi</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div class="mb-4 flex gap-4">
+          <Input v-model="searchQuery" placeholder="Ara (İlan No, Başlık, Satıcı)..." class="max-w-sm" />
+          <!-- Diğer filtreler buraya eklenebilir -->
+        </div>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>İlan No</TableHead>
+              <TableHead>Başlık</TableHead>
+              <TableHead>Satıcı</TableHead>
+              <TableHead>Durum</TableHead>
+              <TableHead>Fiyat</TableHead>
+              <TableHead class="text-right">
+                İşlemler
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <tr v-if="loading">
+              <td colspan="6" class="text-center">
+                Yükleniyor...
+              </td>
+            </tr>
+            <tr v-else-if="error">
+              <td colspan="6" class="text-center text-red-500">
+                Hata: {{ error }}
+              </td>
+            </tr>
+            <tr v-else-if="properties.length === 0">
+              <td colspan="6" class="text-center">
+                Sonuç bulunamadı.
+              </td>
+            </tr>
+            <TableRow v-for="p in filtered" :key="p.id">
               <TableCell>
-                <DropdownMenu>
-                  <DropdownMenuTrigger as-child>
-                    <Button variant="ghost" class="p-0 h-auto">
-                      <UBadge :color="prop.status === 'SOLD' || prop.status === 'RENTED' ? 'red' : 'green'" variant="soft" class="cursor-pointer">
-                        {{ prop.status }}
-                      </UBadge>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="start">
-                    <DropdownMenuLabel>Durumu Değiştir</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem v-for="s in listingStatuses" :key="s.value" @click="updatePropertyStatus(prop.id, s.value as any)">
-                      <span>{{ s.label }}</span>
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                <span
+                  class="cursor-pointer font-medium hover:underline"
+                  @click="viewPropertyDetails(p.id)"
+                >{{ p.listingNo }}</span>
               </TableCell>
-              <TableCell>{{ prop.transactionType }}</TableCell>
-              <TableCell>{{ prop.location }}</TableCell>
-              <TableCell>{{ new Intl.NumberFormat('tr-TR', { style: 'currency', currency: prop.currency }).format(prop.price) }}</TableCell>
-              <TableCell>{{ prop.seller.name }}</TableCell>
+              <TableCell>{{ p.title }}</TableCell>
+              <TableCell>{{ p.seller.name }}</TableCell>
               <TableCell>
+                <Badge :variant="getStatusVariant(p.status)">
+                  {{ p.status }}
+                </Badge>
+              </TableCell>
+              <TableCell>{{ new Intl.NumberFormat('tr-TR', { style: 'currency', currency: p.currency }).format(p.price) }}</TableCell>
+              <TableCell class="text-right">
                 <DropdownMenu>
                   <DropdownMenuTrigger as-child>
-                    <Button variant="ghost" class="h-8 w-8 p-0">
-                      <span class="sr-only">Menüyü aç</span>
-                      <i class="i-lucide-ellipsis h-4 w-4" />
+                    <Button variant="ghost" size="icon">
+                      <Icon name="lucide:more-horizontal" />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <DropdownMenuLabel>İşlemler</DropdownMenuLabel>
-                    <DropdownMenuItem @click="handleDelete(prop.id)">
-                      Sil
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem @click="viewPropertyDetails(p.id)">
+                      Detayları Görüntüle
                     </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                     <template v-for="status in propertyStatuses" :key="status.value">
+                       <DropdownMenuItem
+                         v-if="p.status !== status.value"
+                         @click="updatePropertyStatus(p.id, status.value as 'ACTIVE' | 'INACTIVE' | 'SOLD' | 'RENTED' | 'PROCESSING')"
+                       >
+                         {{ status.label }} Olarak İşaretle
+                       </DropdownMenuItem>
+                     </template>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </TableCell>
             </TableRow>
-          </template>
-          <TableRow v-else>
-            <TableCell :colspan="columns.length" class="h-24 text-center">
-              Filtrelerinize uygun sonuç bulunamadı.
-            </TableCell>
-          </TableRow>
-        </TableBody>
-      </Table>
-    </div>
-
-    <div class="mt-4 flex items-center justify-between">
-      <p class="text-sm text-muted-foreground">
-        Toplam {{ total }} ilan.
-      </p>
-      <div class="flex items-center gap-2">
-        <Button
-          variant="outline"
-          :disabled="currentPage === 1"
-          @click="onPageChange(currentPage - 1)"
-        >
-          Önceki
-        </Button>
-        <span>Sayfa {{ currentPage }}</span>
-        <Button
-          variant="outline"
-          :disabled="currentPage * pageSize >= total"
-          @click="onPageChange(currentPage + 1)"
-        >
-          Sonraki
-        </Button>
-      </div>
-    </div>
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
+    <PropertyDetailSheet v-model:open="isSheetOpen" :property-id="selectedPropertyId || undefined" />
   </div>
 </template>
