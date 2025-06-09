@@ -2,13 +2,10 @@
 import type { Column } from '@tanstack/vue-table'
 import type { Component } from 'vue'
 import type { User } from '../data/schema'
-import { cn } from '@/lib/utils'
 import { computed } from 'vue'
-import { useI18n } from 'vue-i18n'
+import { cn } from '@/lib/utils'
 
 const props = defineProps<DataTableFacetedFilter>()
-
-const { t } = useI18n()
 
 interface DataTableFacetedFilter {
   column?: Column<User, any>
@@ -68,7 +65,7 @@ function handleFilterSelection(optionValue: string) {
                 variant="secondary"
                 class="rounded-sm px-1 font-normal"
               >
-                {{ t(item.label) }}
+                {{ item.label }}
               </Badge>
             </template>
           </div>
@@ -101,7 +98,7 @@ function handleFilterSelection(optionValue: string) {
                 <Icon name="i-radix-icons-check" :class="cn('h-4 w-4')" />
               </div>
               <component :is="option.icon" v-if="option.icon" class="mr-2 h-4 w-4 text-muted-foreground" />
-              <span>{{ t(option.label) }}</span>
+              <span>{{ option.label }}</span>
               <span v-if="facets?.get(option.value)" class="ml-auto h-4 w-4 flex items-center justify-center text-xs font-mono">
                 {{ facets.get(option.value) }}
               </span>

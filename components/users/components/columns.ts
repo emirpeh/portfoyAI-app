@@ -1,7 +1,6 @@
 import type { ColumnDef } from '@tanstack/vue-table'
 import type { User } from '../data/schema'
 import { h } from 'vue'
-import { useI18n } from 'vue-i18n'
 import DataTableColumnHeader from './DataTableColumnHeader.vue'
 import DataTableRowActions from './DataTableRowActions.vue'
 
@@ -13,7 +12,7 @@ export const columns: Column[] = [
     accessorFn: row => row.id,
     header: ({ column }) => h(DataTableColumnHeader, {
       column,
-      title: 'users.columns.id',
+      title: 'ID',
     }),
     enableHiding: false,
     enableSorting: false,
@@ -27,7 +26,7 @@ export const columns: Column[] = [
     accessorFn: row => row.email,
     header: ({ column }) => h(DataTableColumnHeader, {
       column,
-      title: 'users.columns.email',
+      title: 'E-posta',
     }),
   },
   {
@@ -35,12 +34,11 @@ export const columns: Column[] = [
     accessorFn: row => row.role,
     header: ({ column }) => h(DataTableColumnHeader, {
       column,
-      title: 'users.columns.role',
+      title: 'Rol',
     }),
     cell: ({ row }) => {
-      const { t } = useI18n()
       const role = row.getValue('role')
-      return h('div', {}, t(role === 'ADMIN' ? 'users.roles.admin' : 'users.roles.user'))
+      return h('div', {}, role === 'ADMIN' ? 'Yönetici' : 'Kullanıcı')
     },
   },
   {
@@ -48,7 +46,7 @@ export const columns: Column[] = [
     accessorFn: row => row.createdAt,
     header: ({ column }) => h(DataTableColumnHeader, {
       column,
-      title: 'users.columns.createdAt',
+      title: 'Oluşturulma Tarihi',
     }),
     cell: ({ row }) => h('div', {}, new Date(row.getValue('createdAt')).toLocaleDateString()),
   },
@@ -57,7 +55,7 @@ export const columns: Column[] = [
     accessorFn: row => row.updatedAt,
     header: ({ column }) => h(DataTableColumnHeader, {
       column,
-      title: 'users.columns.updatedAt',
+      title: 'Güncellenme Tarihi',
     }),
     cell: ({ row }) => h('div', {}, new Date(row.getValue('updatedAt')).toLocaleDateString()),
   },
@@ -66,7 +64,7 @@ export const columns: Column[] = [
     header: ({ column }) => {
       return h(DataTableColumnHeader, {
         column,
-        title: 'users.columns.isDefault',
+        title: 'Varsayılan mı',
       })
     },
     enableHiding: false,

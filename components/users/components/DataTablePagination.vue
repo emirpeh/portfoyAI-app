@@ -1,26 +1,24 @@
 <script setup lang="ts">
 import type { Table } from '@tanstack/vue-table'
 import type { User } from '../data/schema'
-import { useI18n } from 'vue-i18n'
 
 interface DataTablePaginationProps {
   table: Table<User>
 }
 
 defineProps<DataTablePaginationProps>()
-const { t } = useI18n()
 </script>
 
 <template>
   <div class="flex items-center justify-between px-2">
     <div class="flex-1 text-sm text-muted-foreground">
-      {{ table.getFilteredSelectedRowModel().rows.length }} of
-      {{ table.getFilteredRowModel().rows.length }} {{ t('common.row') }}
+      {{ table.getFilteredSelectedRowModel().rows.length }} /
+      {{ table.getFilteredRowModel().rows.length }} satır seçili.
     </div>
     <div class="flex items-center space-x-6 lg:space-x-8">
       <div class="flex items-center space-x-2">
         <p class="text-sm font-medium">
-          {{ t('table.pagination.rowsPerPage') }}
+          Sayfa başına satır
         </p>
         <Select
           :model-value="`${table.getState().pagination.pageSize}`"
@@ -37,7 +35,7 @@ const { t } = useI18n()
         </Select>
       </div>
       <div class="w-[100px] flex items-center justify-center text-sm font-medium">
-        Page {{ table.getState().pagination.pageIndex + 1 }} of
+        Sayfa {{ table.getState().pagination.pageIndex + 1 }} /
         {{ table.getPageCount() }}
       </div>
       <div class="flex items-center space-x-2">
@@ -47,7 +45,7 @@ const { t } = useI18n()
           :disabled="!table.getCanPreviousPage()"
           @click="table.setPageIndex(0)"
         >
-          <span class="sr-only">Go to first page</span>
+          <span class="sr-only">İlk sayfaya git</span>
           <Icon name="i-radix-icons-double-arrow-left" class="h-4 w-4" />
         </Button>
         <Button
@@ -56,7 +54,7 @@ const { t } = useI18n()
           :disabled="!table.getCanPreviousPage()"
           @click="table.previousPage()"
         >
-          <span class="sr-only">Go to previous page</span>
+          <span class="sr-only">Önceki sayfaya git</span>
           <Icon name="i-radix-icons-chevron-left" class="h-4 w-4" />
         </Button>
         <Button
@@ -65,7 +63,7 @@ const { t } = useI18n()
           :disabled="!table.getCanNextPage()"
           @click="table.nextPage()"
         >
-          <span class="sr-only">Go to next page</span>
+          <span class="sr-only">Sonraki sayfaya git</span>
           <Icon name="i-radix-icons-chevron-right" class="h-4 w-4" />
         </Button>
         <Button
@@ -74,7 +72,7 @@ const { t } = useI18n()
           :disabled="!table.getCanNextPage()"
           @click="table.setPageIndex(table.getPageCount() - 1)"
         >
-          <span class="sr-only">Go to last page</span>
+          <span class="sr-only">Son sayfaya git</span>
           <Icon name="i-radix-icons-double-arrow-right" class="h-4 w-4" />
         </Button>
       </div>

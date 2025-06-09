@@ -12,7 +12,6 @@ import {
   AlertDialogTitle,
 } from '#components'
 import { computed } from 'vue'
-import { useI18n } from 'vue-i18n'
 import { useUsers } from '~/composables/useUsers'
 import { userSchema } from '../data/schema'
 
@@ -23,7 +22,6 @@ interface DataTableRowActionsProps {
 const props = defineProps<DataTableRowActionsProps>()
 const emit = defineEmits(['edit'])
 
-const { t } = useI18n()
 const { deleteUser } = useUsers()
 
 const user = computed(() => userSchema.parse(props.row.original))
@@ -58,17 +56,17 @@ async function handleDelete() {
         class="h-8 w-8 flex p-0 data-[state=open]:bg-muted"
       >
         <Icon name="i-radix-icons-dots-horizontal" class="h-4 w-4" />
-        <span class="sr-only">Open menu</span>
+        <span class="sr-only">Menüyü aç</span>
       </Button>
     </DropdownMenuTrigger>
     <DropdownMenuContent align="end" class="w-[160px]">
       <DropdownMenuSeparator />
       <DropdownMenuItem @click="handleEdit">
-        {{ t('users.edit') }}
+        Düzenle
         <DropdownMenuShortcut>⌘E</DropdownMenuShortcut>
       </DropdownMenuItem>
       <DropdownMenuItem :disabled="user.isDefault" @click="showDeleteDialog = true">
-        {{ t('users.delete') }}
+        Sil
         <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
       </DropdownMenuItem>
     </DropdownMenuContent>
@@ -77,15 +75,17 @@ async function handleDelete() {
   <AlertDialog :open="showDeleteDialog" @update:open="showDeleteDialog = $event">
     <AlertDialogContent>
       <AlertDialogHeader>
-        <AlertDialogTitle>{{ t('users.deleteConfirmTitle') }}</AlertDialogTitle>
+        <AlertDialogTitle>Emin misiniz?</AlertDialogTitle>
         <AlertDialogDescription>
-          {{ t(`users.deleteConfirm${user.role}`) }}
+          {{ user.role === 'ADMIN'
+            ? 'Bu işlem geri alınamaz. Bu, yönetici hesabını kalıcı olarak silecek ve verilerini sunucularımızdan kaldıracaktır.'
+            : 'Bu işlem geri alınamaz. Bu, kullanıcı hesabını kalıcı olarak silecek ve verilerini sunucularımızdan kaldıracaktır.' }}
         </AlertDialogDescription>
       </AlertDialogHeader>
       <AlertDialogFooter>
-        <AlertDialogCancel>{{ t('common.cancel') }}</AlertDialogCancel>
+        <AlertDialogCancel>İptal</AlertDialogCancel>
         <AlertDialogAction variant="destructive" @click="handleDelete">
-          {{ t('common.delete') }}
+          Sil
         </AlertDialogAction>
       </AlertDialogFooter>
     </AlertDialogContent>

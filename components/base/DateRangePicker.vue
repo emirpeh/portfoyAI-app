@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import type { DateRange } from 'radix-vue'
-import { cn } from '@/lib/utils'
 import { CalendarDate, DateFormatter, getLocalTimeZone } from '@internationalized/date'
 import { Calendar as CalendarIcon } from 'lucide-vue-next'
-import { useI18n } from 'vue-i18n'
+import { cn } from '@/lib/utils'
 
 interface Props {
   modelValue: { start: Date, end: Date } | null
@@ -14,8 +13,6 @@ const props = defineProps<Props>()
 const emit = defineEmits<{
   'update:modelValue': [{ start: Date, end: Date } | null]
 }>()
-
-const { t } = useI18n()
 
 const df = new DateFormatter('en-US', {
   dateStyle: 'medium',
@@ -81,7 +78,7 @@ const value = computed<DateRange>({
             </template>
           </template>
           <template v-else>
-            {{ t('common.pickDate') }}
+            Tarih Aralığı Seçin
           </template>
         </Button>
       </PopoverTrigger>

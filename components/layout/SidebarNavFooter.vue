@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n'
 import { useSidebar } from '~/components/ui/sidebar'
 import { useAuth } from '~/composables/useAuth'
 
@@ -10,7 +9,6 @@ defineProps<{
     avatar: string
   }
 }>()
-const { t } = useI18n()
 const auth = useAuth()
 
 const { isMobile } = useSidebar()
@@ -69,13 +67,13 @@ const showModalTheme = ref(false)
           <DropdownMenuGroup>
             <DropdownMenuItem @click="showModalTheme = true">
               <Icon name="i-lucide-paintbrush" />
-              {{ t('nav.theme') }}
+              Tema
             </DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuItem @click="handleLogout">
             <Icon name="i-lucide-log-out" />
-            {{ t('nav.logout') }}
+            Çıkış Yap
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -85,9 +83,9 @@ const showModalTheme = ref(false)
   <Dialog v-model:open="showModalTheme">
     <DialogContent>
       <DialogHeader>
-        <DialogTitle>{{ t('customize.title') }}</DialogTitle>
+        <DialogTitle>Temayı Özelleştir</DialogTitle>
         <DialogDescription class="text-xs text-muted-foreground">
-          {{ t('customize.description') }}
+          Temayı kendi zevkinize göre özelleştirin.
         </DialogDescription>
       </DialogHeader>
       <ThemeCustomize />

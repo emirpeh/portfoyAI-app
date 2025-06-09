@@ -1,3 +1,5 @@
+import { env } from 'node:process'
+
 export default defineNuxtConfig({
   devtools: { enabled: true },
 
@@ -20,13 +22,16 @@ export default defineNuxtConfig({
   },
 
   modules: [
-    '@nuxtjs/i18n',
     'shadcn-nuxt',
     '@vueuse/nuxt',
     '@nuxt/eslint',
     '@nuxt/icon',
-    '@pinia/nuxt',
-    'pinia-plugin-persistedstate/nuxt',
+    ['@pinia/nuxt', {
+      autoImports: [
+        'defineStore',
+        'acceptHMRUpdate',
+      ],
+    }],
     '@nuxtjs/color-mode',
     '@nuxt/image',
     '@unocss/nuxt',
@@ -80,52 +85,20 @@ export default defineNuxtConfig({
 
   compatibilityDate: '2024-12-14',
 
-  i18n: {
-    langDir: './lang/locales',
-    defaultLocale: 'tr',
-    locales: [
-      { code: 'tr', iso: 'tr-TR', file: 'tr.json', name: 'Türkçe' },
-      { code: 'en', iso: 'en-US', file: 'en.json', name: 'English' },
-    ],
-    strategy: 'no_prefix',
-    detectBrowserLanguage: false,
-    vueI18n: './config.ts',
-    compilation: {
-      strictMessage: false,
-      escapeHtml: false,
-    },
-  },
-
-  piniaPluginPersistedstate: {
-    storage: 'localStorage',
-    cookieOptions: {
-      sameSite: 'strict',
-    },
-  },
-
   runtimeConfig: {
     public: {
-      apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL ?? 'http://localhost:5000/api',
+      apiBaseUrl: env.NUXT_PUBLIC_API_BASE_URL ?? '/api',
     },
   },
 
-  // Nitro yapılandırması - statik site için
-  nitro: {
-    preset: 'static',
-    prerender: {
-      crawlLinks: true,
-      routes: [
-        '/',
-        '/login',
-        '/tr',
-        '/tr/login',
-        '/en',
-        '/en/login',
-        '/dashboard',
-        '/tr/dashboard',
-        '/en/dashboard',
-      ],
+  vite: {
+    server: {
+      proxy: {
+        '/api': {
+          target: 'http://localhost:5000',
+          changeOrigin: true,
+        },
+      },
     },
-    static: true,
   },
 })

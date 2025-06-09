@@ -2,7 +2,6 @@
 import type { Column } from '@tanstack/vue-table'
 import type { User } from '../data/schema'
 import { cn } from '@/lib/utils'
-import { useI18n } from 'vue-i18n'
 
 interface DataTableColumnHeaderProps {
   column: Column<User, unknown>
@@ -10,8 +9,6 @@ interface DataTableColumnHeaderProps {
 }
 
 defineProps<DataTableColumnHeaderProps>()
-
-const { t } = useI18n()
 </script>
 
 <script lang="ts">
@@ -29,7 +26,7 @@ export default {
           size="sm"
           class="h-8 -ml-3 data-[state=open]:bg-accent"
         >
-          <span>{{ t(title) }}</span>
+          <span>{{ title }}</span>
           <Icon v-if="column.getIsSorted() === 'desc'" name="i-radix-icons-arrow-down" class="ml-2 h-4 w-4" />
           <Icon v-else-if=" column.getIsSorted() === 'asc'" name="i-radix-icons-arrow-up" class="ml-2 h-4 w-4" />
           <Icon v-else name="i-radix-icons-caret-sort" class="ml-2 h-4 w-4" />
@@ -38,22 +35,22 @@ export default {
       <DropdownMenuContent align="start">
         <DropdownMenuItem @click="column.toggleSorting(false)">
           <Icon name="i-radix-icons-arrow-up" class="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
-          {{ t('table.sort.asc') }}
+          Artan
         </DropdownMenuItem>
         <DropdownMenuItem @click="column.toggleSorting(true)">
           <Icon name="i-radix-icons-arrow-down" class="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
-          {{ t('table.sort.desc') }}
+          Azalan
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem @click="column.toggleVisibility(false)">
           <Icon name="i-radix-icons-eye-none" class="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
-          {{ t('table.column.hide') }}
+          Gizle
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   </div>
 
   <div v-else :class="$attrs.class">
-    {{ t(title) }}
+    {{ title }}
   </div>
 </template>

@@ -1,51 +1,35 @@
-# PortfoyAI Ön Yüz Uygulaması (portfoyAI-app)
+![nuxt-shadcn-dashboard-social-card](https://nuxt-shadcn-dashboard.vercel.app/social-card.png)
 
-Bu proje, PortfoyAI emlak yönetimi ve analiz platformunun ön yüzüdür. Nuxt 3 ve Vue 3 kullanılarak geliştirilmiştir.
+# Nuxt Shadcn UnoCSS - Dashboard
 
-## Proje Amacı
+[![built with nuxt][nuxt-src]][nuxt-href]
 
-PortfoyAI, emlak alıcıları, satıcıları ve danışmanları için akıllı çözümler sunmayı hedefler. Bu ön yüz uygulaması, kullanıcıların emlak ilanlarını yönetmelerine, alıcı taleplerini analiz etmelerine ve pazar verilerine dayalı içgörüler elde etmelerine olanak tanır.
+- [Live demo](https://nuxt-shadcn-dashboard.vercel.app)
+- [Component Documentation](https://shadcn-vue.com/docs/introduction)
 
-## Kullanılan Teknolojiler
+## Quick Start
 
-- Nuxt 3
-- Vue 3
-- Pinia (State Management)
-- UnoCSS (CSS Framework)
-- Shadcn-Nuxt (UI Bileşenleri)
-- TypeScript
-- ESLint, Prettier
+```bash [Terminal]
+npx degit dianprata/nuxt-shadcn-dashboard my-dashboard-app
+cd my-dashboard-app
+pnpm i # If you don't have pnpm installed, run: npm install -g pnpm
+```
 
-## Kurulum
+## Contributing
 
-1.  **Bağımlılıkları Yükleyin:**
-    ```bash
-    pnpm install
-    # veya npm install / yarn install
-    ```
+1. Clone this repository.
+2. Install dependencies `pnpm install`.
+3. Use `pnpm run dev` to start dev server.
 
-2.  **Geliştirme Sunucusunu Başlatın:**
-    ```bash
-    pnpm dev
-    # veya npm run dev / yarn dev
-    ```
-    Uygulama varsayılan olarak `http://localhost:3000` adresinde çalışacaktır.
+## Credits
 
-## Proje Yapısı
+- [Nuxt.js](https://nuxtjs.org/)
+- [Shadcn Vue](https://shadcn-vue.com/)
+- [UnoCSS](https://unocss.com/)
 
-- `pages/`: Uygulama sayfaları
-- `components/`: Tekrar kullanılabilir UI bileşenleri
-- `layouts/`: Sayfa düzenleri
-- `stores/`: Pinia state yönetimi
-- `composables/`: Tekrar kullanılabilir Composition API fonksiyonları
-- `assets/`: Statik varlıklar (CSS, resimler vb.)
-- `public/`: Genel erişilebilir statik dosyalar
-- `i18n/`: Uluslararasılaştırma ve çeviri dosyaları
+## License
 
-## Katkıda Bulunma
+MIT
 
-Katkıda bulunmak isterseniz, lütfen önce bir issue açarak veya mevcut bir issue üzerinde tartışarak başlayın.
-
-## Lisans
-
-Bu proje MIT Lisansı altındadır. Detaylar için `LICENSE` dosyasına bakın.
+[nuxt-src]: https://img.shields.io/badge/Built%20With%20Nuxt-18181B?logo=nuxt.js
+[nuxt-href]: https://nuxt.com/

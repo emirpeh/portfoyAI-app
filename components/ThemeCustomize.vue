@@ -1,8 +1,5 @@
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n'
-
 const customize = useCustomize()
-const { t } = useI18n()
 
 onMounted(() => {
   if (customize && customize.setTheme) {
@@ -16,7 +13,7 @@ const colorMode = useColorMode()
 <template>
   <div class="grid gap-6">
     <div class="space-y-1.5">
-      <Label>{{ t('customize.mode') }}</Label>
+      <Label>Mod</Label>
       <div class="grid grid-cols-3 gap-2">
         <Button
           class="justify-center gap-2"
@@ -25,7 +22,7 @@ const colorMode = useColorMode()
           @click="colorMode.preference = 'light'"
         >
           <Icon name="i-ph-sun-dim-duotone" size="16" />
-          <span class="text-xs capitalize">{{ t('customize.light') }}</span>
+          <span class="text-xs capitalize">Açık</span>
         </Button>
         <Button
           class="justify-center gap-2"
@@ -34,7 +31,7 @@ const colorMode = useColorMode()
           @click="colorMode.preference = 'dark'"
         >
           <Icon name="i-ph-moon-stars-duotone" size="16" />
-          <span class="text-xs capitalize">{{ t('customize.dark') }}</span>
+          <span class="text-xs capitalize">Karanlık</span>
         </Button>
         <Button
           class="justify-center gap-2"
@@ -43,7 +40,7 @@ const colorMode = useColorMode()
           @click="colorMode.preference = 'system'"
         >
           <Icon name="i-lucide-monitor" size="16" />
-          <span class="text-xs capitalize">{{ t('customize.system') }}</span>
+          <span class="text-xs capitalize">Sistem</span>
         </Button>
       </div>
     </div>

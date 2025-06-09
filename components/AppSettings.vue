@@ -22,19 +22,19 @@ function handleChangeDirection(dir: 'ltr' | 'rtl') {
     </SheetTrigger>
     <SheetContent :side="direction === 'rtl' ? 'left' : 'right'">
       <SheetHeader>
-        <SheetTitle>Template Customizer</SheetTitle>
-        <SheetDescription>Customize & Preview in Real Time</SheetDescription>
+        <SheetTitle>Tema Ayarları</SheetTitle>
+        <SheetDescription>Gerçek Zamanlı Olarak Özelleştir ve Önizle</SheetDescription>
       </SheetHeader>
       <div class="mt-4 flex flex-col gap-6">
         <div class="space-y-3">
-          <Badge>Theming</Badge>
+          <Badge>Temalar</Badge>
           <ThemeCustomize />
         </div>
         <Separator />
         <div class="space-y-3">
-          <Badge>Layout</Badge>
+          <Badge>Yerleşim</Badge>
           <div class="space-y-1.5">
-            <Label>Navbar Type</Label>
+            <Label>Navigasyon Tipi</Label>
             <div class="grid grid-cols-3 gap-2">
               <Button
                 variant="outline"
@@ -60,7 +60,7 @@ function handleChangeDirection(dir: 'ltr' | 'rtl') {
             </div>
           </div>
           <div class="space-y-1.5">
-            <Label>Direction</Label>
+            <Label>Yön</Label>
             <div class="grid grid-cols-2 gap-2">
               <Button
                 variant="outline"
@@ -91,19 +91,19 @@ function handleChangeDirection(dir: 'ltr' | 'rtl') {
     </DrawerTrigger>
     <DrawerContent class="max-h-[97%]">
       <DrawerHeader class="text-center sm:text-center">
-        <DrawerTitle>Template Customizer</DrawerTitle>
-        <DrawerDescription>Customize & Preview in Real Time</DrawerDescription>
+        <DrawerTitle>Tema Ayarları</DrawerTitle>
+        <DrawerDescription>Gerçek Zamanlı Olarak Özelleştir ve Önizle</DrawerDescription>
       </DrawerHeader>
       <div class="mx-auto max-w-md w-full overflow-auto overflow-y-auto px-4 pb-6 space-y-6">
         <div class="space-y-3">
-          <Badge>Theming</Badge>
+          <Badge>Temalar</Badge>
           <ThemeCustomize />
         </div>
         <Separator />
         <div class="space-y-3">
-          <Badge>Layout</Badge>
+          <Badge>Yerleşim</Badge>
           <div class="space-y-1.5">
-            <Label>Navbar Type</Label>
+            <Label>Navigasyon Tipi</Label>
             <div class="grid grid-cols-3 gap-2">
               <Button
                 variant="outline"
@@ -129,7 +129,7 @@ function handleChangeDirection(dir: 'ltr' | 'rtl') {
             </div>
           </div>
           <div class="space-y-1.5">
-            <Label>Direction</Label>
+            <Label>Yön</Label>
             <div class="grid grid-cols-2 gap-2">
               <Button
                 variant="outline"

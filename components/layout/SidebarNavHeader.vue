@@ -8,15 +8,13 @@ const props = defineProps<{
 }>()
 
 const activeTeam = ref(props.teams[0])
-const localePath = useLocalePath()
 
 // Logo URL kontrolü
 const isImageUrl = (url: string) => url.startsWith('/') || url.startsWith('http')
 
-// Ana sayfaya yönlendirme fonksiyonu (dil kontrolü ile)
+// Ana sayfaya yönlendirme fonksiyonu
 function goToHome() {
-  const homePath = localePath('/')
-  return navigateTo(homePath)
+  return navigateTo('/')
 }
 </script>
 
@@ -29,7 +27,7 @@ function goToHome() {
             v-if="isImageUrl(activeTeam.logo)"
             :src="activeTeam.logo"
             :alt="activeTeam.name"
-            class="h-12 w-auto"
+            class="w-full h-auto p-2"
             loading="eager"
           >
           <Icon v-else :name="activeTeam.logo" class="size-8" />

@@ -5,7 +5,7 @@ const color = useColorMode()
 <template>
   <DropdownMenu>
     <DropdownMenuTrigger as-child>
-      <Button variant="ghost" size="icon" title="Toggle Color Scheme" aria-label="button dark toggle">
+      <Button variant="ghost" size="icon" title="Renk Şemasını Değiştir" aria-label="button dark toggle">
         <div class="i-ph-sun-dim-duotone dark:i-ph-moon-stars-duotone" />
       </Button>
     </DropdownMenuTrigger>
@@ -17,7 +17,7 @@ const color = useColorMode()
           @click="color.preference = 'light'"
         >
           <Icon name="i-ph-sun-dim-duotone" size="16" />
-          <span>Light</span>
+          <span>Açık</span>
         </DropdownMenuItem>
         <DropdownMenuItem
           flex="~ gap-2"
@@ -25,7 +25,7 @@ const color = useColorMode()
           @click="color.preference = 'dark'"
         >
           <Icon name="i-ph-moon-stars-duotone" size="16" />
-          <span>Dark</span>
+          <span>Karanlık</span>
         </DropdownMenuItem>
         <DropdownMenuItem
           flex="~ gap-2"
@@ -33,7 +33,7 @@ const color = useColorMode()
           @click="color.preference = 'system'"
         >
           <Icon name="i-lucide-monitor" size="16" />
-          <span>System</span>
+          <span>Sistem</span>
         </DropdownMenuItem>
       </DropdownMenuGroup>
     </DropdownMenuContent>

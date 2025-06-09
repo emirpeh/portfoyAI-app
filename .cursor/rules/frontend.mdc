@@ -1,0 +1,47 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+"Vue.js kullanarak modern ve çekici bir ana sayfa (Landing Page) komponenti oluşturmanı istiyorum. Bu ana sayfa, herhangi bir oturum açma (login) gerektirmeden herkese açık olmalı.
+
+**Tasarım ve Modernlik:**
+* Tasarımdan ödün verme. Minimalist, ferah ve profesyonel bir görünüm benimse.
+* Renk paleti olarak soft tonları (örneğin, açık gri, pastel maviler/yeşiller, beyaz) tercih et.
+* Modern tipografi kullan (örneğin, Google Fonts'tan Roboto, Open Sans, Lato gibi).
+* Görsel hiyerarşiyi net bir şekilde belirt. Başlıklar, alt başlıklar ve ana metinler arasında belirgin farklar olsun.
+* Responsive (duyarlı) bir tasarım olsun; yani farklı ekran boyutlarına (mobil, tablet, masaüstü) sorunsuz uyum sağlasın. Flexbox veya Grid gibi modern CSS layout tekniklerini kullan.
+
+**İçerik:**
+Ana sayfanın temel amacı, sitem olan 'PortföyAI'nin ne yaptığını basit, anlaşılır ve ilgi çekici bir dille açıklamaktır.
+
+Sitenin açıklaması şu ana hatları içermeli:
+* **Başlık:** 'PortföyAI: Emlak Sektörüne Akıllı Köprü' gibi ilgi çekici bir başlık.
+* **Giriş Paragrafı:** PortföyAI'nin ne olduğunu kısaca açıkla (Emlak alıcı ve satıcılarını buluşturan e-posta tabanlı otomasyon sistemi).
+* **Alıcılar İçin Bölüm:**
+    * 'Alıcıysanız:' gibi bir alt başlık.
+    * Alıcıların aradıkları mülkü nasıl bulduklarını (AI destekli e-posta analizi, kriterlere uygun portföylerin gönderilmesi) vurgula.
+    * Kullanım kolaylığını ve zaman kazandırma özelliğini belirt.
+* **Satıcılar İçin Bölüm:**
+    * 'Satıcıysanız:' gibi bir alt başlık.
+    * Satıcıların mülklerini nasıl listelediklerini (e-posta ile bilgi göndererek hızlı ilan oluşturma, AI desteği) açıkla.
+    * Süreç hızını ve pratikliğini vurgula.
+* **Faydalar/Neden PortföyAI? Bölümü:**
+    * AI destekli akıllı eşleştirme, zaman tasarrufu, kolay yönetim (dashboard), profesyonel destek gibi genel faydaları maddeler halinde sırala.
+* **Harekete Geçirici Mesaj (Call to Action - CTA):**
+    * 'Hemen Başlayın', 'Daha Fazla Bilgi Edinin' veya 'Mülkünüzü Listeleyin' gibi butonlar ekle. Bu butonlar şimdilik sadece placeholder olarak bulunsun, herhangi bir yönlendirme yapmasın.
+
+**Kod Yapısı:**
+* Tek bir Vue 3 `<script setup>` tabanlı komponent olarak hazırla (Örn: `HomePage.vue`).
+* HTML, CSS (scoped stil tercih edilir) ve temel JavaScript yapısını içer.
+* State yönetimi veya karmaşık logic gerektirmeyen, sadece görsel bir sunum amaçlı bir komponent olsun.
+* İçerik metinlerini doğrudan `<template>` içinde kullan, props veya state'e gerek yok.
+
+**Önemli Notlar:**
+* Herhangi bir animasyon veya karmaşık JavaScript etkileşimi ekleme, sadece temiz bir statik sayfa yeterli.
+* Backend bağlantısı veya API çağrısı yapmayacak, sadece tanıtım amaçlı bir arayüz olacak.
+* Görsel öğeler (resimler, ikonlar) için placeholder kullanabilirsin (örneğin, `<div>` içine bir renk veya 'Resim Placeholder' yazısı).
+* CSS'te global stillere müdahale etmemek için `<style scoped>` kullanmayı unutma.
+
+
+Bu talimatlara göre Vue.js'de modern ve bilgilendirici bir ana sayfa komponenti oluştur."

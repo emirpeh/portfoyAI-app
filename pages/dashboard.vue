@@ -1,141 +1,169 @@
 <script setup lang="ts">
-import NumberFlow from '@number-flow/vue'
+import { onMounted, ref } from 'vue'
+import { ArrowUpRight, Inbox, Users, MoreHorizontal, PlusCircle } from 'lucide-vue-next'
 import { format } from 'date-fns'
-import { ArrowDownRight, ArrowRight, ArrowUpRight, Package } from 'lucide-vue-next'
-import { useI18n } from 'vue-i18n'
-import DashboardOverviewCard from '~/components/dashboard/OverviewCard.vue'
-import { usePositions } from '~/composables/usePositions'
-import { usePositionStats } from '~/composables/usePositionStats'
+import { useRouter } from 'vue-router'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Badge } from '@/components/ui/badge'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { fetchDashboardData } from '@/lib/api'
+import type { Lead, DashboardStats } from '@/lib/types'
 
-const { t } = useI18n()
-const { stats, fetchStats } = usePositionStats()
-const { positions, fetchPositions } = usePositions()
-const selectedDateRange = ref<{ start: Date, end: Date } | null>(null)
-
-watch(selectedDateRange, (newRange) => {
-  if (newRange?.start && newRange?.end) {
-    fetchStats(newRange.start, newRange.end)
-  }
-}, { deep: true, immediate: true })
-
-onMounted(() => {
-  fetchStats()
-  fetchPositions({ page: 1, pageSize: 5 })
+definePageMeta({
+  layout: 'default',
 })
+
+const leads = ref<Lead[]>([])
+const stats = ref<DashboardStats>({ totalListings: 0, totalCustomers: 0, activeRequests: 0 })
+const loading = ref(true)
+const router = useRouter()
+
+function navigateToLead(id: string) {
+  router.push(`/leads/${id}`)
+}
+
+const statusVariant = (status: Lead['status']) => {
+  switch (status) {
+    case 'ACTIVE':
+      return 'secondary'
+    case 'PENDING':
+      return 'outline'
+    case 'CLOSED':
+      return 'default'
+    case 'REJECTED':
+      return 'destructive'
+    default:
+      return 'secondary'
+  }
+}
+
+async function fetchData() {
+  loading.value = true
+  try {
+    const dashboardData = await fetchDashboardData()
+    leads.value = dashboardData.leads
+    stats.value = dashboardData.stats
+  }
+  catch (error) {
+    console.error('Error fetching dashboard data:', error)
+    // Hata durumunda state'leri sıfırla
+    leads.value = []
+    stats.value = { totalListings: 0, totalCustomers: 0, activeRequests: 0 }
+  }
+  finally {
+    loading.value = false
+  }
+}
+
+onMounted(fetchData)
 </script>
 
 <template>
-  <div class="w-full flex flex-col gap-4">
-    <div class="flex flex-wrap items-center justify-between gap-2">
-      <h2 class="text-2xl font-bold tracking-tight" />
-      <div class="flex items-center space-x-2">
-        <BaseDateRangePicker v-model="selectedDateRange" />
+  <main class="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
+    <div class="flex items-center">
+      <h1 class="text-lg font-semibold md:text-2xl">Kontrol Paneli</h1>
+      <div class="ml-auto flex items-center gap-2">
+        <Button size="sm" class="h-8 gap-1">
+          <PlusCircle class="h-3.5 w-3.5" />
+          <span class="sr-only sm:not-sr-only sm:whitespace-nowrap">Yeni Talep Ekle</span>
+        </Button>
       </div>
     </div>
-    <main class="flex flex-1 flex-col gap-4 md:gap-8">
-      <div class="grid gap-4 lg:grid-cols-4 md:grid-cols-2 md:gap-8">
-        <Card>
-          <CardHeader class="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle class="text-sm font-medium">
-              {{ t('dashboard.totalPositions') }}
-            </CardTitle>
-            <Package class="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div class="text-2xl font-bold">
-              <NumberFlow :value="stats.totalPositions" />
-            </div>
-            <p class="flex items-center gap-1 text-xs" style="color: #f5c518;">
-              {{ t('dashboard.fromLastMonth') }}
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader class="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle class="text-sm font-medium">
-              {{ t('dashboard.totalExport') }}
-            </CardTitle>
-            <ArrowUpRight class="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div class="text-2xl font-bold">
-              <NumberFlow :value="stats.totalExport" />
-            </div>
-            <p class="flex items-center gap-1 text-xs" style="color: #f5c518;">
-              {{ t('dashboard.fromLastMonth') }}
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader class="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle class="text-sm font-medium">
-              {{ t('dashboard.totalImport') }}
-            </CardTitle>
-            <ArrowDownRight class="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div class="text-2xl font-bold">
-              <NumberFlow :value="stats.totalImport" />
-            </div>
-            <p class="flex items-center gap-1 text-xs" style="color: #f5c518;">
-              {{ t('dashboard.fromLastMonth') }}
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader class="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle class="text-sm font-medium">
-              {{ t('dashboard.totalTransit') }}
-            </CardTitle>
-            <ArrowRight class="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div class="text-2xl font-bold">
-              <NumberFlow :value="stats.totalTransit" />
-            </div>
-            <p class="flex items-center gap-1 text-xs" style="color: #f5c518;">
-              {{ t('dashboard.fromLastMonth') }}
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-      <div class="grid gap-4 lg:grid-cols-2 xl:grid-cols-3 md:gap-8">
-        <DashboardOverviewCard class="xl:col-span-2">
-          <CardHeader>
-            <CardTitle>{{ t('dashboard.overview') }}</CardTitle>
-          </CardHeader>
-          <CardContent class="pl-2">
-            <DashboardOverview />
-          </CardContent>
-        </DashboardOverviewCard>
-        <Card>
-          <CardHeader>
-            <CardTitle>{{ t('dashboard.recentPositions') }}</CardTitle>
-          </CardHeader>
-          <CardContent class="grid gap-4">
-            <div
-              v-for="position in positions"
-              :key="position.positionNo"
-              class="flex items-center gap-4"
-            >
-              <div class="grid gap-1">
-                <NuxtLink
-                  :to="`/positions/detail?id=${position.positionNo}`"
-                  class="text-sm font-medium leading-none hover:underline"
-                >
-                  {{ position.positionNo }}
-                </NuxtLink>
-                <p class="text-sm" style="color: #f5c518;">
-                  {{ t(`positions.positionType.${position.positionType}`) }}
-                </p>
-              </div>
-              <div class="ml-auto text-sm" style="color: #f5c518;">
-                {{ position.orderDate ? format(new Date(position.orderDate), 'yyyy-MM-dd') : '' }}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    </main>
-  </div>
+    <!-- İstatistik Kartları -->
+    <div class="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-3">
+       <Card>
+        <CardHeader class="flex flex-row items-center justify-between pb-2">
+          <CardTitle class="text-sm font-medium">Toplam İlanlar</CardTitle>
+          <Inbox class="h-4 w-4 text-muted-foreground" />
+        </CardHeader>
+        <CardContent>
+          <div class="text-2xl font-bold">{{ stats.totalListings }}</div>
+          <p class="text-xs text-muted-foreground">Sistemdeki toplam ilan sayısı</p>
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader class="flex flex-row items-center justify-between pb-2">
+          <CardTitle class="text-sm font-medium">Aktif Talepler</CardTitle>
+          <ArrowUpRight class="h-4 w-4 text-muted-foreground" />
+        </CardHeader>
+        <CardContent>
+          <div class="text-2xl font-bold">{{ stats.activeRequests }}</div>
+          <p class="text-xs text-muted-foreground">Şu anda aktif olan talep sayısı</p>
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader class="flex flex-row items-center justify-between pb-2">
+          <CardTitle class="text-sm font-medium">Toplam Müşteriler</CardTitle>
+          <Users class="h-4 w-4 text-muted-foreground" />
+        </CardHeader>
+        <CardContent>
+          <div class="text-2xl font-bold">{{ stats.totalCustomers }}</div>
+          <p class="text-xs text-muted-foreground">Sistemdeki toplam müşteri sayısı</p>
+        </CardContent>
+      </Card>
+    </div>
+
+    <!-- Son Talepler Tablosu -->
+    <Card>
+      <CardHeader>
+        <CardTitle>Son Talepler</CardTitle>
+        <CardDescription>En son gelen talepleri ve durumlarını buradan yönetebilirsiniz.</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Müşteri</TableHead>
+              <TableHead>Talep Notu</TableHead>
+              <TableHead>Durum</TableHead>
+              <TableHead class="text-right">Tarih</TableHead>
+              <TableHead><span class="sr-only">Eylemler</span></TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <template v-if="loading">
+              <TableRow>
+                <TableCell colspan="5" class="text-center">Yükleniyor...</TableCell>
+              </TableRow>
+            </template>
+            <template v-else-if="leads.length > 0">
+              <TableRow v-for="lead in leads" :key="lead.id">
+                <TableCell>
+                  <div class="font-medium">{{ lead.customer.name }}</div>
+                  <div class="text-sm text-muted-foreground">{{ lead.customer.email }}</div>
+                </TableCell>
+                <TableCell>{{ lead.mailLogs[0]?.contentTitle || 'Başlıksız Talep' }}</TableCell>
+                <TableCell>
+                  <Badge :variant="statusVariant(lead.status)">{{ lead.status }}</Badge>
+                </TableCell>
+                <TableCell class="text-right">{{ format(new Date(lead.createdAt), 'dd.MM.yyyy') }}</TableCell>
+                <TableCell class="text-right">
+                   <DropdownMenu>
+                    <DropdownMenuTrigger as-child>
+                      <Button aria-haspopup="true" size="icon" variant="ghost">
+                        <MoreHorizontal class="h-4 w-4" />
+                        <span class="sr-only">Menüyü aç</span>
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuLabel>Eylemler</DropdownMenuLabel>
+                      <DropdownMenuItem @click="navigateToLead(lead.id)">Detayları Görüntüle</DropdownMenuItem>
+                      <DropdownMenuItem>Müşteriye Ulaş</DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </TableCell>
+              </TableRow>
+            </template>
+            <template v-else>
+               <TableRow>
+                <TableCell colspan="5" class="text-center">Henüz gösterilecek bir talep yok.</TableCell>
+              </TableRow>
+            </template>
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
+  </main>
 </template>

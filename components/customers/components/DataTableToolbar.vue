@@ -7,7 +7,6 @@ import {
 } from '#components'
 import { Loader2 } from 'lucide-vue-next'
 import { computed, ref, watch } from 'vue'
-import { useI18n } from 'vue-i18n'
 import DataTableViewOptions from './DataTableViewOptions.vue'
 
 interface DataTableToolbarProps {
@@ -18,7 +17,6 @@ interface DataTableToolbarProps {
 
 const props = defineProps<DataTableToolbarProps>()
 const emit = defineEmits(['search', 'update:modelValue'])
-const { t } = useI18n()
 const isFiltered = computed(() => props.table.getState().columnFilters.length > 0)
 
 const searchInput = ref(props.modelValue || '')
@@ -53,7 +51,7 @@ function onSearchInput(event: Event) {
         <div class="relative flex items-center gap-2">
           <Input
             v-model="searchInput"
-            :placeholder="t('customers.filter.placeholder')"
+            placeholder="Müşteri ara..."
             class="h-8 w-[200px] lg:w-[250px]"
             :disabled="loading"
             @input="onSearchInput"
@@ -70,7 +68,7 @@ function onSearchInput(event: Event) {
               v-if="loading"
               class="mr-2 h-4 w-4 animate-spin"
             />
-            {{ t('customers.filter.search') }}
+            Ara
           </Button>
         </div>
 
@@ -80,7 +78,7 @@ function onSearchInput(event: Event) {
           class="h-8 px-2 lg:px-3"
           @click="table.resetColumnFilters()"
         >
-          {{ t('customers.filter.reset') }}
+          Sıfırla
           <Icon name="i-radix-icons-cross-2" class="ml-2 h-4 w-4" />
         </Button>
       </div>

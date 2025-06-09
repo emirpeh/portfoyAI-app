@@ -1,23 +1,15 @@
 import { defineNuxtPlugin } from '#app'
 import { useRoute } from 'vue-router'
-// import { useAuth } from '~/composables/useAuth' // Eski import
-import { useAuthStore } from '~/composables/useAuthStore'
-import { useUserProfileStore } from '~/stores/userProfileStore'
+import { useAuth } from '~/composables/useAuth'
 
 export default defineNuxtPlugin(async (_nuxtApp) => {
-  const authStore = useAuthStore()
-  const userProfileStore = useUserProfileStore()
+  const auth = useAuth()
   const route = useRoute()
 
   // Public route'ları tanımla
   const publicPaths = ['/login', '/register', '/forgot-password']
 
-  // Tarayıcıda çalışıp çalışmadığını kontrol et, çünkü route.path sunucuda farklı olabilir
-  let currentPath = ''
-  if (process.client) {
-    currentPath = window.location.pathname.replace(/^\/[a-z]{2}(?=\/|$)/, '') // Dil kodunu kaldır (örn: /tr/login -> /login)
-    if (currentPath === '') currentPath = '/'; // Ana sayfa için
-  }
+  const currentPath = route.path.replace(/^\/[a-z]{2}/, '')
 
   // Eğer public route'taysa user fetch etme
   if (publicPaths.includes(currentPath)) {
@@ -25,13 +17,13 @@ export default defineNuxtPlugin(async (_nuxtApp) => {
   }
 
   // Kullanıcı giriş yapmışsa ve user bilgisi yoksa profil bilgilerini al
-  if (authStore.accessToken && !userProfileStore.currentUser) {
+  if (auth.accessToken && !auth.user) {
     try {
-      await authStore.fetchUser()
+      await auth.fetchUser()
     }
     catch (error) {
-      console.error('Error fetching user profile in auth plugin:', error)
-      // Hata durumunda sessizce devam et, logout işlemini component'lere veya $apiFetch onResponseError'a bırak
+      console.error('Error fetching user profile:', error)
+      // Hata durumunda sessizce devam et, logout işlemini component'lere bırak
     }
   }
 })

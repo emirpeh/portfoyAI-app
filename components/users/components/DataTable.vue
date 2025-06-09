@@ -8,7 +8,6 @@ import type {
 
 import type { User } from '../data/schema'
 import { Button, Icon } from '#components'
-import { valueUpdater } from '@/lib/utils'
 import {
   FlexRender,
   getCoreRowModel,
@@ -19,7 +18,7 @@ import {
   getSortedRowModel,
   useVueTable,
 } from '@tanstack/vue-table'
-import { useI18n } from 'vue-i18n'
+import { valueUpdater } from '@/lib/utils'
 import AddOrEditUser from './AddOrEditUser.vue'
 import DataTablePagination from './DataTablePagination.vue'
 import DataTableRowActions from './DataTableRowActions.vue'
@@ -45,7 +44,6 @@ const columnVisibility = ref<VisibilityState>({
 })
 
 const rowSelection = ref({})
-const { t } = useI18n()
 
 const table = useVueTable({
   get data() { return props.data },
@@ -114,7 +112,7 @@ function handleCreate() {
           @click="handleCreate"
         >
           <Icon name="i-lucide-plus" class="mr-2 h-4 w-4" />
-          {{ t('users.createAccount') }}
+          Hesap Oluştur
         </Button>
 
         <DataTableViewOptions :table="table" />
@@ -125,7 +123,7 @@ function handleCreate() {
       <Table class="dark:bg-background">
         <TableHeader class="dark:bg-background">
           <TableRow v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id" class="dark:bg-background">
-            <TableHead v-for="header in headerGroup.headers" :key="header.id" class="dark:bg-background text-foreground">
+            <TableHead v-for="header in headerGroup.headers" :key="header.id" class="text-foreground dark:bg-background">
               <FlexRender v-if="!header.isPlaceholder" :render="header.column.columnDef.header" :props="header.getContext()" />
             </TableHead>
           </TableRow>
@@ -136,9 +134,9 @@ function handleCreate() {
               v-for="row in table.getRowModel().rows"
               :key="row.id"
               :data-state="row.getIsSelected() && 'selected'"
-              class="hover:bg-muted/50 dark:hover:bg-muted/90 dark:bg-background"
+              class="dark:bg-background hover:bg-muted/50 dark:hover:bg-muted/90"
             >
-              <TableCell v-for="cell in row.getVisibleCells()" :key="cell.id" class="dark:bg-background text-foreground">
+              <TableCell v-for="cell in row.getVisibleCells()" :key="cell.id" class="text-foreground dark:bg-background">
                 <template v-if="cell.column.id === 'actions'">
                   <DataTableRowActions :row="row" @edit="handleEdit" />
                 </template>
@@ -152,9 +150,9 @@ function handleCreate() {
           <TableRow v-else class="dark:bg-background">
             <TableCell
               :colspan="props.columns.length"
-              class="h-24 text-center dark:bg-background text-foreground"
+              class="h-24 text-center text-foreground dark:bg-background"
             >
-              {{ t('common.no_results') }}
+              Sonuç bulunamadı.
             </TableCell>
           </TableRow>
         </TableBody>

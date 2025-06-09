@@ -1,123 +1,165 @@
-<script setup lang="ts">
-import { useI18n } from 'vue-i18n'
-import { useAuthStore } from '~/composables/useAuthStore'
-import { useUserProfileStore } from '~/stores/userProfileStore'
-import { storeToRefs } from 'pinia'
-
-definePageMeta({
-  layout: 'blank',
-})
-
-const { t } = useI18n()
-const authStore = useAuthStore()
-const userProfileStore = useUserProfileStore()
-const router = useRouter()
-
-const form = ref({
-  email: 'buyer@portfoy.ai',
-  password: 'password',
-})
-
-const { isLoading, error: authError } = storeToRefs(userProfileStore)
-
-async function handleSubmit() {
-  console.log('[LoginVue] Attempting login with form data:', JSON.parse(JSON.stringify(form.value)));
-  try {
-    const result = await authStore.login(form.value);
-    console.log('[LoginVue] Login result from authStore:', JSON.parse(JSON.stringify(result || {})));
-
-    if (result && result.success && result.user) {
-      if (result.user.roles.includes('buyer') && !userProfileStore.userPreferences) {
-        router.push('/my-profile/preferences')
-      } else {
-        router.push('/dashboard')
-      }
-    } else {
-      console.error('[LoginVue] Login failed in component. Full result:', JSON.parse(JSON.stringify(result || {})), 'Result error part:', result?.error);
-    }
-  } catch (e) {
-    console.error('[LoginVue] Error during handleSubmit execution:', e);
-  }
-}
-</script>
-
 <template>
-  <LayoutAuth :reverse="true">
-    <Card class="mx-auto max-w-md overflow-hidden border border-gray-100 bg-white shadow-lg">
-      <CardHeader class="pb-4 pt-6 text-center">
-        <div class="mb-4 flex justify-center">
-          <img
-            src="/images/logo-portfoyai.svg"
-            alt="PortfoyAI"
-            class="h-12 w-auto"
-          >
+  <div class="relative min-h-screen w-full flex items-center justify-center bg-dark-space p-4">
+    <canvas ref="canvasRef" class="absolute top-0 left-0 w-full h-full z-0"></canvas>
+    
+    <div class="relative z-10 w-full max-w-md bg-black/40 backdrop-blur-lg rounded-xl shadow-2xl overflow-hidden">
+      <div class="p-8">
+        <div class="text-center mb-6">
+           <NuxtLink to="/" class="inline-block">
+              <h1 class="text-4xl font-bold gradient-text">PortföyAI</h1>
+          </NuxtLink>
+          <p class="text-gray-400 mt-2">Yönetim paneline erişmek için giriş yapın.</p>
         </div>
-        <CardTitle class="text-2xl text-gray-900 font-bold">
-          {{ t('auth.login') }}
-        </CardTitle>
-        <CardDescription class="relative">
-          <span class="animate-gradient-x from-primary via-primary/70 to-primary bg-gradient-to-r bg-clip-text text-base text-transparent">
-            PortfoyAI Emlak Platformu
-          </span>
-        </CardDescription>
-      </CardHeader>
-      <CardContent class="p-8">
+        
         <form class="space-y-6" @submit.prevent="handleSubmit">
           <div class="space-y-2">
-            <Label for="email" class="text-sm text-gray-700 font-medium">{{ t('auth.email') }}</Label>
+            <Label for="email" class="text-gray-300">E-posta</Label>
             <Input
               id="email"
               v-model="form.email"
               type="email"
               required
-              class="w-full border border-gray-300 rounded-lg bg-gray-100 px-4 py-2 text-gray-900 focus:border-primary focus:ring-2 focus:ring-primary focus:ring-opacity-50"
+              class="w-full bg-gray-800/50 border-gray-700 rounded-lg px-4 py-2 text-white focus:border-teal-500 focus:ring-teal-500"
               placeholder="name@example.com"
             />
           </div>
 
           <div class="space-y-2">
-            <Label for="password" class="text-sm text-gray-700 font-medium">{{ t('auth.password') }}</Label>
+            <Label for="password" class="text-gray-300">Şifre</Label>
             <Input
               id="password"
               v-model="form.password"
               type="password"
               required
-              class="w-full border border-gray-300 rounded-lg bg-gray-100 px-4 py-2 text-gray-900 focus:border-primary focus:ring-2 focus:ring-primary focus:ring-opacity-50"
+              class="w-full bg-gray-800/50 border-gray-700 rounded-lg px-4 py-2 text-white focus:border-teal-500 focus:ring-teal-500"
               placeholder="••••••••"
             />
           </div>
 
-          <p v-if="authError" class="mt-2 text-sm text-red-600 font-medium">
-            {{ typeof authError === 'object' ? JSON.stringify(authError) : authError }}
+          <p v-if="error" class="text-sm text-red-400">
+            {{ error }}
           </p>
 
           <Button
             type="submit"
-            class="w-full rounded-lg bg-primary py-2.5 text-white font-medium transition-colors hover:bg-primary/90"
-            :loading="isLoading"
-            :disabled="isLoading"
+            class="w-full cta-button-primary text-white font-bold py-3 rounded-lg text-lg"
+            :loading="loading"
           >
-            {{ t('auth.login') }}
+            Giriş Yap
           </Button>
         </form>
-      </CardContent>
-    </Card>
-  </LayoutAuth>
+      </div>
+    </div>
+  </div>
 </template>
 
-<style scoped>
-@keyframes gradient-x {
-  0%,
-  100% {
-    background-position: 200% center;
-  }
-  50% {
-    background-position: -200% center;
+<script setup lang="ts">
+import { ref, onMounted, onUnmounted } from 'vue'
+import * as THREE from 'three'
+import { useAuth } from '~/composables/useAuth'
+
+definePageMeta({
+  layout: 'blank',
+  auth: false,
+})
+
+const auth = useAuth()
+const router = useRouter()
+
+const form = ref({
+  email: '',
+  password: '',
+})
+
+const loading = ref(false)
+const error = ref('')
+
+async function handleSubmit() {
+  loading.value = true
+  error.value = ''
+  try {
+    const { success } = await auth.login(form.value)
+    if (success) {
+      router.push(`/dashboard`)
+    } else {
+      error.value = 'Giriş başarısız. Lütfen bilgilerinizi kontrol edin.'
+    }
+  } catch {
+    error.value = 'Bir hata oluştu. Lütfen tekrar deneyin.'
+  } finally {
+    loading.value = false
   }
 }
 
-.animate-gradient-x {
-  animation: gradient-x 10s linear infinite;
-  background-size: 200% auto;
+// Three.js background animation
+const canvasRef = ref<HTMLCanvasElement | null>(null)
+let renderer: THREE.WebGLRenderer
+let scene: THREE.Scene
+let camera: THREE.PerspectiveCamera
+let animationFrameId: number
+
+onMounted(() => {
+  if (!canvasRef.value) return
+  scene = new THREE.Scene()
+  camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
+  camera.position.z = 5
+  renderer = new THREE.WebGLRenderer({ canvas: canvasRef.value, alpha: true })
+  renderer.setSize(window.innerWidth, window.innerHeight)
+  
+  const particlesGeometry = new THREE.BufferGeometry()
+  const particlesCount = 5000
+  const posArray = new Float32Array(particlesCount * 3)
+  for (let i = 0; i < particlesCount * 3; i++) {
+    posArray[i] = (Math.random() - 0.5) * 10
+  }
+  particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3))
+  
+  const particlesMaterial = new THREE.PointsMaterial({
+    size: 0.005,
+    color: 0x3b82f6,
+  })
+  const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial)
+  scene.add(particlesMesh)
+  
+  const animate = () => {
+    animationFrameId = requestAnimationFrame(animate)
+    particlesMesh.rotation.y += 0.0005
+    renderer.render(scene, camera)
+  }
+  animate()
+
+  window.addEventListener('resize', () => {
+    renderer.setSize(window.innerWidth, window.innerHeight)
+    camera.aspect = window.innerWidth / window.innerHeight
+    camera.updateProjectionMatrix()
+  })
+})
+
+onUnmounted(() => {
+  if (animationFrameId) {
+    cancelAnimationFrame(animationFrameId)
+  }
+})
+</script>
+
+<style>
+.bg-dark-space {
+  background: #0a0e1a;
+}
+
+.gradient-text {
+    background: -webkit-linear-gradient(45deg, #3b82f6, #14b8a6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.cta-button-primary {
+    background-image: linear-gradient(to right, #3b82f6 0%, #14b8a6 51%, #3b82f6 100%);
+    background-size: 200% auto;
+    transition: 0.5s;
+}
+
+.cta-button-primary:hover {
+    background-position: right center;
 }
 </style>

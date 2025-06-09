@@ -1,9 +1,15 @@
-import type { Customer } from '~/components/customers/data/schema'
-import { computed, ref } from 'vue'
+import { ref, computed } from 'vue'
+import type { Customer } from '~/lib/types' // Genel Customer tipini import ediyoruz
 
-interface PaginatedResponse {
+// Yerel, tutarsız interfaceler kaldırıldı.
+
+interface BackendResponse {
   data: Customer[]
-  total: number
+  pagination: {
+    total: number
+    limit: number
+    offset: number
+  }
 }
 
 export function useCustomers() {
@@ -29,27 +35,27 @@ export function useCustomers() {
     try {
       const offset = (page - 1) * limit
       const query: Record<string, any> = {
-        offset,
         limit,
+        offset,
       }
 
       if (search?.trim()) {
-        query.customer = search.trim()
+        query.name = search.trim()
       }
 
-      const response = await $apiFetch<PaginatedResponse>('/customers', {
+      const response = await $apiFetch<BackendResponse>('/api/customers', { // Endpoint güncellendi
         query,
       })
 
       customers.value = response.data
-      total.value = response.total
+      total.value = response.pagination.total // Yanıt yapısı güncellendi
       currentPage.value = page
       pageSize.value = limit
       searchQuery.value = search
     }
     catch (err: any) {
       console.error('Error fetching customers:', err)
-      error.value = err.message
+      error.value = err.message || 'Müşteriler getirilirken bir hata oluştu.'
     }
     finally {
       loading.value = false
@@ -63,30 +69,35 @@ export function useCustomers() {
   }
 
   function onPageChange(page: number) {
-    fetchCustomers(page, pageSize.value)
+    fetchCustomers(page, pageSize.value, searchQuery.value)
   }
 
   function onPageSizeChange(limit: number) {
-    fetchCustomers(1, limit)
-  }
-
-  async function getCustomerMailList(id: string) {
-    loading.value = true
-    error.value = null
-
-    const response = await $apiFetch(`/customers/${id}/mail-list`)
-    loading.value = false
-
-    return response
+    pageSize.value = limit
+    fetchCustomers(1, limit, searchQuery.value)
   }
 
   async function deleteCustomer(id: string) {
-    loading.value = true
-    error.value = null
-    await $apiFetch(`/api/customers/${id}`, {
-      method: 'DELETE',
+    try {
+      await $apiFetch(`/api/customers/${id}`, { // Endpoint güncellendi
+        method: 'DELETE',
+      })
+      await fetchCustomers(currentPage.value, pageSize.value, searchQuery.value)
+    }
+    catch (err: any) {
+      console.error('Error deleting customer:', err)
+      throw err
+    }
+  }
+
+  // createCustomer fonksiyonu projenin DTO'su ile uyumlu hale getirilmeli.
+  // Şimdilik genel bir Customer objesi alacak şekilde basitleştiriyoruz.
+  // Not: Backend'deki CreateCustomerDto, frontend'deki Customer tipinden farklı olabilir.
+  async function createCustomer(customer: Partial<Customer>) {
+    return $apiFetch('/api/customers', { // Endpoint güncellendi
+      method: 'POST',
+      body: customer,
     })
-    loading.value = false
   }
 
   return {
@@ -96,13 +107,13 @@ export function useCustomers() {
     error,
     total,
     currentPage: computed(() => currentPage.value),
-    pageSize,
+    pageSize: computed(() => pageSize.value),
     searchQuery,
     fetchCustomers,
     onPageChange,
     onPageSizeChange,
     onSearch,
-    getCustomerMailList,
     deleteCustomer,
+    createCustomer,
   }
-}
+} 

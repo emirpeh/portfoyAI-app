@@ -1,0 +1,230 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Open+Sans:wght@300;400;700&display=swap');
+
+:root {
+  --primary-color: #2A60FF; /* Kobalt Mavi */
+  --secondary-color: #F5F6FA; /* Açık Gri */
+  --accent-color: #30C98E; /* Nane Yeşili */
+  --text-dark: #212529;
+  --text-light: #6c757d;
+}
+
+.landing-page {
+  font-family: 'Open Sans', sans-serif;
+  background-color: var(--secondary-color) !important;
+  color: var(--text-dark);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.landing-page .container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+/* Header */
+.landing-page .header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background-color: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 1.25rem 0;
+  border-bottom: 1px solid #e9ecef;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.landing-page .header .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  transition: transform 0.3s ease;
+}
+
+.landing-page .logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.landing-page .logo:hover {
+  transform: scale(1.05);
+}
+
+.landing-page .logo-icon {
+  color: var(--accent-color);
+  width: 28px;
+  height: 28px;
+}
+
+.landing-page .logo-text {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+.landing-page .logo-ai, .landing-page .logo-icon {
+  background: linear-gradient(45deg, #30C98E, #2A60FF);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+}
+
+/* Hero Section */
+.landing-page .hero {
+  text-align: center;
+  padding: 6rem 0;
+}
+
+.landing-page .hero-title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 1.5rem;
+}
+
+.landing-page .hero-subtitle {
+  font-size: 1.25rem;
+  font-weight: 300;
+  color: var(--text-light);
+  max-width: 700px;
+  margin: 0 auto 2.5rem;
+}
+
+.landing-page .hero-cta {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+/* Buttons */
+.landing-page .cta-button {
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.landing-page .cta-button.large {
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+}
+
+.landing-page .cta-button.primary {
+  background-color: var(--primary-color);
+  color: white;
+  box-shadow: 0 4px 14px rgba(42, 96, 255, 0.25);
+}
+
+.landing-page .cta-button.primary:hover {
+  filter: brightness(110%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(42, 96, 255, 0.35);
+}
+
+.landing-page .cta-button.secondary {
+  background-color: transparent;
+  color: var(--primary-color);
+  border: 2px solid var(--primary-color);
+}
+
+.landing-page .cta-button.secondary:hover {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+/* Features Section */
+.landing-page .features-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  padding: 2rem 0 4rem;
+}
+
+.landing-page .feature-card {
+  background-color: #ffffff;
+  padding: 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  text-align: center;
+  border-top: 4px solid var(--accent-color);
+}
+
+.landing-page .feature-title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.landing-page .feature-description {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--text-light);
+}
+
+/* Benefits Section */
+.landing-page .benefits {
+  text-align: center;
+  padding: 4rem 0;
+}
+
+.landing-page .section-title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 2.25rem;
+  font-weight: 700;
+  margin-bottom: 2.5rem;
+}
+
+.landing-page .benefits-list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  gap: 2.5rem;
+  flex-wrap: wrap;
+}
+
+.landing-page .benefits-list li {
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.landing-page .benefit-icon {
+  color: var(--primary-color);
+  width: 24px;
+  height: 24px;
+}
+
+
+/* Footer */
+.landing-page .footer {
+  background-color: #212529;
+  color: var(--secondary-color);
+  padding: 2rem 0;
+  margin-top: auto;
+  text-align: center;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .landing-page .hero-title {
+    font-size: 2.5rem;
+  }
+  .landing-page .features-grid {
+    grid-template-columns: 1fr;
+  }
+} 

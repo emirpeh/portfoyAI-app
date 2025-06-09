@@ -17,7 +17,6 @@ import {
   getSortedRowModel,
   useVueTable,
 } from '@tanstack/vue-table'
-import { useI18n } from 'vue-i18n'
 import { valueUpdater } from '@/lib/utils'
 import DataTablePagination from './DataTablePagination.vue'
 import DataTableToolbar from './DataTableToolbar.vue'
@@ -39,7 +38,6 @@ const columnFilters = ref<ColumnFiltersState>([])
 const columnVisibility = ref<VisibilityState>({
   accountId: false,
 })
-const { t } = useI18n()
 const rowSelection = ref({})
 
 const pagination = ref({
@@ -139,7 +137,7 @@ function handleSearch(value: string) {
               :colspan="props.columns.length"
               class="h-24 text-center"
             >
-              {{ t('common.no_results') }}
+              Sonuç bulunamadı.
             </TableCell>
           </TableRow>
         </TableBody>

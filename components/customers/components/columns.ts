@@ -12,51 +12,51 @@ export const columns: ColumnDef<Customer, any>[] = [
     header: ({ table }) => h(Checkbox, {
       'checked': table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate'),
       'onUpdate:checked': value => table.toggleAllPageRowsSelected(!!value),
-      'ariaLabel': 'Select all',
+      'ariaLabel': 'Hepsini seç',
       'class': 'translate-y-0.5',
     }),
-    cell: ({ row }) => h(Checkbox, { 'checked': row.getIsSelected(), 'onUpdate:checked': value => row.toggleSelected(!!value), 'ariaLabel': 'Select row', 'class': 'translate-y-0.5' }),
+    cell: ({ row }) => h(Checkbox, { 'checked': row.getIsSelected(), 'onUpdate:checked': value => row.toggleSelected(!!value), 'ariaLabel': 'Satırı seç', 'class': 'translate-y-0.5' }),
     enableSorting: false,
     enableHiding: false,
   },
   {
     accessorKey: 'company',
-    header: ({ column }) => h(DataTableColumnHeader, { column, title: 'customers.columns.company' }),
+    header: ({ column }) => h(DataTableColumnHeader, { column, title: 'Firma' }),
     cell: ({ row }) => h('div', { class: 'max-w-[500px] truncate' }, row.getValue('company')),
   },
   {
     accessorKey: 'taxOffice',
-    header: ({ column }) => h(DataTableColumnHeader, { column, title: 'customers.columns.taxOffice' }),
+    header: ({ column }) => h(DataTableColumnHeader, { column, title: 'Vergi Dairesi' }),
     cell: ({ row }) => h('div', { class: 'w-[180px]' }, row.getValue('taxOffice')),
   },
   {
     accessorKey: 'taxValue',
-    header: ({ column }) => h(DataTableColumnHeader, { column, title: 'customers.columns.taxValue' }),
+    header: ({ column }) => h(DataTableColumnHeader, { column, title: 'Vergi Numarası' }),
     cell: ({ row }) => h('div', { class: 'w-[120px]' }, row.getValue('taxValue')),
   },
   {
     accessorKey: 'currency',
-    header: ({ column }) => h(DataTableColumnHeader, { column, title: 'customers.columns.currency' }),
+    header: ({ column }) => h(DataTableColumnHeader, { column, title: 'Para Birimi' }),
     cell: ({ row }) => h('div', { class: 'w-[80px]' }, row.getValue('currency')),
   },
   {
     accessorKey: 'country',
-    header: ({ column }) => h(DataTableColumnHeader, { column, title: 'customers.columns.country' }),
+    header: ({ column }) => h(DataTableColumnHeader, { column, title: 'Ülke' }),
     cell: ({ row }) => h('div', { class: 'w-[120px]' }, row.getValue('country')),
   },
   {
     accessorKey: 'city',
-    header: ({ column }) => h(DataTableColumnHeader, { column, title: 'customers.columns.city' }),
+    header: ({ column }) => h(DataTableColumnHeader, { column, title: 'Şehir' }),
     cell: ({ row }) => h('div', { class: 'w-[120px]' }, row.getValue('city')),
   },
   {
     accessorKey: 'district',
-    header: ({ column }) => h(DataTableColumnHeader, { column, title: 'customers.columns.district' }),
+    header: ({ column }) => h(DataTableColumnHeader, { column, title: 'İlçe' }),
     cell: ({ row }) => h('div', { class: 'w-[120px]' }, row.getValue('district')),
   },
   {
     accessorKey: 'accountId',
-    header: ({ column }) => h(DataTableColumnHeader, { column, title: 'customers.columns.accountId' }),
+    header: ({ column }) => h(DataTableColumnHeader, { column, title: 'Hesap ID' }),
     cell: ({ row }) => h('div', {
       class: [
         'w-[120px]',

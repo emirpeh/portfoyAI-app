@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ConfigProvider } from 'radix-vue'
 import { Sonner } from '@/components/ui/sonner'
-import { useLanguage } from '~/composables/useLanguage'
+import { useAuth } from '~/composables/useAuth'
+import SidebarProvider from '~/components/ui/sidebar/SidebarProvider.vue'
 
 const colorMode = useColorMode()
 const color = computed(() => (colorMode?.value === 'dark' ? '#09090b' : '#ffffff'))
@@ -10,21 +11,6 @@ const customize = useCustomize()
 
 const theme = computed(() => 'yellow')
 const radius = computed(() => customize?.radius || 0.5)
-
-const { currentLanguage, setLanguage } = useLanguage()
-
-onMounted(() => {
-  const savedLocale = useCookie('i18n_redirected').value
-  if (savedLocale) {
-    setLanguage(savedLocale as 'en' | 'tr')
-  }
-})
-
-watch(() => currentLanguage.value, async (newLocale) => {
-  if (newLocale) {
-    await setLanguage(newLocale)
-  }
-}, { immediate: true })
 
 useHead({
   meta: [
@@ -36,7 +22,7 @@ useHead({
     { rel: 'icon', href: '/images/icon.jpeg' },
   ],
   htmlAttrs: {
-    lang: computed(() => currentLanguage.value),
+    lang: 'tr',
   },
   bodyAttrs: {
     class: computed(() => `theme-${theme.value}`),
@@ -44,27 +30,14 @@ useHead({
   },
 })
 
-const title = 'Maxi Logistics'
-const description = 'Sistemli kargo taşımacılığı hizmetleri'
+const title = 'PortfoyAI'
+const description = 'Emlak Talebi Yönetim Sistemi'
 
 useSeoMeta({
   title,
   description,
   ogTitle: title,
   ogDescription: description,
-  ogUrl: 'https://maxitransport.net',
-  ogImage: 'https://maxitransport.net/wp-content/uploads/2022/03/Varlik-2.png',
-  twitterTitle: title,
-  twitterDescription: description,
-  twitterImage: 'https://maxitransport.net/wp-content/uploads/2022/03/Varlik-2.png',
-  twitterCard: 'summary_large_image',
-})
-
-const router = useRouter()
-
-defineShortcuts({
-  'G-H': () => router.push('/'),
-  'G-E': () => router.push('/email'),
 })
 
 const useIdFunction = () => useId()
@@ -75,13 +48,13 @@ const dir = computed(() => textDirection.value === 'rtl' ? 'rtl' : 'ltr')
 
 <template>
   <ConfigProvider :use-id="useIdFunction" :dir="dir">
-    <div vaul-drawer-wrapper class="relative">
+    <SidebarProvider>
       <NuxtLayout>
         <NuxtPage />
       </NuxtLayout>
-    </div>
 
-    <Toaster />
-    <Sonner class="pointer-events-auto" />
+      <Toaster />
+      <Sonner class="pointer-events-auto" />
+    </SidebarProvider>
   </ConfigProvider>
 </template>

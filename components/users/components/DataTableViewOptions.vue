@@ -2,15 +2,12 @@
 import type { Table } from '@tanstack/vue-table'
 import type { User } from '../data/schema'
 import { computed } from 'vue'
-import { useI18n } from 'vue-i18n'
 
 interface DataTableViewOptionsProps {
   table: Table<User>
 }
 
 const props = defineProps<DataTableViewOptionsProps>()
-
-const { t } = useI18n()
 
 const columns = computed(() => props.table.getAllColumns()
   .filter(
@@ -28,11 +25,11 @@ const columns = computed(() => props.table.getAllColumns()
         class="ml-auto hidden h-8 lg:flex"
       >
         <Icon name="i-radix-icons-mixer-horizontal" class="mr-2 h-4 w-4" />
-        {{ t('users.view') }}
+        Görünüm
       </Button>
     </DropdownMenuTrigger>
     <DropdownMenuContent align="end" class="w-[150px]">
-      <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
+      <DropdownMenuLabel>Sütunları Göster/Gizle</DropdownMenuLabel>
       <DropdownMenuSeparator />
 
       <DropdownMenuCheckboxItem
@@ -42,7 +39,7 @@ const columns = computed(() => props.table.getAllColumns()
         :checked="column.getIsVisible()"
         @update:checked="(value) => column.toggleVisibility(!!value)"
       >
-        {{ t(`users.columns.${column.id}`) }}
+        {{ column.id }}
       </DropdownMenuCheckboxItem>
     </DropdownMenuContent>
   </DropdownMenu>

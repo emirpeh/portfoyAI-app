@@ -13,7 +13,7 @@
 }
 
 /* Custom sidebar class */
-.custom-sidebar [data-sidebar="sidebar"] {
+.custom-sidebar [data-sidebar='sidebar'] {
   background-color: #343a40 !important; /* Ensure the dark gray background is applied */
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.2) !important; /* Add subtle shadow for depth */
 }
@@ -24,15 +24,15 @@
 }
 
 /* Adjust sidebar menu items for better contrast */
-.custom-sidebar [data-sidebar="menu-item"] button,
-.custom-sidebar [data-sidebar="menu-button"] {
+.custom-sidebar [data-sidebar='menu-item'] button,
+.custom-sidebar [data-sidebar='menu-button'] {
   color: #ffffff !important;
   transition: all 0.2s ease-in-out !important;
 }
 
 /* Adjust active states */
-.custom-sidebar [data-active="true"],
-.custom-sidebar [aria-current="page"] {
+.custom-sidebar [data-active='true'],
+.custom-sidebar [aria-current='page'] {
   background-color: rgba(255, 255, 255, 0.15) !important;
   color: #ffde59 !important; /* Yellow text for active items */
   font-weight: bold;
@@ -40,26 +40,26 @@
 }
 
 /* Style sidebar header */
-.custom-sidebar [data-sidebar="header"] {
+.custom-sidebar [data-sidebar='header'] {
   border-bottom-color: rgba(255, 255, 255, 0.1) !important;
   padding-bottom: 0.75rem !important;
 }
 
 /* Style sidebar footer */
-.custom-sidebar [data-sidebar="footer"] {
+.custom-sidebar [data-sidebar='footer'] {
   border-top-color: rgba(255, 255, 255, 0.1) !important;
   padding-top: 0.75rem !important;
 }
 
 /* Style sidebar group labels */
-.custom-sidebar [data-sidebar="group-label"] {
+.custom-sidebar [data-sidebar='group-label'] {
   color: rgba(255, 255, 255, 0.7) !important;
   font-weight: 600 !important;
   letter-spacing: 0.5px !important;
 }
 
 /* Style sidebar search input */
-.custom-sidebar input[type="search"] {
+.custom-sidebar input[type='search'] {
   background-color: rgba(255, 255, 255, 0.05) !important;
   color: #ffffff !important;
   border-color: rgba(255, 255, 255, 0.1) !important;
@@ -67,18 +67,18 @@
 }
 
 /* Style sidebar search input focus */
-.custom-sidebar input[type="search"]:focus {
+.custom-sidebar input[type='search']:focus {
   background-color: rgba(255, 255, 255, 0.1) !important;
   border-color: rgba(255, 222, 89, 0.5) !important; /* Yellow border on focus */
   box-shadow: 0 0 0 2px rgba(255, 222, 89, 0.25) !important;
 }
 
 /* Style sidebar search input placeholder */
-.custom-sidebar input[type="search"]::placeholder {
+.custom-sidebar input[type='search']::placeholder {
   color: rgba(255, 255, 255, 0.5) !important;
 }
 
 /* Style logo area */
 .custom-sidebar .logo-container img {
   filter: brightness(1.2) !important; /* Make logo slightly brighter */
-} 
+}

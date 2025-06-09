@@ -18,7 +18,7 @@ useHead({
   <div class="relative min-h-screen">
     <div class="grid lg:grid-cols-[280px_1fr]">
       <AppSidebar class="hidden lg:block" />
-      <div class="min-h-screen flex flex-col">
+      <div class="min-h-screen flex flex-col w-full">
         <LayoutHeader>
           <AppSettings />
         </LayoutHeader>

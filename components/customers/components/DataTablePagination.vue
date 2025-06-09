@@ -2,7 +2,6 @@
 import type { Table } from '@tanstack/vue-table'
 import type { Customer } from '../data/schema'
 import { computed } from 'vue'
-import { useI18n } from 'vue-i18n'
 
 interface DataTablePaginationProps {
   table: Table<Customer>
@@ -15,8 +14,6 @@ const props = defineProps<DataTablePaginationProps>()
 // Toplam sayfa sayısını hesapla
 const totalPages = computed(() => Math.ceil(props.total / props.pageSize))
 
-const { t } = useI18n()
-
 // Sayfa boyutu seçenekleri
 const pageSizeOptions = [10, 20, 30, 40, 50]
 </script>
@@ -24,13 +21,12 @@ const pageSizeOptions = [10, 20, 30, 40, 50]
 <template>
   <div class="flex items-center justify-between px-2">
     <div class="flex-1 text-sm text-muted-foreground">
-      {{ table.getFilteredSelectedRowModel().rows.length }} {{ t('table.pagination.of') }}
-      {{ total }} {{ t('table.pagination.selected') }}
+      Toplam {{ total }} kayıttan {{ table.getFilteredSelectedRowModel().rows.length }} tanesi seçili.
     </div>
     <div class="flex items-center space-x-6 lg:space-x-8">
       <div class="flex items-center space-x-2">
         <p class="text-sm font-medium">
-          {{ t('table.pagination.rowsPerPage') }}
+          Sayfa başına satır
         </p>
         <Select
           :model-value="`${pageSize}`"
@@ -47,8 +43,7 @@ const pageSizeOptions = [10, 20, 30, 40, 50]
         </Select>
       </div>
       <div class="w-[100px] flex items-center justify-center text-sm font-medium">
-        Page {{ table.getState().pagination.pageIndex + 1 }} of
-        {{ totalPages }}
+        Sayfa {{ table.getState().pagination.pageIndex + 1 }} / {{ totalPages }}
       </div>
       <div class="flex items-center space-x-2">
         <Button
@@ -57,7 +52,7 @@ const pageSizeOptions = [10, 20, 30, 40, 50]
           :disabled="table.getState().pagination.pageIndex === 0"
           @click="table.setPageIndex(0)"
         >
-          <span class="sr-only">{{ t('table.pagination.firstPage') }}</span>
+          <span class="sr-only">İlk Sayfa</span>
           <Icon name="i-radix-icons-double-arrow-left" class="h-4 w-4" />
         </Button>
         <Button
@@ -66,7 +61,7 @@ const pageSizeOptions = [10, 20, 30, 40, 50]
           :disabled="table.getState().pagination.pageIndex === 0"
           @click="table.previousPage()"
         >
-          <span class="sr-only">{{ t('table.pagination.previousPage') }}</span>
+          <span class="sr-only">Önceki Sayfa</span>
           <Icon name="i-radix-icons-chevron-left" class="h-4 w-4" />
         </Button>
         <Button
@@ -75,7 +70,7 @@ const pageSizeOptions = [10, 20, 30, 40, 50]
           :disabled="table.getState().pagination.pageIndex >= totalPages - 1"
           @click="table.nextPage()"
         >
-          <span class="sr-only">{{ t('table.pagination.nextPage') }}</span>
+          <span class="sr-only">Sonraki Sayfa</span>
           <Icon name="i-radix-icons-chevron-right" class="h-4 w-4" />
         </Button>
         <Button
@@ -84,7 +79,7 @@ const pageSizeOptions = [10, 20, 30, 40, 50]
           :disabled="table.getState().pagination.pageIndex >= totalPages - 1"
           @click="table.setPageIndex(totalPages - 1)"
         >
-          <span class="sr-only">{{ t('table.pagination.lastPage') }}</span>
+          <span class="sr-only">Son Sayfa</span>
           <Icon name="i-radix-icons-double-arrow-right" class="h-4 w-4" />
         </Button>
       </div>

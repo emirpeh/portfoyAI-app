@@ -10,7 +10,6 @@ import {
   Input,
   Label,
 } from '#components'
-import { useI18n } from 'vue-i18n'
 import { useUsers } from '~/composables/useUsers'
 
 interface Props {
@@ -26,7 +25,6 @@ const emit = defineEmits<{
   'update:show': [value: boolean]
 }>()
 
-const { t } = useI18n()
 const { createUser, updateUser, getUser } = useUsers()
 
 const formData = ref({
@@ -41,11 +39,12 @@ const isEditMode = computed(() => !!props.userId)
 
 // Başlık ve açıklama metinleri
 const dialogTitle = computed(() =>
-  isEditMode.value ? t('users.editAccount') : t('users.createAccount'),
+  isEditMode.value ? 'Hesabı Düzenle' : 'Hesap Oluştur',
 )
 const dialogDescription = computed(() =>
-  isEditMode.value ? t('users.editAccountDescription') : t('users.createAccountDescription'),
+  isEditMode.value ? 'Hesap bilgilerini düzenleyin.' : 'Yeni bir hesap oluşturun.',
 )
+const roleDisplay = computed(() => (props.role === 'CUSTOMER' ? 'Müşteri' : 'Yönetici'))
 
 // Komponentin mount olduğunda mevcut kullanıcı verilerini yükle
 onMounted(async () => {
@@ -105,7 +104,7 @@ async function onSubmit() {
         <div class="grid gap-4 py-4">
           <div class="grid grid-cols-4 items-center gap-4">
             <Label for="email" class="text-right">
-              {{ t('users.email') }}
+              E-posta
             </Label>
             <Input
               id="email"
@@ -117,7 +116,7 @@ async function onSubmit() {
           </div>
           <div class="grid grid-cols-4 items-center gap-4">
             <Label for="password" class="text-right">
-              {{ t('users.password') }}
+              Şifre
             </Label>
             <Input
               id="password"
@@ -125,21 +124,21 @@ async function onSubmit() {
               type="password"
               class="col-span-3"
               :required="!isEditMode"
-              :placeholder="isEditMode ? t('users.passwordPlaceholder') : ''"
+              :placeholder="isEditMode ? 'Değiştirmek için yeni şifre girin' : ''"
             />
           </div>
           <div class="grid grid-cols-4 items-center gap-4">
             <Label class="text-right">
-              {{ t('users.role') }}
+              Rol
             </Label>
             <div class="col-span-3 font-medium">
-              {{ t(`users.roles.${props.role.toLowerCase()}`) }}
+              {{ roleDisplay }}
             </div>
           </div>
         </div>
         <DialogFooter>
           <Button type="submit">
-            {{ isEditMode ? t('users.update') : t('users.save') }}
+            {{ isEditMode ? 'Güncelle' : 'Kaydet' }}
           </Button>
         </DialogFooter>
       </form>

@@ -5,6 +5,10 @@ import { columns } from '~/components/users/components/columns'
 import DataTable from '~/components/users/components/DataTable.vue'
 import { useUsers } from '~/composables/useUsers'
 
+definePageMeta({
+  layout: 'default',
+})
+
 const router = useRouter()
 const {
   users,

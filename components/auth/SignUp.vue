@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { cn } from '@/lib/utils'
 import { Loader2 } from 'lucide-vue-next'
+import { cn } from '@/lib/utils'
 import PasswordInput from '~/components/PasswordInput.vue'
 
 const isLoading = ref(false)
@@ -20,11 +20,11 @@ async function onSubmit(event: Event) {
       <div class="grid gap-4">
         <div class="grid gap-2">
           <Label for="name">
-            Name
+            Ad
           </Label>
           <Input
             id="name"
-            placeholder="Enter your name"
+            placeholder="Adınızı girin"
             type="text"
             auto-capitalize="none"
             auto-complete="name"
@@ -34,7 +34,7 @@ async function onSubmit(event: Event) {
         </div>
         <div class="grid gap-2">
           <Label for="email">
-            Email
+            E-posta
           </Label>
           <Input
             id="email"
@@ -48,23 +48,23 @@ async function onSubmit(event: Event) {
         </div>
         <div class="grid gap-2">
           <Label for="password">
-            Password
+            Şifre
           </Label>
           <PasswordInput id="password" />
         </div>
         <div class="grid gap-2">
           <Label for="confirm-password">
-            Confirm Password
+            Şifreyi Onayla
           </Label>
           <PasswordInput id="confirm-password" />
         </div>
         <Button :disabled="isLoading">
           <Loader2 v-if="isLoading" class="mr-2 h-4 w-4 animate-spin" />
-          Sign In with Email
+          E-posta ile Giriş Yap
         </Button>
       </div>
     </form>
-    <Separator label="Or continue with" />
+    <Separator label="Veya şununla devam et" />
     <div class="flex items-center gap-4">
       <Button variant="outline" class="w-full gap-2">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="size-4">

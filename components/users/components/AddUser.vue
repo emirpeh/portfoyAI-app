@@ -10,7 +10,6 @@ import {
   Input,
   Label,
 } from '#components'
-import { useI18n } from 'vue-i18n'
 
 interface Props {
   show: boolean
@@ -22,8 +21,6 @@ const props = defineProps<Props>()
 const emit = defineEmits<{
   'update:show': [value: boolean]
 }>()
-
-const { t } = useI18n()
 
 const formData = ref({
   email: '',
@@ -42,16 +39,16 @@ function onSubmit() {
   >
     <DialogContent class="bg-background sm:max-w-[425px]">
       <DialogHeader>
-        <DialogTitle>{{ t('users.createAccount') }}</DialogTitle>
+        <DialogTitle>Hesap Oluştur</DialogTitle>
         <DialogDescription>
-          {{ t('users.createAccountDescription') }}
+          Yeni bir hesap oluşturun.
         </DialogDescription>
       </DialogHeader>
       <form @submit.prevent="onSubmit">
         <div class="grid gap-4 py-4">
           <div class="grid grid-cols-4 items-center gap-4">
             <Label for="email" class="text-right">
-              {{ t('users.email') }}
+              E-posta
             </Label>
             <Input
               id="email"
@@ -63,7 +60,7 @@ function onSubmit() {
           </div>
           <div class="grid grid-cols-4 items-center gap-4">
             <Label for="password" class="text-right">
-              {{ t('users.password') }}
+              Şifre
             </Label>
             <Input
               id="password"
@@ -75,16 +72,16 @@ function onSubmit() {
           </div>
           <div class="grid grid-cols-4 items-center gap-4">
             <Label class="text-right">
-              {{ t('users.role') }}
+              Rol
             </Label>
             <div class="col-span-3 font-medium">
-              {{ t(`users.roles.${props.role.toLowerCase()}`) }}
+              {{ props.role === 'CUSTOMER' ? 'Müşteri' : 'Yönetici' }}
             </div>
           </div>
         </div>
         <DialogFooter>
           <Button type="submit">
-            {{ t('users.save') }}
+            Kaydet
           </Button>
         </DialogFooter>
       </form>
