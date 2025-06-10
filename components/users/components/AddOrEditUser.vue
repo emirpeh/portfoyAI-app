@@ -73,12 +73,15 @@ async function onSubmit() {
       })
     }
     else {
-      await createUser({
+      const payload: any = {
         email: formData.value.email,
         password: formData.value.password,
         role: formData.value.role,
-        ...(formData.value.externalId && { externalId: formData.value.externalId }),
-      })
+      }
+      if (formData.value.externalId) {
+        payload.externalId = formData.value.externalId
+      }
+      await createUser(payload)
     }
     emit('update:show', false)
   }

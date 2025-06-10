@@ -81,8 +81,6 @@ export default defineNuxtConfig({
   routeRules: {
     '/components': { redirect: '/components/accordion' },
     '/settings': { redirect: '/settings/profile' },
-    // CSR modunda çalışacak şekilde tüm rotaları yapılandır
-    '/**': { ssr: false },
   },
 
   build: {

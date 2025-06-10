@@ -33,6 +33,7 @@ interface DataTableProps {
   pageSize: number
   loading?: boolean
   searchValue?: string
+  userRole: 'ADMIN' | 'CUSTOMER'
 }
 const props = defineProps<DataTableProps>()
 
@@ -75,13 +76,11 @@ const table = useVueTable({
 
 const showEditDialog = ref(false)
 const selectedUserId = ref<string>()
-const showCreateDialog = ref(false)
 
 const showDialog = computed({
-  get: () => showCreateDialog.value || showEditDialog.value,
+  get: () => showEditDialog.value,
   set: (value) => {
     if (!value) {
-      showCreateDialog.value = false
       showEditDialog.value = false
     }
   },
@@ -90,11 +89,6 @@ const showDialog = computed({
 function handleEdit(userId: string) {
   selectedUserId.value = userId
   showEditDialog.value = true
-}
-
-function handleCreate() {
-  selectedUserId.value = undefined
-  showCreateDialog.value = true
 }
 </script>
 
@@ -106,15 +100,6 @@ function handleCreate() {
       </div>
 
       <div class="flex flex-col items-end gap-2">
-        <Button
-          variant="default"
-          class="bg-primary text-primary-foreground hover:bg-primary/90"
-          @click="handleCreate"
-        >
-          <Icon name="i-lucide-plus" class="mr-2 h-4 w-4" />
-          Hesap Oluştur
-        </Button>
-
         <DataTableViewOptions :table="table" />
       </div>
     </div>
@@ -163,10 +148,10 @@ function handleCreate() {
 
     <!-- Edit Dialog -->
     <AddOrEditUser
-      v-if="showCreateDialog || showEditDialog"
+      v-if="showEditDialog"
       v-model:show="showDialog"
       :user-id="selectedUserId"
-      role="ADMIN"
+      :role="props.userRole"
     />
   </div>
 </template>

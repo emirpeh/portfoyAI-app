@@ -36,12 +36,28 @@ export function useUsers() {
         query.email = search.trim()
       }
 
-      const response = await $apiFetch<PaginatedResponse>('/users', {
+      const response = await $apiFetch<PaginatedResponse | User[]>('/users', {
         query,
       })
 
-      users.value = response.data
-      total.value = response.total
+      // API can return a paginated object or a simple array.
+      if (Array.isArray(response)) {
+        // It's a simple array
+        users.value = response
+        total.value = response.length
+      }
+      else if (response && response.data) {
+        // It's a paginated object
+        users.value = response.data
+        total.value = response.total
+      }
+      else {
+        // Unexpected format
+        console.warn('Fetched users data is not in an expected format:', response)
+        users.value = []
+        total.value = 0
+      }
+      
       currentOffset.value = offset
       pageSize.value = limit
       searchQuery.value = search

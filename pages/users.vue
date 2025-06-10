@@ -3,6 +3,7 @@ import { Loader2 } from 'lucide-vue-next'
 import { useRouter } from 'vue-router'
 import { columns } from '~/components/users/components/columns'
 import DataTable from '~/components/users/components/DataTable.vue'
+import AddOrEditUser from '~/components/users/components/AddOrEditUser.vue'
 import { useUsers } from '~/composables/useUsers'
 
 definePageMeta({
@@ -25,6 +26,8 @@ const {
   searchQuery,
 } = useUsers()
 
+const showCreateDialog = ref(false)
+
 // Sayfa yüklendiğinde kullanıcıları getir
 onMounted(() => {
   fetchUsers()
@@ -37,13 +40,27 @@ function handleCreateUser() {
 </script>
 
 <template>
-  <div class="detail-container py-6">
+  <div class="flex flex-col gap-4">
+    <div class="flex items-center justify-between">
+      <h1 class="text-2xl font-semibold">
+        Kullanıcı Yönetimi
+      </h1>
+       <Button
+        variant="default"
+        class="bg-primary text-primary-foreground hover:bg-primary/90"
+        @click="showCreateDialog = true"
+      >
+        <Icon name="i-lucide-plus" class="mr-2 h-4 w-4" />
+        Hesap Oluştur
+      </Button>
+    </div>
+
     <div v-if="error" class="text-red-500">
       {{ error }}
     </div>
 
-    <div v-if="loading && !searching" class="flex justify-center">
-      <Loader2 class="h-6 w-6 animate-spin" />
+    <div v-else-if="loading && !searching" class="flex justify-center items-center h-64">
+      <Loader2 class="h-8 w-8 animate-spin" />
     </div>
 
     <DataTable
@@ -55,10 +72,16 @@ function handleCreateUser() {
       :current-page="currentPage"
       :page-size="pageSize"
       :loading="searching"
+      user-role="ADMIN"
       @page-change="onPageChange"
       @page-size-change="onPageSizeChange"
       @search="onSearch"
-      @create-user="handleCreateUser"
+    />
+
+    <AddOrEditUser
+      v-if="showCreateDialog"
+      v-model:show="showCreateDialog"
+      role="ADMIN"
     />
   </div>
 </template>
