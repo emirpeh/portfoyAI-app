@@ -82,8 +82,10 @@ export async function fetchAllLeads(): Promise<Lead[]> {
       console.warn('fetchAllLeads received an unexpected response format:', response)
       return []
     }
-    // Gelen her bir isteği Lead formatına çevir
-    return response.data.map(request => adaptRequestToLead(request))
+    // Gelen her bir isteği Lead formatına çevir, müşterisi olmayanları atla
+    return response.data
+      .filter(request => request.customer) // Müşterisi olanları filtrele
+      .map(request => adaptRequestToLead(request))
   }
   catch (error) {
     console.error('Error fetching all leads:', error)

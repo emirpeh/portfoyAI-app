@@ -85,6 +85,10 @@ export default defineNuxtConfig({
     '/**': { ssr: false },
   },
 
+  build: {
+    transpile: ['three'],
+  },
+
   imports: {
     dirs: [
       './lib',
@@ -103,7 +107,7 @@ export default defineNuxtConfig({
     server: {
       proxy: {
         '/api': {
-          target: 'http://localhost:5000',
+          target: 'http://localhost:5001',
           changeOrigin: true,
         },
       },

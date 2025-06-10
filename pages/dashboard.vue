@@ -24,6 +24,7 @@ import {
 } from '@/components/ui/dialog'
 import BuyerForm from '@/components/forms/BuyerForm.vue'
 import SellerForm from '@/components/forms/SellerForm.vue'
+import LeadsOverTimeChart from '@/components/charts/LeadsOverTimeChart.vue'
 import { fetchDashboardData } from '@/lib/api'
 import type { Lead, DashboardStats as DashboardStatsType, Property } from '@/lib/types'
 
@@ -115,13 +116,13 @@ onMounted(fetchData)
           <DialogTrigger as-child>
             <Button size="sm" class="h-8 gap-1">
               <PlusCircle class="h-3.5 w-3.5" />
-              <span class="sr-only sm:not-sr-only sm:whitespace-nowrap">Yeni Talep Ekle</span>
+              <span class="sr-only sm:not-sr-only sm:whitespace-nowrap">Yeni Kayıt Ekle</span>
             </Button>
           </DialogTrigger>
           <DialogContent class="sm:max-w-[425px]">
             <DialogHeader>
-              <DialogTitle>Yeni Talep Oluştur</DialogTitle>
-              <DialogDescription>Eklemek istediğiniz talep türünü seçin.</DialogDescription>
+              <DialogTitle>Yeni Kayıt Oluştur</DialogTitle>
+              <DialogDescription>Eklemek istediğiniz kayıt türünü seçin.</DialogDescription>
             </DialogHeader>
             <div class="grid gap-4 py-4">
               <Button variant="outline" @click="openBuyerForm">Alıcı Talebi Ekle</Button>
@@ -141,7 +142,7 @@ onMounted(fetchData)
          </CardHeader>
          <CardContent>
            <div class="text-2xl font-bold">{{ stats.totalListings }}</div>
-           <p class="text-xs text-muted-foreground">Sistemdeki toplam ilan sayısı</p>
+           <p class="text-xs text-muted-foreground">Sistemdeki toplam portföy sayısı</p>
          </CardContent>
        </Card>
        <Card>
@@ -151,7 +152,7 @@ onMounted(fetchData)
          </CardHeader>
          <CardContent>
            <div class="text-2xl font-bold">{{ stats.activeRequests }}</div>
-           <p class="text-xs text-muted-foreground">Şu anda aktif olan talep sayısı</p>
+           <p class="text-xs text-muted-foreground">Takip edilen aktif talep sayısı</p>
          </CardContent>
        </Card>
        <Card>
@@ -161,137 +162,126 @@ onMounted(fetchData)
          </CardHeader>
          <CardContent>
            <div class="text-2xl font-bold">{{ stats.totalCustomers }}</div>
-           <p class="text-xs text-muted-foreground">Sistemdeki toplam müşteri sayısı</p>
+           <p class="text-xs text-muted-foreground">Sistemdeki toplam alıcı/satıcı</p>
          </CardContent>
        </Card>
     </div>
 
-    <!-- Recent Leads Table -->
-    <Card>
-       <CardHeader>
-         <CardTitle>Son Talepler</CardTitle>
-         <CardDescription>En son gelen talepleri ve durumlarını buradan yönetebilirsiniz.</CardDescription>
-       </CardHeader>
-       <CardContent>
-         <Table>
-           <TableHeader>
-             <TableRow>
-               <TableHead>Müşteri</TableHead>
-               <TableHead>Talep Notu</TableHead>
-               <TableHead>Durum</TableHead>
-               <TableHead class="text-right">Tarih</TableHead>
-               <TableHead><span class="sr-only">Eylemler</span></TableHead>
-             </TableRow>
-           </TableHeader>
-           <TableBody>
-             <template v-if="loading">
-               <TableRow>
-                 <TableCell colspan="5" class="text-center">Yükleniyor...</TableCell>
-               </TableRow>
-             </template>
-             <template v-else-if="leads.length > 0">
-               <TableRow v-for="lead in leads" :key="lead.id">
-                 <TableCell>
-                   <div class="font-medium">{{ lead.customer.name }}</div>
-                   <div class="text-sm text-muted-foreground">{{ lead.customer.email }}</div>
-                 </TableCell>
-                 <TableCell>{{ lead.mailLogs && lead.mailLogs[0] ? lead.mailLogs[0].contentTitle : 'Başlıksız Talep' }}</TableCell>
-                 <TableCell>
-                   <Badge :variant="statusVariant(lead.status)">{{ lead.status }}</Badge>
-                 </TableCell>
-                 <TableCell class="text-right">{{ format(new Date(lead.createdAt), 'dd.MM.yyyy') }}</TableCell>
-                 <TableCell class="text-right">
-                    <DropdownMenu>
-                     <DropdownMenuTrigger as-child>
-                       <Button aria-haspopup="true" size="icon" variant="ghost">
-                         <MoreHorizontal class="h-4 w-4" />
-                         <span class="sr-only">Menüyü aç</span>
-                       </Button>
-                     </DropdownMenuTrigger>
-                     <DropdownMenuContent align="end">
-                       <DropdownMenuLabel>Eylemler</DropdownMenuLabel>
-                       <DropdownMenuItem @click="navigateToLead(lead.id)">Detayları Görüntüle</DropdownMenuItem>
-                       <DropdownMenuItem>Müşteriye Ulaş</DropdownMenuItem>
-                     </DropdownMenuContent>
-                   </DropdownMenu>
-                 </TableCell>
-               </TableRow>
-             </template>
-             <template v-else>
+    <!-- Main Grid Layout -->
+    <div class="grid grid-cols-1 gap-4 md:gap-8 lg:grid-cols-3">
+      <!-- Main Content (Chart and Recent Leads) -->
+      <div class="lg:col-span-2 grid auto-rows-max items-start gap-4 md:gap-8">
+        <Card>
+          <CardHeader>
+            <CardTitle>Son 7 Günlük Talep Akışı</CardTitle>
+          </CardHeader>
+          <CardContent class="pl-2">
+            <div class="h-[300px]">
+              <LeadsOverTimeChart :leads="leads" />
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Son Gelen Talepler</CardTitle>
+            <CardDescription>En son gelen talepleri ve durumlarını buradan yönetebilirsiniz.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
                 <TableRow>
-                 <TableCell colspan="5" class="text-center">Henüz gösterilecek bir talep yok.</TableCell>
-               </TableRow>
-             </template>
-           </TableBody>
-         </Table>
-       </CardContent>
-     </Card>
+                  <TableHead>Müşteri</TableHead>
+                  <TableHead class="hidden sm:table-cell">Talep Notu</TableHead>
+                  <TableHead class="hidden sm:table-cell">Durum</TableHead>
+                  <TableHead class="text-right">Tarih</TableHead>
+                  <TableHead><span class="sr-only">Eylemler</span></TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <template v-if="loading">
+                  <TableRow>
+                    <TableCell colspan="5" class="text-center">Yükleniyor...</TableCell>
+                  </TableRow>
+                </template>
+                <template v-else-if="leads.length > 0">
+                  <TableRow v-for="lead in leads.slice(0, 5)" :key="lead.id">
+                    <TableCell>
+                      <div class="font-medium">{{ lead.customer?.name || 'İlişkisiz Talep' }}</div>
+                      <div class="hidden text-sm text-muted-foreground md:inline">{{ lead.customer?.email || '-' }}</div>
+                    </TableCell>
+                    <TableCell class="hidden sm:table-cell">{{ lead.mailLogs && lead.mailLogs[0] ? lead.mailLogs[0].contentTitle : 'Başlıksız Talep' }}</TableCell>
+                    <TableCell class="hidden sm:table-cell">
+                      <Badge :variant="statusVariant(lead.status)">{{ lead.status }}</Badge>
+                    </TableCell>
+                    <TableCell class="text-right">{{ format(new Date(lead.createdAt), 'dd.MM.yyyy') }}</TableCell>
+                    <TableCell class="text-right">
+                       <DropdownMenu>
+                        <DropdownMenuTrigger as-child>
+                          <Button aria-haspopup="true" size="icon" variant="ghost">
+                            <MoreHorizontal class="h-4 w-4" />
+                            <span class="sr-only">Menüyü aç</span>
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuLabel>Eylemler</DropdownMenuLabel>
+                          <DropdownMenuItem @click="navigateToLead(lead.id)">Detayları Görüntüle</DropdownMenuItem>
+                          <DropdownMenuItem>Müşteriye Ulaş</DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                </template>
+                <template v-else>
+                   <TableRow>
+                    <TableCell colspan="5" class="text-center">Henüz gösterilecek bir talep yok.</TableCell>
+                  </TableRow>
+                </template>
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      </div>
 
-    <!-- Recent Activities Table -->
-    <Card>
-       <CardHeader>
-         <CardTitle>Son Aktiviteler</CardTitle>
-         <CardDescription>En son satılan veya kiralanan mülkler.</CardDescription>
-       </CardHeader>
-       <CardContent>
-         <Table>
-           <TableHeader>
-             <TableRow>
-               <TableHead>İlan</TableHead>
-               <TableHead>Durum</TableHead>
-               <TableHead>Fiyat</TableHead>
-               <TableHead class="text-right">Tarih</TableHead>
-             </TableRow>
-           </TableHeader>
-           <TableBody>
-             <template v-if="loading">
-               <TableRow>
-                 <TableCell colspan="4" class="text-center">Yükleniyor...</TableCell>
-               </TableRow>
-             </template>
-             <template v-else-if="recentActivities.length > 0">
-               <TableRow v-for="activity in recentActivities" :key="activity.id">
-                 <TableCell>
-                   <div class="font-medium">{{ activity.title }}</div>
-                   <div class="text-sm text-muted-foreground">{{ activity.listingNo }}</div>
-                 </TableCell>
-                 <TableCell>
-                   <Badge :variant="activity.status === 'SOLD' ? 'destructive' : 'default'">{{ activity.status === 'SOLD' ? 'Satıldı' : 'Kiralandı' }}</Badge>
-                 </TableCell>
-                 <TableCell>{{ new Intl.NumberFormat('tr-TR', { style: 'currency', currency: activity.currency }).format(activity.price) }}</TableCell>
-                 <TableCell class="text-right">{{ format(new Date(activity.updatedAt), 'dd.MM.yyyy') }}</TableCell>
-               </TableRow>
-             </template>
-             <template v-else>
-                <TableRow>
-                 <TableCell colspan="4" class="text-center">Henüz gösterilecek bir aktivite yok.</TableCell>
-               </TableRow>
-             </template>
-           </TableBody>
-         </Table>
-       </CardContent>
-     </Card>
+      <!-- Side Content (Recent Activities) -->
+      <div class="grid auto-rows-max items-start gap-4 md:gap-8">
+        <Card>
+          <CardHeader>
+            <CardTitle>Son Eklenen Portföyler</CardTitle>
+            <CardDescription>En son eklenen satılık/kiralık mülkler.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div v-if="loading" class="text-center text-muted-foreground">Yükleniyor...</div>
+            <div v-else-if="recentActivities.length > 0" class="grid gap-6">
+              <div v-for="activity in recentActivities" :key="activity.id" class="flex items-center gap-4">
+                <div class="grid gap-1">
+                  <p class="text-sm font-medium leading-none">{{ activity.title }}</p>
+                  <p class="text-sm text-muted-foreground">{{ activity.location }}</p>
+                </div>
+                <div class="ml-auto font-medium">{{ new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(activity.price) }}</div>
+              </div>
+            </div>
+            <div v-else class="text-center text-muted-foreground">Henüz aktivite yok.</div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
 
-    <!-- Form Modals -->
+    <!-- Dialogs for forms -->
     <Dialog v-model:open="isBuyerFormOpen">
-      <DialogContent class="max-w-4xl">
+      <DialogContent class="sm:max-w-[600px]">
         <DialogHeader>
           <DialogTitle>Yeni Alıcı Talebi Oluştur</DialogTitle>
-          <DialogDescription>
-            Manuel olarak yeni bir alıcı talebi ekleyin. Gerekli tüm alanları doldurun.
-          </DialogDescription>
+          <DialogDescription>Müşterinin aradığı mülk kriterlerini girin.</DialogDescription>
         </DialogHeader>
         <BuyerForm @success="onBuyerFormSuccess" />
       </DialogContent>
     </Dialog>
 
     <Dialog v-model:open="isSellerFormOpen">
-      <DialogContent class="max-w-4xl">
+      <DialogContent class="sm:max-w-[600px]">
         <DialogHeader>
-          <DialogTitle>Yeni Satıcı/İlan Oluştur</DialogTitle>
-          <DialogDescription>
-            Manuel olarak yeni bir satıcı veya ilan ekleyin.
-          </DialogDescription>
+          <DialogTitle>Yeni Satıcı ve Mülk Ekle</DialogTitle>
+          <DialogDescription>Satıcının bilgilerini ve mülk detaylarını girin.</DialogDescription>
         </DialogHeader>
         <SellerForm @success="onSellerFormSuccess" />
       </DialogContent>

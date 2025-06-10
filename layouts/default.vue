@@ -22,7 +22,7 @@ useHead({
         <LayoutHeader>
           <AppSettings />
         </LayoutHeader>
-        <main class="flex-1 p-4 md:p-6">
+        <main class="flex-1 p-4 sm:p-6 md:p-8">
           <slot />
         </main>
       </div>
