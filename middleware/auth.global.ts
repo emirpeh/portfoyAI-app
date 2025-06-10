@@ -1,8 +1,14 @@
 import { useAuth } from '~/composables/useAuth'
 
 export default defineNuxtRouteMiddleware(async (to) => {
+  // `auth: false` olarak işaretlenmiş sayfaları atla
+  if (to.meta.auth === false) {
+    return
+  }
+
   // Herkese açık olması gereken yolları (path) burada tanımlayın.
-  const publicRoutes = ['/login', '/'] 
+  // Not: meta-tabanlı yaklaşımla bu diziye olan ihtiyaç azalır veya ortadan kalkar.
+  const publicRoutes = ['/login'] 
 
   // Eğer gidilmek istenen yol herkese açık yollardan biriyse, hiçbir şey yapma.
   if (publicRoutes.includes(to.path)) {

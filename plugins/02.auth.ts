@@ -1,6 +1,5 @@
 import { defineNuxtPlugin } from '#app'
 import { useRoute } from 'vue-router'
-import { useAuth } from '~/composables/useAuth'
 
 export default defineNuxtPlugin(async () => {
   const auth = useAuth()

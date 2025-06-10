@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia'
 import { useRoute, useRouter } from 'vue-router'
 // import type { User } from '@prisma/client'
-import { useStorage } from '@vueuse/core'
 
 // Geçici olarak User tipini burada tanımlıyoruz
 interface User {
@@ -19,25 +18,28 @@ interface LoginPayload {
 
 interface LoginResponse {
   access_token: string
+  refresh_token: string
   user: AuthUser
 }
 
 export const useAuth = defineStore('auth', () => {
   const user = ref<AuthUser | null>(null)
-  const accessToken = ref<string | null>(null)
+  const accessToken = useCookie<string | null>('token')
+  const refreshToken = useCookie<string | null>('refresh_token')
   const router = useRouter()
   const route = useRoute()
 
   async function login(payload: LoginPayload) {
-    const { $apiFetch } = useNuxtApp()
+    const { $customFetch } = useNuxtApp()
 
     try {
-      const response = await $apiFetch<LoginResponse>('/api/auth/login', {
+      const response = await $customFetch<LoginResponse>('/api/auth/login', {
         method: 'POST',
         body: payload,
       })
 
       accessToken.value = response.access_token
+      refreshToken.value = response.refresh_token
       user.value = response.user
 
       return { success: true }
@@ -49,21 +51,22 @@ export const useAuth = defineStore('auth', () => {
   }
 
   async function fetchUser() {
-    const { $apiFetch } = useNuxtApp()
+    const { $customFetch } = useNuxtApp()
     if (!accessToken.value)
       return
 
     try {
-      const fetchedUser = await $apiFetch<AuthUser>('/api/auth/profile', {
-        headers: {
-          Authorization: `Bearer ${accessToken.value}`,
-        },
-      })
+      const fetchedUser = await $customFetch<AuthUser>('/api/auth/profile')
       user.value = fetchedUser
       return fetchedUser
     }
     catch (error) {
       console.error('Fetch user error:', error)
+      // Eğer gidilmek istenen sayfa herkese açıksa (auth: false), logout yapma ve yönlendirme.
+      if (route.meta.auth === false) {
+        return null
+      }
+
       const publicRoutes = ['/login', '/register', '/forgot-password']
       const currentPath = route.path.replace(/^\/(tr|en)/, '')
       if (!publicRoutes.includes(currentPath)) {
@@ -76,6 +79,7 @@ export const useAuth = defineStore('auth', () => {
   async function logout() {
     user.value = null
     accessToken.value = null
+    refreshToken.value = null
 
     try {
       if (route.path !== '/login') {
@@ -91,6 +95,7 @@ export const useAuth = defineStore('auth', () => {
     // State
     user,
     accessToken,
+    refreshToken,
     // Actions
     login,
     fetchUser,
